@@ -1,0 +1,13 @@
+[common]
+port = 3000
+httpsPort = 443
+# open https server or not
+# httpsServer = true
+
+[api]
+pathname = [
+  "get | /, /version | Static.Utils.getPackageInfo",
+  "get | /mockTime, /test | Bot.Mocker.getTime",
+  "get | /mockData | Bot.Mocker.getData",
+  "post | /mockToHex | Bot.Mocker.toHex"
+]

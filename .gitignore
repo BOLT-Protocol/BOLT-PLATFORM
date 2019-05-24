@@ -1,0 +1,7 @@
+.next/*
+build/*
+node_modules/*
+.eslintcache
+package-lock.json
+yarn.lock
+server/config.toml
