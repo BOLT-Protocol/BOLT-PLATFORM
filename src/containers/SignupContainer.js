@@ -42,7 +42,7 @@ class Signup extends Component {
 
         this.state = {
             // 1 ~ 3, 3 steps
-            page: 3,
+            page: 1,
             page1: {
                 name: {
                     ...initialInput,
@@ -176,7 +176,11 @@ class Signup extends Component {
 
         if (page < 3) {
             return (
-                <div>
+                <div
+                    style={{
+                        alignItems: 'flex-end'
+                    }}
+                >
                     <WGH1>註冊</WGH1>
 
                     <WGmainP>
@@ -342,22 +346,19 @@ class Signup extends Component {
     render() {
 
         return (
-            <Fragment>
+            <WGloginField>
 
-                <WGloginField>
+                {this.renderHeader()}
 
-                    {this.renderHeader()}
+                <form>
 
-                    <form>
+                    {this.renderInput()}
 
-                        {this.renderInput()}
+                </form>
 
-                    </form>
+                {this.renderStep()}
 
-                    {this.renderStep()}
-
-                </WGloginField>
-            </Fragment>
+            </WGloginField>
         );
     }
 }
