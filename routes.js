@@ -14,6 +14,10 @@ const APP_ROUTES = [
     {
         page: 'signin',
         pattern: '/signin'
+    },
+    {
+        page: 'forgetPassword',
+        pattern: '/forgetpassword'
     }
 ];
 

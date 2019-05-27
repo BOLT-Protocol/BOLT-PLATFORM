@@ -9,3 +9,7 @@ export const validatePassword = pwd => {
 
     return re.test(pwd);
 };
+
+export const vaildateEqual = (f, s) => {
+    return f === s;
+};

@@ -19,11 +19,21 @@ export const SCimage = styled.div`
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 	background-image: url("/static/images/${props => (props.type === 'signup' ? 'login_bg_signup.jpg' : 'login_bg_signin.jpg')}");
+s
 `;
 
 export const SCmain = styled.main`
     display: flex;
     justify-content: center;
     align-items: center;
+`;
+
+export const SCcopyright = styled.p`
+    color: #fff;
+    font-size: 0.625rem;
 `;

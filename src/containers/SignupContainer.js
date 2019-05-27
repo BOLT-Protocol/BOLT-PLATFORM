@@ -12,7 +12,8 @@ import { WGmainP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
 import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton, WGsmallButton } from '../widgets/button';
-import { validateEmail, validatePassword } from '../utils/validation';
+import { validateEmail, validatePassword, vaildateEqual } from '../utils/validation';
+import { setInput, handleStep } from '../utils/loginService';
 
 class Signup extends Component {
     static getInitialProps() {
@@ -59,8 +60,8 @@ class Signup extends Component {
                     ...initialInput,
                     type: 'password',
                     placeholder: '設定密碼',
-                    hint: '密碼長度須為8個字元以上，32個字元以下',
-                    error: '密碼長度須為8個字元以上，32個字元以下'
+                    hint: '密碼須英數字8個字元以上，32個字元以下',
+                    error: '密碼須英數字8個字元以上，32個字元以下'
                 },
                 replyPassword: {
                     ...initialInput,
@@ -95,36 +96,9 @@ class Signup extends Component {
                 }
             ]
         };
-    }
 
-    handleStep = (step, check = true) => {
-        // step: go to step
-        // check: should check valid ? for back feature
-
-        const { page } = this.state;
-
-        // eslint-disable-next-line react/destructuring-assignment
-        const checkedPage = this.state[`page${page}`];
-
-        // check all validation
-        for (let el in checkedPage) {
-            // eslint-disable-next-line react/destructuring-assignment
-            if (!checkedPage[el].valid && check) {
-
-                this.setState(
-                    produce(draft => {
-                        draft[`page${page}`][el].showError = true;
-                    })
-                );
-                return false;
-            }
-        }
-
-        this.setState(
-            produce(draft => {
-                draft.page = step;
-            })
-        );
+        this.setInput = setInput.bind(this);
+        this.handleStep = handleStep.bind(this);
     }
 
     handleCheck = (index) => {
@@ -133,36 +107,6 @@ class Signup extends Component {
                 draft.terms[index].checked = !draft.terms[index].checked;
             })
         );
-    }
-
-    setInput = ({ key, value, valid }) => {
-        const { page } = this.state;
-
-        this.setState(
-            produce(draft => {
-                draft[`page${page}`][key].value = value;
-                draft[`page${page}`][key].valid = valid;
-
-                if (valid) {
-                    draft[`page${page}`][key].showError = false;
-                }
-
-                // if input password and replyPassword aready has value
-                if (key === 'password' && draft[`page${page}`].replyPassword.value !== '') {
-
-                    // if password value === replyPassword value, set replyPassword valid
-                    draft[`page${page}`].replyPassword.valid = (draft[`page${page}`].replyPassword.value === value);
-                }
-            }),
-            () => {
-                console.log(this.state);
-            }
-        );
-    }
-
-    validateReplyPassword = (v) => {
-        const { page1 } = this.state;
-        return v === page1.password.value;
     }
 
     sendVeriCode = (e) => {
@@ -240,7 +184,8 @@ class Signup extends Component {
                     validCheck = validatePassword;
                     break;
                 case 'replyPassword':
-                    validCheck = this.validateReplyPassword;
+                    const { page1 } = this.state;
+                    validCheck = (v) => vaildateEqual(page1.password.value, v);
                     break;
                 default:
                     validCheck = v => v.trim().length > 0;

@@ -10,6 +10,8 @@ import { WGmainP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
 import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton, WGsmallButton } from '../widgets/button';
+import { setInput } from '../utils/loginService';
+import { validateEmail } from '../utils/validation';
 
 class Signin extends Component {
     static getInitialProps() {
@@ -38,30 +40,43 @@ class Signin extends Component {
         };
 
         this.state = {
-            email: {
-                ...initialInput,
-                type: 'email',
-                placeholder: '電子郵件帳號',
-                error: '您的電子郵件輸入錯誤，請檢查帳號及格式是否正確，謝謝'
-            },
-            password: {
-                ...initialInput,
-                type: 'password',
-                placeholder: '密碼',
-                error: '您的密碼輸入錯誤，請重新輸入，或使用下方忘記密碼重新設定'
+            page1: {
+                email: {
+                    ...initialInput,
+                    type: 'email',
+                    placeholder: '電子郵件帳號',
+                    error: '您的電子郵件輸入錯誤，請檢查帳號及格式是否正確，謝謝'
+                },
+                password: {
+                    ...initialInput,
+                    type: 'password',
+                    placeholder: '密碼',
+                    error: '帳號與密碼不符'
+                }
             }
         };
+
+        this.setInput = setInput.bind(this);
     }
 
-    setInput = ({ value }) => {
-        console.log(value);
+    handleSubmit = () => {
+        // if error state.page1.password.showError = true
+
+        console.log('submit');
     };
 
     renderInput() {
-        return Object.keys(this.state).map(key => {
+        const { page1 } = this.state;
+
+        return Object.keys(page1).map(key => {
+            let validCheck = () => true;
+
+            if (key === 'email') {
+                validCheck = validateEmail;
+            }
             // eslint-disable-next-line react/destructuring-assignment
-            const item = this.state[key];
-            return <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} showError={item.showError} />;
+            const item = page1[key];
+            return <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} showError={item.showError} validCheck={validCheck} />;
         });
     }
 
