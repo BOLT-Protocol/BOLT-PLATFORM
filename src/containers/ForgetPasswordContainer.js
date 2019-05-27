@@ -157,7 +157,7 @@ class ForgetPassword extends Component {
                 return (
                     <Fragment>
                         <WGmainP style={{ margin: '30px 0 25px 0' }}>密碼須英數字8個字元以上，32個字元以下</WGmainP>
-                        {this.renderInput()}
+                        <form style={{ marginTop: 0 }}>{this.renderInput()}</form>
                     </Fragment>
                 );
             case 4:
