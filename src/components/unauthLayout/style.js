@@ -16,6 +16,7 @@ export const SClayout = styled.div`
 
 export const SCimage = styled.div`
 	height: 100%;
+    position: relative;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -24,7 +25,13 @@ export const SCimage = styled.div`
     align-items: center;
     justify-content: center;
 	background-image: url("/static/images/${props => (props.type === 'signup' ? 'login_bg_signup.jpg' : 'login_bg_signin.jpg')}");
-s
+
+    > p {
+        position: absolute;
+        bottom: 27px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 `;
 
 export const SCmain = styled.main`
