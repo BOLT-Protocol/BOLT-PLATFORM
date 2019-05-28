@@ -8,7 +8,7 @@ import * as types from '../../constants/actionTypes/nasa';
 
 const url = 'https://api.nasa.gov/planetary/apod?api_key=NNKOjkoul8n1CH18TWA9gwngW1s1SmjESPjNoUFo';
 
-export const fetchDataEpic = action$ =>
+const fetchDataEpic = action$ =>
     action$
         // export const fetchDataEpic = (action$, state$) => action$
         .pipe(
@@ -19,3 +19,5 @@ export const fetchDataEpic = action$ =>
             catchError(error => of(actions.fetchDataFailure(error))),
             takeUntil(action$.pipe(ofType(types.CANCEL_FETCH_DATA)))
         );
+
+export default [fetchDataEpic];

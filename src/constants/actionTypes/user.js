@@ -1,0 +1,6 @@
+export const USER_REGISTER = 'USER_REGISTER';
+export const USER_CREATE_TOKEN = 'USER_CREATE_TOKEN';
+export const USER_VERIFY_TOKEN = 'USER_VERIFY_TOKEN';
+export const USER_LOGIN = 'USER_LOGIN';
+export const USER_AUTH_SUCCESS = 'USE_AUTH_SUCCESS';
+export const USER_AUTH_FAIL = 'USE_AUTH_FAIL';

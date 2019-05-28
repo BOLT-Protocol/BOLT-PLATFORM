@@ -9,7 +9,7 @@ export const cancelFetchData = () => ({
 });
 
 export const fetchData = () => ({
-    type: types.FETCH_DATA,
+    type: types.FETCH_DATA
 });
 
 export const fetchDataSuccess = response => ({

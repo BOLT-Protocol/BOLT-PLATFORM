@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Link from 'next/link';
 import produce from "immer";
 import { connect } from 'react-redux';
+import Router from 'next/router';
 
 import InputField from '../components/inputField';
 import Term from '../components/term';
@@ -14,18 +15,30 @@ import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton, WGsmallButton } from '../widgets/button';
 import { validateEmail, validatePassword, vaildateEqual } from '../utils/validation';
 import { setInput, handleStep } from '../utils/loginService';
+import { registerUser$ } from '../actions/user';
 
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    onRegister$: (payload) => dispatch(registerUser$(payload))
+});
 class Signup extends Component {
-    static getInitialProps() {
-        const user = {
-            isAuth: false
-        };
+    static getInitialProps({ store }) {
+
+        const { user } = store.getState();
 
         return {
             namespacesRequired: [],
             user,
             page: 'signup'
         };
+    }
+
+    static propTypes = {
+        onRegister: PropTypes.func.isRequired,
+        user: PropTypes.object.isRequired
     }
 
     constructor(props) {
@@ -101,12 +114,67 @@ class Signup extends Component {
         this.handleStep = handleStep.bind(this);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+
+        const { user } = this.props;
+
+        // if signup success
+        if (prevState.page === 2 && !prevProps.user.isAuth && user.isAuth) {
+            setTimeout(() => {
+                this.setState(produce(draft => {
+                    draft.page = 3;
+                }));
+
+                this.timmer = setTimeout(() => {
+                    Router.push('/');
+                }, 3000);
+            }, 200);
+        }
+    }
+
+
+    componentWillUnmount() {
+        clearTimeout(this.timmer);
+    }
+
     handleCheck = (index) => {
         this.setState(
             produce(draft => {
                 draft.terms[index].checked = !draft.terms[index].checked;
             })
         );
+    }
+
+    handleSubmit = () => {
+        const { onRegister } = this.props;
+        const { page1, page2 } = this.state;
+        const { name, email, password } = page1;
+        const { cellphone } = page2;
+
+        // check all validation
+        for (let el in page2) {
+            // eslint-disable-next-line react/destructuring-assignment
+            if (!page2[el].valid) {
+                this.setState(
+                    produce(draft => {
+                        draft.page2[el].showError = true;
+                    })
+                );
+                return false;
+            }
+        }
+
+        onRegister$(
+            {
+                email: email.value,
+                password: password.value,
+                profile: {
+                    name: name.value,
+                    phone: cellphone.value
+                }
+            }
+        );
+
     }
 
     sendVeriCode = (e) => {
@@ -261,7 +329,7 @@ class Signup extends Component {
 
                         <WGbuttonField>
 
-                            <WGmainButton onClick={() => { this.handleStep(3); }}>
+                            <WGmainButton onClick={this.handleSubmit}>
                                 確認註冊
                             </WGmainButton>
 
@@ -309,6 +377,6 @@ class Signup extends Component {
 }
 
 export default connect(
-    null,
-    null
+    mapStateToProps,
+    mapDispatchToProps
 )(Signup);

@@ -12,7 +12,15 @@ import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton, WGsmallButton } from '../widgets/button';
 import { setInput } from '../utils/loginService';
 import { validateEmail } from '../utils/validation';
+import { loginUser$ } from '../actions/user';
 
+const mapStateToProps = state => ({
+    user: state.user
+});
+
+const mapDispatchToProps = dispatch => ({
+    onLigin$: payload => dispatch(loginUser$(payload))
+});
 class Signin extends Component {
     static getInitialProps() {
         const user = {
@@ -60,9 +68,25 @@ class Signin extends Component {
     }
 
     handleSubmit = () => {
-        // if error state.page1.password.showError = true
+        const { onLigin$ } = this.props;
+        const { page1 } = this.state;
 
-        console.log('submit');
+        for (let el in page1) {
+            // eslint-disable-next-line react/destructuring-assignment
+            if (!page1[el].valid) {
+                this.setState(
+                    produce(draft => {
+                        draft.page1[el].showError = true;
+                    })
+                );
+                return false;
+            }
+        }
+
+        onLigin$({
+            email: page1.email.value,
+            password: page1.password.value
+        });
     };
 
     renderInput() {
@@ -114,7 +138,7 @@ class Signin extends Component {
 
                         <WGmainP>記住我</WGmainP>
                     </div>
-                    <WGmainButton>登入</WGmainButton>
+                    <WGmainButton onClick={this.handleSubmit}>登入</WGmainButton>
                 </WGbuttonField>
 
                 <span
@@ -133,6 +157,6 @@ class Signin extends Component {
 }
 
 export default connect(
-    null,
-    null
+    mapStateToProps,
+    mapDispatchToProps
 )(Signin);
