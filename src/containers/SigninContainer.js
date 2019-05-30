@@ -6,7 +6,7 @@ import produce from 'immer';
 
 import InputField from '../components/inputField';
 import { WGH1 } from '../widgets/h';
-import { WGmainP } from '../widgets/p';
+import { WGmainP, WGerrorP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
 import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton, WGsmallButton } from '../widgets/button';
@@ -22,10 +22,8 @@ const mapDispatchToProps = dispatch => ({
     onLigin$: payload => dispatch(loginUser$(payload))
 });
 class Signin extends Component {
-    static getInitialProps() {
-        const user = {
-            isAuth: false
-        };
+    static getInitialProps({ store }) {
+        const { user } = store.getState();
 
         return {
             namespacesRequired: [],
@@ -34,13 +32,18 @@ class Signin extends Component {
         };
     }
 
+    static propTypes = {
+        onLigin$: PropTypes.func.isRequired,
+        user: PropTypes.object.isRequired
+    };
+
     constructor(props) {
         super(props);
 
         const initialInput = {
             type: 'text',
             value: '',
-            valid: false,
+            valid: null,
             error: '',
             hint: '',
             placeholder: '',
@@ -67,6 +70,14 @@ class Signin extends Component {
         this.setInput = setInput.bind(this);
     }
 
+    componentDidMount() {
+        this.count = false;
+    }
+
+    componentWillUnmount() {
+        this.count = false;
+    }
+
     handleSubmit = () => {
         const { onLigin$ } = this.props;
         const { page1 } = this.state;
@@ -82,6 +93,8 @@ class Signin extends Component {
                 return false;
             }
         }
+
+        this.count = true;
 
         onLigin$({
             email: page1.email.value,
@@ -100,11 +113,13 @@ class Signin extends Component {
             }
             // eslint-disable-next-line react/destructuring-assignment
             const item = page1[key];
-            return <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} showError={item.showError} validCheck={validCheck} />;
+            return <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} showError={item.showError} validCheck={validCheck} valid={item.valid} />;
         });
     }
 
     render() {
+        const { user } = this.props;
+
         return (
             <WGloginField>
                 <div
@@ -140,6 +155,8 @@ class Signin extends Component {
                     </div>
                     <WGmainButton onClick={this.handleSubmit}>登入</WGmainButton>
                 </WGbuttonField>
+
+                {user.error && this.count && <WGerrorP>{user.error}</WGerrorP>}
 
                 <span
                     style={{

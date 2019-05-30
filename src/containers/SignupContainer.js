@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
-import produce from "immer";
+import produce from 'immer';
 import { connect } from 'react-redux';
 import Router from 'next/router';
 
@@ -9,24 +9,25 @@ import InputField from '../components/inputField';
 import Term from '../components/term';
 import BackArrow from '../components/backArrow';
 import { WGH1 } from '../widgets/h';
-import { WGmainP } from '../widgets/p';
+import { WGmainP, WGerrorP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
 import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton, WGsmallButton } from '../widgets/button';
 import { validateEmail, validatePassword, vaildateEqual } from '../utils/validation';
 import { setInput, handleStep } from '../utils/loginService';
 import { registerUser$ } from '../actions/user';
+import { checkRegistered } from '../utils/keystone';
 
 const mapStateToProps = state => ({
     user: state.user
 });
 
 const mapDispatchToProps = dispatch => ({
-    onRegister$: (payload) => dispatch(registerUser$(payload))
+    onRegister$: payload => dispatch(registerUser$(payload))
 });
+
 class Signup extends Component {
     static getInitialProps({ store }) {
-
         const { user } = store.getState();
 
         return {
@@ -37,9 +38,9 @@ class Signup extends Component {
     }
 
     static propTypes = {
-        onRegister: PropTypes.func.isRequired,
+        onRegister$: PropTypes.func.isRequired,
         user: PropTypes.object.isRequired
-    }
+    };
 
     constructor(props) {
         super(props);
@@ -47,7 +48,7 @@ class Signup extends Component {
         const initialInput = {
             type: 'text',
             value: '',
-            valid: false,
+            valid: null,
             error: '',
             hint: '',
             placeholder: '',
@@ -61,7 +62,7 @@ class Signup extends Component {
                 name: {
                     ...initialInput,
                     placeholder: '您的稱呼',
-                    error: '此欄位不可為空白',
+                    error: '此欄位不可為空白'
                 },
                 email: {
                     ...initialInput,
@@ -88,12 +89,11 @@ class Signup extends Component {
                     ...initialInput,
                     placeholder: '您的手機號碼',
                     error: '手機格式錯誤'
-
                 },
                 veriCode: {
                     ...initialInput,
                     placeholder: '輸入手機驗證碼',
-                    error: '驗證碼錯誤',
+                    error: '驗證碼錯誤'
                 }
             },
             terms: [
@@ -107,23 +107,29 @@ class Signup extends Component {
                     checked: false,
                     link: '/'
                 }
-            ]
+            ],
+            termError: false
         };
 
         this.setInput = setInput.bind(this);
         this.handleStep = handleStep.bind(this);
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidMount() {
+        this.count = false;
+    }
 
+    componentDidUpdate(prevProps, prevState) {
         const { user } = this.props;
 
         // if signup success
         if (prevState.page === 2 && !prevProps.user.isAuth && user.isAuth) {
             setTimeout(() => {
-                this.setState(produce(draft => {
-                    draft.page = 3;
-                }));
+                this.setState(
+                    produce(draft => {
+                        draft.page = 3;
+                    })
+                );
 
                 this.timmer = setTimeout(() => {
                     Router.push('/');
@@ -132,22 +138,68 @@ class Signup extends Component {
         }
     }
 
-
     componentWillUnmount() {
         clearTimeout(this.timmer);
+        this.count = false;
     }
 
-    handleCheck = (index) => {
+    handleCheck = index => {
         this.setState(
             produce(draft => {
                 draft.terms[index].checked = !draft.terms[index].checked;
-            })
+            }),
+            () => {
+                const { terms } = this.state;
+                if (terms[0].checked && terms[1].checked) {
+                    this.setState(
+                        produce(draft => {
+                            draft.termError = false;
+                        })
+                    );
+                }
+            }
         );
-    }
+    };
+
+    checkEmail = email => {
+        return new Promise(resolve => {
+            if (!validateEmail(email)) {
+                this.setState(
+                    produce(draft => {
+                        draft.page1.email.error = '電子郵件格式不符';
+                    })
+                );
+
+                return resolve(false);
+            }
+
+            checkRegistered(email).then(({ data }) => {
+                if (!data.isRegister) {
+                    return resolve(true);
+                } else if (data.isRegister) {
+                    this.setState(
+                        produce(draft => {
+                            draft.page1.email.error = '電子郵件已被註冊';
+                        })
+                    );
+
+                    return resolve(false);
+                } else {
+                    this.setState(
+                        produce(draft => {
+                            draft.page1.email.error = data.message;
+                        })
+                    );
+
+                    return resolve(false);
+                }
+            });
+        });
+    };
 
     handleSubmit = () => {
-        const { onRegister } = this.props;
-        const { page1, page2 } = this.state;
+        const { onRegister$ } = this.props;
+        const { page1, page2, terms } = this.state;
         const { name, email, password } = page1;
         const { cellphone } = page2;
 
@@ -164,24 +216,34 @@ class Signup extends Component {
             }
         }
 
-        onRegister$(
-            {
-                email: email.value,
-                password: password.value,
-                profile: {
-                    name: name.value,
-                    phone: cellphone.value
-                }
+        // check term
+        for (let term of terms) {
+            if (!term.checked) {
+                return this.setState(
+                    produce(draft => {
+                        draft.termError = true;
+                    })
+                );
             }
-        );
+        }
 
-    }
+        this.count = true;
 
-    sendVeriCode = (e) => {
+        onRegister$({
+            email: email.value,
+            password: password.value,
+            profile: {
+                name: name.value,
+                phone: cellphone.value
+            }
+        });
+    };
+
+    sendVeriCode = e => {
         e.preventDefault();
 
         console.log('Send Verification Code');
-    }
+    };
 
     renderHeader() {
         const { page } = this.state;
@@ -196,34 +258,19 @@ class Signup extends Component {
                     <WGH1>註冊</WGH1>
 
                     <WGmainP>
-                        已經有帳號了？
-                        &nbsp;
-
+                        已經有帳號了？ &nbsp;
                         <Link href="/signin">
-                            <WGmainA>
-                                登入帳號
-                            </WGmainA>
-
+                            <WGmainA>登入帳號</WGmainA>
                         </Link>
-
                     </WGmainP>
                 </div>
             );
-        }
-        else {
+        } else {
             return (
                 <Fragment>
-                    <WGH1
-                        style={{ marginBottom: '30px'}}
-                    >
-                        註冊完成
-                    </WGH1>
+                    <WGH1 style={{ marginBottom: '30px' }}>註冊完成</WGH1>
 
-                    <WGmainP>
-
-                        感謝您的註冊，系統將於數秒之後進入主頁面，或按下以下按鈕直接進入，謝謝
-
-                    </WGmainP>
+                    <WGmainP>感謝您的註冊，系統將於數秒之後進入主頁面，或按下以下按鈕直接進入，謝謝</WGmainP>
                 </Fragment>
             );
         }
@@ -246,42 +293,27 @@ class Signup extends Component {
 
             switch (key) {
                 case 'email':
-                    validCheck = validateEmail;
+                    validCheck = this.checkEmail;
                     break;
                 case 'password':
                     validCheck = validatePassword;
                     break;
                 case 'replyPassword':
                     const { page1 } = this.state;
-                    validCheck = (v) => vaildateEqual(page1.password.value, v);
+                    validCheck = v => vaildateEqual(page1.password.value, v);
                     break;
                 default:
                     validCheck = v => v.trim().length > 0;
             }
 
-            const content = <InputField
-                key={key}
-                inputValue={item.value}
-                type={item.type}
-                setInput={this.setInput}
-                name={key}
-                error={item.error}
-                placeholder={item.placeholder}
-                validCheck={validCheck}
-                hint={item.hint}
-                showError={item.showError}
-            />;
-
+            const content = <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} validCheck={validCheck} hint={item.hint} showError={item.showError} valid={item.valid} />;
 
             if (key === 'veriCode') {
                 return (
                     <div key={key} style={{ display: 'flex' }}>
                         {content}
 
-                        <WGsmallButton
-                            style={{ marginLeft: '13px' }}
-                            onClick={this.sendVeriCode}
-                        >
+                        <WGsmallButton style={{ marginLeft: '13px' }} onClick={this.sendVeriCode}>
                             取得驗證碼
                         </WGsmallButton>
                     </div>
@@ -299,23 +331,19 @@ class Signup extends Component {
             case 1:
                 return (
                     <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
-                        <WGsmallButton onClick={() => { this.handleStep(2); }}>
+                        <WGsmallButton
+                            onClick={() => {
+                                this.handleStep(2);
+                            }}
+                        >
                             下一步
                         </WGsmallButton>
                     </div>
                 );
             case 2:
-
-                const { terms } = this.state;
-                const termContent = terms.map((t, i) => (
-                    <Term
-                        key={t.name}
-                        term={t.name}
-                        link={t.link}
-                        checked={t.checked}
-                        onChange={() => this.handleCheck(i)}
-                    />
-                ));
+                const { user } = this.props;
+                const { terms, termError } = this.state;
+                const termContent = terms.map((t, i) => <Term key={t.name} term={t.name} link={t.link} checked={t.checked} onChange={() => this.handleCheck(i)} />);
                 return (
                     <div
                         style={{
@@ -327,29 +355,26 @@ class Signup extends Component {
                     >
                         {termContent}
 
+                        {termError && <WGerrorP>請勾選條款</WGerrorP>}
+
                         <WGbuttonField>
-
-                            <WGmainButton onClick={this.handleSubmit}>
-                                確認註冊
-                            </WGmainButton>
-
+                            <WGmainButton onClick={this.handleSubmit}>確認註冊</WGmainButton>
                         </WGbuttonField>
 
-                        <BackArrow onClick={() => this.handleStep(1, false)} />
+                        {user.error && this.count && <WGerrorP>{user.error}</WGerrorP>}
 
+                        <BackArrow onClick={() => this.handleStep(1, false)} />
                     </div>
                 );
 
             case 3:
-                return(
+                return (
                     <WGbuttonField>
                         <Link href="/">
-                            <WGmainButton>
-                                進入操作系統頁面
-                            </WGmainButton>
+                            <WGmainButton>進入操作系統頁面</WGmainButton>
                         </Link>
-
-                    </WGbuttonField>);
+                    </WGbuttonField>
+                );
 
             default:
                 return null;
@@ -357,20 +382,13 @@ class Signup extends Component {
     }
 
     render() {
-
         return (
             <WGloginField>
-
                 {this.renderHeader()}
 
-                <form>
-
-                    {this.renderInput()}
-
-                </form>
+                <form>{this.renderInput()}</form>
 
                 {this.renderStep()}
-
             </WGloginField>
         );
     }

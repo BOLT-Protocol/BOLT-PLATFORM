@@ -18,7 +18,7 @@ export function setInput({ key, value, valid }) {
             // if input password
             // and need to reply password
             // and replyPassword aready has value
-            if (key === 'password' && draft[`page${page}`].replyPassword && draft[`page${page}`].replyPassword.value !== '') {
+            if (key === 'password' && draft[`page${page}`].replyPassword && valid && draft[`page${page}`].replyPassword.value !== '') {
                 // if password value === replyPassword value, set replyPassword valid
                 draft[`page${page}`].replyPassword.valid = draft[`page${page}`].replyPassword.value === value;
             }

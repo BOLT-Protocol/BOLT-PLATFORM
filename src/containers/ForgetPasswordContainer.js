@@ -31,7 +31,7 @@ class ForgetPassword extends Component {
         const initialInput = {
             type: 'text',
             value: '',
-            valid: false,
+            valid: null,
             error: '',
             hint: '',
             placeholder: '',
@@ -134,7 +134,7 @@ class ForgetPassword extends Component {
                 const { page3 } = this.state;
                 valid = v => vaildateEqual(page3.password.value, v);
             }
-            return <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} showError={item.showError} validCheck={valid} />;
+            return <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} showError={item.showError} validCheck={valid} valid={item.valid} />;
         });
     }
 

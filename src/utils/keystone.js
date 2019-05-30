@@ -1,20 +1,55 @@
 import axios from 'axios';
-import { url } from '../constants/config';
+import { keystoneUrl } from '../constants/config';
 
 export const register = ({ email, password, profile }) => {
-    return axios
-        .post(`${url}/register`, {
-            userID: email,
-            password,
-            profile
-        })
-        .catch(e => e);
+    return new Promise(resolve => {
+        return axios
+            .post(`${keystoneUrl}/register`, {
+                userID: email,
+                password,
+                profile
+            })
+            .then(res => resolve(res))
+            .catch(e => {
+                resolve({
+                    data: {
+                        message: e.message
+                    }
+                });
+            });
+    });
+};
+
+export const checkRegistered = email => {
+    return new Promise(resolve => {
+        return axios
+            .get(`${keystoneUrl}/isRegister/${email}`)
+            .then(res => resolve(res))
+            .catch(e => {
+                resolve({
+                    data: {
+                        message: e.message
+                    }
+                });
+            });
+    });
 };
 
 export const createToken = ({ apiKey, apiSecret }) => {
-    return axios.post(`${url}/createToken`, {
-        apiKey,
-        apiSecret
+    return new Promise(resolve => {
+        return axios
+            .post(`${keystoneUrl}/createToken`, {
+                apiKey,
+                apiSecret
+            })
+            .then(res => resolve(res))
+            .catch(e => {
+                resolve({
+                    data: {
+                        message: e.message
+                    }
+                });
+            });
     });
 };
 
@@ -24,13 +59,24 @@ export const verifyToken = token => {
             token
         }
     });
-    return axiosInstance.post(`${url}/verifyToken`, {});
+    return new Promise(resolve => {
+        return axiosInstance
+            .post(`${keystoneUrl}/verifyToken`, {})
+            .then(res => resolve(res))
+            .catch(e => {
+                resolve({
+                    data: {
+                        message: e.message
+                    }
+                });
+            });
+    });
 };
 
 export const login = ({ email, password }) => {
     return new Promise(resolve => {
         axios
-            .post(`${url}/tenant/login`, {
+            .post(`${keystoneUrl}/tenant/login`, {
                 userID: email,
                 password
             })
@@ -38,7 +84,7 @@ export const login = ({ email, password }) => {
             .catch(e => {
                 resolve({
                     data: {
-                        message: e
+                        message: e.message
                     }
                 });
             });

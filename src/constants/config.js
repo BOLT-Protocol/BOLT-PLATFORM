@@ -1,4 +1,4 @@
 const prefix = 'http://';
-const apiUrl = '54.169.228.65';
+const keystone = '54.197.7.252:5999';
 
-export const url = prefix + apiUrl;
+export const keystoneUrl = prefix + keystone;

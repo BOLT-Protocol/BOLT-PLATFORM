@@ -25,12 +25,25 @@ export const SCimage = styled.div`
     align-items: center;
     justify-content: center;
 	background-image: url("/static/images/${props => (props.type === 'signup' ? 'login_bg_signup.jpg' : 'login_bg_signin.jpg')}");
+    
+    &::after {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, .48);
+        content: '';
+    }
+    img {
+        width: 200px;
+        z-index: 1;
+    }
 
     > p {
         position: absolute;
         bottom: 27px;
         left: 50%;
         transform: translateX(-50%);
+        z-index: 1;
     }
 `;
 

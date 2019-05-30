@@ -16,17 +16,23 @@ const registerEpic = action$ =>
         switchMap(action => from(register(action.data))),
         concatMap(res => {
             const { data } = res;
+
+            if (!data.profile) {
+                return of(actions.authUserFail(res.data.message));
+            }
+
             return from(
                 createToken({
                     apiKey: data.profile.apiKey,
                     apiSecret: data.profile.apiSecret
                 })
+            ).pipe(
+                map(response => {
+                    if (!response.data.token) return actions.authUserFail(response.data.message);
+                    cookie.set('boltToken', response.data.token, { path: '/' });
+                    return actions.authUserSuccess(response.data.token);
+                })
             );
-        }),
-        map(res => {
-            if (!res.data.token) return actions.authUserFail();
-            cookie.set('boltToken', res.data.token, { path: '/' });
-            return actions.authUserSuccess(res.data.token);
         }),
         catchError((err, obs) => {
             console.error(err);

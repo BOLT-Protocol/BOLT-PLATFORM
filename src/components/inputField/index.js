@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { SCinputField, SCinputMessage } from './style';
 import { WGerrorP, WGhintP } from '../../widgets/p';
 
-const inputField = ({ name, type, hint, inputValue, setInput, placeholder, validCheck, error, showError }) => {
+const inputField = ({ name, type, hint, inputValue, setInput, placeholder, validCheck, error, showError, valid }) => {
     // type: password, text...
-
+    // ***** valid need initial value null, after enter value, will be true or false
     const [value, setValue] = useState(inputValue);
     const timeoutRef = useRef(null);
 
@@ -21,26 +21,28 @@ const inputField = ({ name, type, hint, inputValue, setInput, placeholder, valid
             clearTimeout(timeoutRef.current);
         }
         if (inputValue !== value) {
-            timeoutRef.current = setTimeout(() => {
+            timeoutRef.current = setTimeout(async () => {
                 timeoutRef.current = null;
-                const valid = validCheck(value);
+
+                // maybe validCheck is async function, sorry
+                const isValid = await validCheck(value);
 
                 setInput({
                     key: name,
-                    valid,
+                    valid: isValid,
                     value
                 });
-            }, 500);
+            }, 300);
         }
     }, [value]);
 
     return (
         <SCinputField>
-            <input type={type} onChange={handleChange} placeholder={placeholder} autoComplete={type === 'password' ? 'on' : 'off'} />
+            <input value={value} type={type} onChange={handleChange} placeholder={placeholder} autoComplete={type === 'password' ? 'on' : 'off'} />
 
             <SCinputMessage>
                 {value.trim() === '' && hint && !showError && <WGhintP>{hint}</WGhintP>}
-                {((value.trim() !== '' && !validCheck(value.trim())) || showError) && <WGerrorP>{error}</WGerrorP>}
+                {((value.trim() !== '' && valid === false) || showError) && <WGerrorP>{error}</WGerrorP>}
             </SCinputMessage>
         </SCinputField>
     );
@@ -53,6 +55,7 @@ inputField.defaultProps = {
     placeholder: '',
     error: '',
     showError: false,
+    valid: null,
     validCheck: () => true
 };
 
@@ -65,7 +68,8 @@ inputField.propTypes = {
     showError: PropTypes.bool,
     validCheck: PropTypes.func,
     setInput: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    valid: PropTypes.bool
 };
 
 export default inputField;
