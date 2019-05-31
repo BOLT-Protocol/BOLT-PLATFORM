@@ -7,11 +7,11 @@ const pem = require('pem');
 const spdy = require('spdy');
 
 const nextI18NextMiddleware = require('next-i18next/middleware');
-const Labor = require('./Bot');
+const Bot = require('./Bot');
 const asyncM = require('../middleware/ayncMiddleware');
 const nextI18next = require('../../i18n');
 
-class Receptor extends Labor {
+class Receptor extends Bot {
     constructor() {
         super();
         this.app = express();
@@ -120,25 +120,26 @@ class Receptor extends Labor {
         this.router[method](
             pathname,
             asyncM(async (...ctx) => {
-                const { body, files, params, header, method, query, originalUrl } = ctx[0];
+                const { body, files, params, method, query, originalUrl, headers, connection } = ctx[0];
                 return operation({
                     body,
                     files,
                     params,
-                    header,
                     method,
                     query,
-                    originalUrl
+                    originalUrl,
+                    headers,
+                    connection
                 }).then(res => {
+                    console.log(res);
                     ctx[1].body = res;
-
                     // add something on res
 
                     ctx[2]();
                 });
             })
         );
-        console.log('set', method, pathname);
+        console.log('set API', method, pathname);
         return Promise.resolve(true);
     }
 

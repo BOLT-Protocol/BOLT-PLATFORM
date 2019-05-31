@@ -1,4 +1,4 @@
 const prefix = 'http://';
-const keystone = '54.197.7.252:5999';
+const keystone = 'rest.boltchain.io';
 
 export const keystoneUrl = prefix + keystone;

@@ -11,3 +11,8 @@ pathname = [
   "get | /mockData | Bot.Mocker.getData",
   "post | /mockToHex | Bot.Mocker.toHex"
 ]
+
+[messagebird]
+apiKey = 'YOUR-API-KEY'
+originator = 'YOUR_PHONE'
+#expireSecond = 180
