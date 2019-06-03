@@ -46,6 +46,7 @@ const loginEpic = action$ =>
         switchMap(action => from(login(action.data))),
         map(res => {
             if (res.data.token) {
+                cookie.set('boltToken', res.data.token, { path: '/' });
                 return actions.authUserSuccess(res.data.token);
             } else {
                 return actions.authUserFail(res.data.message);

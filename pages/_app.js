@@ -9,10 +9,7 @@ import Layout from '../src/components/layout';
 import UnauthLayout from '../src/components/unauthLayout';
 import { appWithTranslation } from '../i18n';
 import { bgColor } from '../src/widgets/styleGuid';
-// import '../src/styles/global.sass';
 
-// should choose one of sass or styled-component
-// do not use together
 const GlobalStyle = createGlobalStyle`
     body {
         box-sizing: border-box;
