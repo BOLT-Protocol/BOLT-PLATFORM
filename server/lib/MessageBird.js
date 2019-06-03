@@ -15,7 +15,6 @@ class MessageBird extends Bot {
         this.messagebird = require('messagebird')(config.messagebird.apiKey);
         this.phonebook = {};
         this.originator = config.messagebird.originator;
-        console.log(this.originator);
         this.expire = (config.messagebird.expireSecond || 30) * 1000;
         return super.init({ config }).then(() => this);
     }
@@ -34,7 +33,7 @@ class MessageBird extends Bot {
     setPhoneBook({ body, headers, connection }) {
         const { phone } = body;
 
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             const ip = (headers['x-forwarded-for'] || connection.remoteAddress).replace('::', '').split(':')[1];
             const code = this.createCode();
 
@@ -45,17 +44,17 @@ class MessageBird extends Bot {
             }
 
             if (this.phonebook[phone]) {
-                return Promise.resolve({
-                    message: 'Please try again a moment later'
+                return resolve({
+                    error: 'Please try again a moment later'
                 });
             }
 
             Object.keys(this.phonebook).forEach(b => {
-                b.ip = ip;
-
-                return resolve({
-                    message: 'Please try again a moment later'
-                });
+                if (this.phonebook[b].ip === ip) {
+                    return resolve({
+                        error: 'Please try again a moment later'
+                    });
+                }
             });
 
             this.phonebook[phone] = {
@@ -69,23 +68,26 @@ class MessageBird extends Bot {
                 delete this.phonebook[phone];
             }, this.expire);
 
+            // return resolve({
+            //     message: `Your verofication code is sent${code}`
+            // });
+
             this.messagebird.messages.create(
                 {
                     originator: this.originator,
-                    recipients: [this.originator],
-                    body: `Hi your verify code is ${code}`
+                    recipients: [phone],
+                    body: `Hi your verofication code is ${code}`
                 },
                 (err, response) => {
                     if (err) {
                         console.log(err);
                         return resolve({
-                            message: 'Please try again a moment later'
+                            error: 'Please try again a moment later'
                         });
                     } else {
                         console.log(response);
                         return resolve({
-                            ip,
-                            code
+                            message: 'Your verofication code is sent'
                         });
                     }
                 }
@@ -94,17 +96,21 @@ class MessageBird extends Bot {
     }
 
     verifyCode({ body }) {
-        console.log(this.phonebook);
-
         const { code, phone } = body;
 
-        if (this.phonebook[phone] && this.phonebook[phone].code === code) {
+        if (!this.phonebook[phone]) {
             return Promise.resolve({
-                message: true
+                error: 'This number has not been sent a verification code'
+            });
+        } else if (this.phonebook[phone].code !== code) {
+            return Promise.resolve({
+                error: 'Verification code wrong'
             });
         }
 
-        return Promise.resolve('Verify Error');
+        return Promise.resolve({
+            message: 'Verify Successfully'
+        });
     }
 }
 

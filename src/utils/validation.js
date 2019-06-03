@@ -13,3 +13,9 @@ export const validatePassword = pwd => {
 export const vaildateEqual = (f, s) => {
     return f === s;
 };
+
+export const validatePhone = phone => {
+    // const re = /^\+[1-9]{1}[0-9]{3,14}$/;
+    const re = /^[0-9]{3,14}$/;
+    return re.test(phone);
+};

@@ -13,10 +13,13 @@ import { WGmainP, WGerrorP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
 import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton, WGsmallButton } from '../widgets/button';
-import { validateEmail, validatePassword, vaildateEqual } from '../utils/validation';
+import { WGmainSelect } from '../widgets/select';
+import { validateEmail, validatePassword, vaildateEqual, validatePhone } from '../utils/validation';
 import { setInput, handleStep } from '../utils/loginService';
 import { registerUser$ } from '../actions/user';
 import { checkRegistered } from '../utils/keystone';
+import { getVerifyCode, checkVerifyCode } from '../utils/api';
+import countryCode from '../constants/countryCode.json';
 
 const mapStateToProps = state => ({
     user: state.user
@@ -108,7 +111,9 @@ class Signup extends Component {
                     link: '/'
                 }
             ],
-            termError: false
+            termError: false,
+            phoneCode: '+886',
+            verifyError: false
         };
 
         this.setInput = setInput.bind(this);
@@ -197,6 +202,14 @@ class Signup extends Component {
         });
     };
 
+    handlePhoneCode = (e) => {
+        const { value } = e.target;
+
+        this.setState(produce(draft => {
+            draft.phoneCode = value;
+        }));
+    }
+
     handleSubmit = () => {
         const { onRegister$ } = this.props;
         const { page1, page2, terms } = this.state;
@@ -241,9 +254,60 @@ class Signup extends Component {
 
     sendVeriCode = e => {
         e.preventDefault();
+        const { page2, phoneCode } = this.state;
 
-        console.log('Send Verification Code');
+        if (page2.cellphone.value.trim() === '') {
+            this.setState(produce(draft => {
+                draft.page2.cellphone.showError = true;
+            }));
+        }
+
+        if (page2.cellphone.valid) {
+            const pv = page2.cellphone.value;
+            const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
+            getVerifyCode(phoneCode + phone)
+                .then(res => {
+                    const { data } = res;
+                    if (data.error) {
+                        this.setState(produce(draft => {
+                            draft.verifyError = true;
+                        }));
+                    } else {
+                        this.setState(produce(draft => {
+                            draft.verifyError = false;
+                        }));
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
     };
+
+    checkVeriCode = code => {
+        const { page2, phoneCode } = this.state;
+        const pv = page2.cellphone.value;
+        const phone = phoneCode + (pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv);
+
+        this.setState(produce(draft => {
+            draft.verifyError = false;
+        }));
+
+        if (pv.trim() === '') return false;
+
+        return new Promise(resolve => {
+            checkVerifyCode({ phone, code })
+                .then(res => {
+                    const { data } = res;
+
+                    if (data.error) {
+                        return resolve(false);
+                    } else {
+                        return resolve(true);
+                    }
+                });
+        });
+    }
 
     renderHeader() {
         const { page } = this.state;
@@ -302,6 +366,13 @@ class Signup extends Component {
                     const { page1 } = this.state;
                     validCheck = v => vaildateEqual(page1.password.value, v);
                     break;
+                case 'cellphone':
+                    validCheck = validatePhone;
+                    break;
+
+                case 'veriCode':
+                    validCheck = this.checkVeriCode;
+                    break;
                 default:
                     validCheck = v => v.trim().length > 0;
             }
@@ -309,13 +380,51 @@ class Signup extends Component {
             const content = <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} validCheck={validCheck} hint={item.hint} showError={item.showError} valid={item.valid} />;
 
             if (key === 'veriCode') {
+                const { verifyError } = this.state;
                 return (
-                    <div key={key} style={{ display: 'flex' }}>
+                    <div key={key} style={{ display: 'flex', position: 'relative' }}>
                         {content}
 
                         <WGsmallButton style={{ marginLeft: '13px' }} onClick={this.sendVeriCode}>
                             取得驗證碼
                         </WGsmallButton>
+                        {
+                            verifyError && (
+                                <WGerrorP
+                                    style={{
+                                        position: 'absolute',
+                                        right: 0,
+                                        bottom: 0
+                                    }}
+                                >
+                                    驗證碼已送出請稍後再試
+                                </WGerrorP>
+                            )
+                        }
+                    </div>
+                );
+            } else if(key === 'cellphone') {
+                const { phoneCode } = this.state;
+                return (
+                    <div key={key} style={{ display: 'flex' }}>
+                        <WGmainSelect
+                            name="countryCode"
+                            value={phoneCode}
+                            onChange={this.handlePhoneCode}
+                            style={{
+                                height: '28px',
+                                marginRight: '.5rem'
+                            }}
+                        >
+                            {
+                                countryCode.map(c => (
+                                    <option key={c.countryName} value={c.phoneCode}>
+                                        {c.countryName} {c.phoneCode}
+                                    </option>
+                                ))
+                            }
+                        </WGmainSelect>
+                        <InputField key={key} inputValue={item.value} type={item.type} setInput={this.setInput} name={key} error={item.error} placeholder={item.placeholder} validCheck={validCheck} hint={item.hint} showError={item.showError} valid={item.valid} />
                     </div>
                 );
             } else {

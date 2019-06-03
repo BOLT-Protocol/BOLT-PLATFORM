@@ -7,9 +7,8 @@ httpsPort = 443
 [api]
 pathname = [
   "get | /, /version | Static.Utils.getPackageInfo",
-  "get | /mockTime, /test | Bot.Mocker.getTime",
-  "get | /mockData | Bot.Mocker.getData",
-  "post | /mockToHex | Bot.Mocker.toHex"
+  "post | /phoneVerify | Bot.MessageBird.setPhoneBook",
+  "post | /codeVerify | Bot.MessageBird.verifyCode"
 ]
 
 [messagebird]
