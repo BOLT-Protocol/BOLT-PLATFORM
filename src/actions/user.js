@@ -12,10 +12,9 @@ export const createToken = keys => ({
     data: keys
 });
 
-// maybe not use
-export const authUser = token => ({
+export const verifyUser$ = data => ({
     type: types.USER_VERIFY_TOKEN,
-    token
+    data
 });
 
 export const loginUser$ = ({ email, password }) => ({
@@ -34,4 +33,23 @@ export const authUserSuccess = data => ({
 export const authUserFail = error => ({
     type: types.USER_AUTH_FAIL,
     error
+});
+
+export const verifyUserSuccess = payload => ({
+    type: types.USER_VERIFY_SUCCESS,
+    data: payload
+});
+
+export const verifyUserFail = error => ({
+    type: types.USER_VERIFY_FAIL,
+    error
+});
+
+export const cancelVerify = () => ({
+    type: types.USER_VERIFY_CANCEL
+});
+
+export const renewToken = data => ({
+    type: types.USER_RENEW_TOKEN,
+    data
 });

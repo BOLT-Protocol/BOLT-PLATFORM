@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21px" height="20px" viewBox="0 0 21 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>speech-bubble</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="01-1-currency_new_token" transform="translate(-1292.000000, -710.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="ic_chat" transform="translate(1273.000000, 696.000000)">
+                <g id="speech-bubble" transform="translate(19.000000, 14.000000)">
+                    <polygon id="Shape" points="6.64204545 6.16761364 6.64204545 16.2753915 15.4905603 16.2753915 18.6852938 19.4517045 18.6852938 16.2753915 20.875 16.2753915 20.875 6.16761364"></polygon>
+                    <polygon id="Shape" points="14.2329545 4.55636165 14.2329545 0 0 0 0 10.1077779 2.18970617 10.1077779 2.18970617 13.2840909 4.9702381 10.5195912 4.9702381 5.90406536 4.9702381 4.55636165 6.32575758 4.55636165"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

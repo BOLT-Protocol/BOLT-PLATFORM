@@ -293,6 +293,15 @@ class Signup extends Component {
             draft.verifyError = false;
         }));
 
+        // ***************************
+        // FOR TEST !!!!!!!!!!!!!!!!!!
+        // ***************************
+        if (code === 'BOLT') return true;
+        // ***************************
+        // FOR TEST !!!!!!!!!!!!!!!!!!
+        // ***************************
+
+
         if (pv.trim() === '') return false;
 
         return new Promise(resolve => {

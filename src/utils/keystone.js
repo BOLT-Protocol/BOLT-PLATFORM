@@ -73,6 +73,26 @@ export const verifyToken = token => {
     });
 };
 
+export const renewToken = token => {
+    const axiosInstance = axios.create({
+        headers: {
+            token
+        }
+    });
+    return new Promise(resolve => {
+        return axiosInstance
+            .post(`${keystoneUrl}/verifyToken`, {})
+            .then(res => resolve(res))
+            .catch(e => {
+                resolve({
+                    data: {
+                        message: e.message
+                    }
+                });
+            });
+    });
+};
+
 export const login = ({ email, password }) => {
     return new Promise(resolve => {
         axios

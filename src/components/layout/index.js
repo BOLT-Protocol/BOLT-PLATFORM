@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import Link from 'next/link';
+import { withRouter } from 'next/router';
 import PropTypes from 'prop-types';
 
 import { SCheader, SCnav, SCcontainer, SCli } from './style';
@@ -28,7 +29,8 @@ const navList = [
 ];
 
 const layout = props => {
-    const [nav, setNav] = useState(0);
+    const { router } = props;
+    const [nav, setNav] = useState(router.pathname);
 
     return (
         <Fragment>
@@ -44,15 +46,15 @@ const layout = props => {
                 <SCnav>
 
                     <ul>
-                        {navList.map((n, i) => (
-                            <SCli key={n.name} active={i === nav} onClick={() => setNav(i)}>
+                        {navList.map((n) => (
+                            <SCli key={n.name} active={n.link === nav} onClick={() => setNav(n.link)}>
                                 <Link href={n.link}>
                                     <a>
                                         <img src={`/static/images/ic_${n.icon}.svg`} alt={n.name}/>
                                         {n.name}
-                                        {i === nav && (
+                                        {n.link === nav && (
                                             <span>
-												>
+                                                <img src="/static/images/ic_arrow.svg" alt="arrow" />
                                             </span>
                                         )}
                                     </a>
@@ -75,7 +77,8 @@ const layout = props => {
 };
 
 layout.propTypes = {
-    children: PropTypes.object.isRequired
+    children: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired
 };
 
-export default layout;
+export default withRouter(layout);
