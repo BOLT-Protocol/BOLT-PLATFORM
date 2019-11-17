@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { secondColor, fontGray } from '../../src/widgets/styleGuid';
+import { secondColor, fontGray, fontWhite, bdDark, devices } from '../../src/widgets/styleGuid';
 
 export const SCcontainer = styled.div`
     display: flex;
@@ -29,6 +29,10 @@ export const SCcontent = styled.div`
     background-color: #3a3b4d;
     justify-content: center;
     align-items: center;
+
+    @media ${devices.laptop} {
+        flex: 4;
+    }
 `;
 
 export const SCstepList = styled.ul`
@@ -78,6 +82,7 @@ export const SCbasic = styled.div`
         flex-direction: column;
         min-width: 150px;
         margin-left: 4rem;
+        align-items: center;
     }
 
     ul {
@@ -87,7 +92,7 @@ export const SCbasic = styled.div`
             display: flex;
 
             span {
-                flex: 1
+                flex: 1;
                 text-align: right;
                 margin-right: .875rem;
                 font-size: .875rem;
@@ -116,5 +121,52 @@ export const SCstepControl = styled.div`
     > button {
         max-width: 120px;
         font-size: 0.75rem;
+    }
+`;
+
+export const SCupload = styled.label`
+    display: flex;
+    flex-direction: column;
+    color: ${fontGray};
+    font-size: 0.75rem;
+    width: 150px;
+    height: 150px;
+    background-color: ${bdDark};
+    border-radius: 8px;
+    align-items: center;
+    cursor: pointer;
+    
+    h4 {
+        color: ${fontWhite};
+        font-size: 0.75rem;
+        margin: 1.5rem 0 0 0;
+    }
+
+    img {
+        margin: 1.25rem 0;
+        width: 22.7px;
+        height: 14.7px;
+    }
+    
+    input {
+        display: none;
+    }
+
+    p {
+        text-align: center;
+    }
+`;
+
+export const SCshowOption = styled.div`
+    display: flex;
+    color: ${fontWhite};
+    margin-top: 38px;
+    align-items: center;
+
+    input {
+        background-color: ${fontGray};
+        margin-right: 0.5rem;
+        height: 1rem;
+        width: 1rem;
     }
 `;

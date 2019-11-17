@@ -1,11 +1,11 @@
 const initialInput = {
-    type: 'text',
+    type: 'text', // input type, or 'textarea' for textarea tag
     value: '',
     valid: null,
     error: '',
     hint: '',
     placeholder: '',
-    showError: false
+    showError: false,
 };
 
 export default initialInput;

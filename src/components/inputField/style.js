@@ -6,7 +6,7 @@ export const SCinputField = styled.div`
     flex-direction: column;
     flex: 1;
 
-    input {
+    input, textarea {
         width: 100%;
         border-bottom: 1px solid ${fontGray};
         color: ${fontWhite};
@@ -15,6 +15,13 @@ export const SCinputField = styled.div`
         &::placeholder {
             color: ${fontGray};
         }
+    }
+
+    textarea {
+        background-color: initial;
+        padding: 0.3rem;
+        resize: none;
+        border: 1px solid ${fontGray};
     }
 `;
 

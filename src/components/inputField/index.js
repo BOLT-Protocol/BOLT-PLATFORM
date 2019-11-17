@@ -38,7 +38,13 @@ const inputField = ({ name, type, hint, inputValue, setInput, placeholder, valid
 
     return (
         <SCinputField>
-            <input value={value} type={type} onChange={handleChange} placeholder={placeholder} autoComplete={type === 'password' ? 'on' : 'off'} />
+            {
+                type === 'textarea' ? (
+                    <textarea rows="3" value={value} onChange={handleChange} placeholder={placeholder} />
+                ) : (
+                    <input value={value} type={type} onChange={handleChange} placeholder={placeholder} autoComplete={type === 'password' ? 'on' : 'off'} />
+                )
+            }
 
             <SCinputMessage>
                 {value.trim() === '' && hint && !showError && <WGhintP>{hint}</WGhintP>}

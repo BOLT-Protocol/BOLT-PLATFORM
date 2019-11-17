@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Link from 'next/link';
 
@@ -8,7 +7,7 @@ import { WGH1 } from '../widgets/h';
 import { WGmainP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
 import { WGloginField, WGbuttonField } from '../widgets/div';
-import { WGmainButton, WGsmallButton } from '../widgets/button';
+import { WGmainButton } from '../widgets/button';
 import { validateEmail, validatePassword, vaildateEqual } from '../utils/validation';
 import { setInput, handleStep } from '../utils/loginService';
 

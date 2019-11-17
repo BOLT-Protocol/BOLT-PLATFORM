@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCbasic, SCstepControl } from './style';
+import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCbasic, SCstepControl, SCupload, SCshowOption } from './style';
 import SelectedItem from '../../src/components/selectItem';
 import InputField from '../../src/components/inputField';
 import input from '../../src/utils/model/input.model';
@@ -18,7 +18,7 @@ class Currency extends Component {
         this.state = {
             step: 1,
             program: 1,
-            basicInform: {
+            newInfo: {
                 name: {
                     ...input,
                     name: '新幣名稱',
@@ -42,7 +42,37 @@ class Currency extends Component {
                 introduction: {
                     ...input,
                     name: '簡介',
-                    placeholder: '內容'
+                    placeholder: '內容',
+                    type: 'textarea',
+
+                }
+            },
+            existInfo: {
+                address: {
+                    ...input,
+                    name: '合約地址',
+                    placeholder: '請輸入您的合約地址'
+                },
+                abbreviation: {
+                    ...input,
+                    name: '英文縮寫',
+                },
+                publishAmount: {
+                    ...input,
+                    name: '發行數量',
+                    placeholder: '請輸入最少 1,000 枚至最多 100,000 枚數量'
+                },
+                web: {
+                    ...input,
+                    name: '您的網站',
+                    placeholder: '請填入您網站的網址'
+                },
+                introduction: {
+                    ...input,
+                    name: '簡介',
+                    placeholder: '內容',
+                    type: 'textarea',
+
                 }
             }
         };
@@ -93,7 +123,7 @@ class Currency extends Component {
     }
 
     renderContent() {
-        const { step, program, basicInform } = this.state;
+        const { step, program, newInfo, existInfo } = this.state;
 
         switch (step) {
             case 1:
@@ -106,22 +136,48 @@ class Currency extends Component {
                 );
 
             case 2:
+                const info = program === 1 ? newInfo : existInfo; // if program = 1 show new token, else show hosting token
+
                 return (
                     <SCbasic>
                         <ul>
-                            {Object.keys(basicInform).map(key => {
+                            {Object.keys(info).map(key => {
                                 return (
                                     <li key={key}>
-                                        <span>{basicInform[key].name}</span>
-                                        <InputField {...basicInform[key]} setInput={re => console.log(re)} />
+                                        <span>{info[key].name}</span>
+                                        <InputField {...info[key]} setInput={re => console.log(re)} />
+                                        {key === 'address' && <WGmainButton style={{ width: 'initial', height: '25.5px', minWidth: '102px' }}>相容性檢視</WGmainButton>}
                                     </li>
                                 );
                             })}
                         </ul>
 
-                        <div>upload</div>
+                        <div>
+                            <SCupload>
+                                <h4>上傳 Logo</h4>
+
+                                <input type="file" />
+
+                                <img src="/static/images/ic-cloud-upload.svg" alt="upload" />
+
+                                <p>
+                                    最大尺寸 1 mb<br />
+                                    檔案類型限 jpg, png, gif
+                                </p>
+
+                            </SCupload>
+
+                            <SCshowOption>
+                                <input type="checkbox" />
+
+                                是否顯示於平台首頁
+                            </SCshowOption>
+
+                        </div>
+
                     </SCbasic>
                 );
+
             default:
                 return null;
         }

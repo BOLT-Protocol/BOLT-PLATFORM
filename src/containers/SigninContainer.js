@@ -9,7 +9,7 @@ import { WGH1 } from '../widgets/h';
 import { WGmainP, WGerrorP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
 import { WGloginField, WGbuttonField } from '../widgets/div';
-import { WGmainButton, WGsmallButton } from '../widgets/button';
+import { WGmainButton } from '../widgets/button';
 import { setInput } from '../utils/loginService';
 import { validateEmail } from '../utils/validation';
 import { loginUser$ } from '../actions/user';
