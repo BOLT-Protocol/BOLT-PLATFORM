@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { secondColor, fontGray, fontWhite, bdDark, devices } from '../../src/widgets/styleGuid';
+import { secondColor, fontGray, fontWhite, bdDark, devices } from '../../widgets/styleGuid';
 
 export const SCcontainer = styled.div`
     display: flex;
@@ -101,6 +101,7 @@ export const SCbasic = styled.div`
 
             > div {
                 flex: 6;
+                display: flex;
             }
         }
     }
@@ -168,5 +169,29 @@ export const SCshowOption = styled.div`
         margin-right: 0.5rem;
         height: 1rem;
         width: 1rem;
+    }
+`;
+
+export const SCoverview = styled.div`
+    display: flex;
+    width: 100%;
+
+    > div {
+        flex: 6;
+        display: flex;
+        flex-direction: column;
+
+        > div {
+            margin-bottom: 20px;
+            display: flex;
+        }
+
+        p {
+            white-space: pre-wrap;
+        }
+
+        &:first-child {
+            flex: 1;
+        }
     }
 `;

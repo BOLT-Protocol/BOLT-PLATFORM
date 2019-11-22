@@ -12,7 +12,6 @@ const inputField = ({ name, type, hint, inputValue, setInput, placeholder, valid
 
     const handleChange = e => {
         const v = e.target.value;
-
         setValue(v);
     };
 
