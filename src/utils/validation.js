@@ -1,3 +1,5 @@
+import { MIN_AMOUNT, MAX_AMOUNT } from '../constants/currency';
+
 export const validateEmail = email => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
@@ -18,4 +20,25 @@ export const validatePhone = phone => {
     // const re = /^\+[1-9]{1}[0-9]{3,14}$/;
     const re = /^[0-9]{3,14}$/;
     return re.test(phone);
+};
+
+export const validateCurrencyName = name => {
+    const re = new RegExp('^(?=.*[a-zA-Z0-9]).{1,30}$');
+
+    return re.test(name);
+};
+
+export const validateCurrencyAbbreviation = name => {
+    const re = new RegExp('^(?=.*[a-zA-Z0-9]).{1,8}$');
+
+    return re.test(name);
+};
+
+export const validateCurrencyAmount = amount => {
+    let value = amount;
+    if (typeof amount === 'string') {
+        value = parseInt(value, 10);
+    }
+
+    return value >= MIN_AMOUNT && value <= MAX_AMOUNT;
 };

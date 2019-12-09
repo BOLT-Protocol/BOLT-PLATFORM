@@ -15,7 +15,7 @@ export default class WrapperDocument extends Document {
             <html lang="en">
                 <Head>
                     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet" />
-
+                    <script type="text/javascript" src="static/js/qrcode.min.js"></script>
                     {this.props.styleTags}
                 </Head>
                 <body>

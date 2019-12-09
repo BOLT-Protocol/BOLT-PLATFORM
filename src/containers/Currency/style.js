@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { secondColor, fontGray, fontWhite, bdDark, devices } from '../../widgets/styleGuid';
+import { secondColor, fontGray, fontWhite, bgDark, devices } from '../../widgets/styleGuid';
 
 export const SCcontainer = styled.div`
     display: flex;
@@ -132,7 +132,7 @@ export const SCupload = styled.label`
     font-size: 0.75rem;
     width: 150px;
     height: 150px;
-    background-color: ${bdDark};
+    background-color: ${bgDark};
     border-radius: 8px;
     align-items: center;
     cursor: pointer;
@@ -192,6 +192,46 @@ export const SCoverview = styled.div`
 
         &:first-child {
             flex: 1;
+        }
+    }
+`;
+
+export const SCfinishField = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    > button {
+        width: 120px;
+        margin-left: 18px;
+    }
+`;
+
+export const SCcardHolder = styled.div`
+    display: flex;
+    margin-bottom: 15px;
+
+    > div {
+        width: calc(25% - 15px);
+        margin-right: 20px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+`;
+
+export const SCuserField = styled.div`
+    display: flex;
+    min-height: 376px;
+
+    > div {
+        min-height: 100%;
+
+        &:first-child {
+            margin-right: 20px;
+            width: calc(25% - 15px);
         }
     }
 `;

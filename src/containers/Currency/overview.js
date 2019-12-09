@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { SCoverview } from './style';
-import CURRENCY from '../../constants/currencyField';
+import CURRENCY from '../../constants/currency';
 
 const items = [
     {
