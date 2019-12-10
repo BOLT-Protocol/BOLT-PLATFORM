@@ -1,8 +1,15 @@
 import * as types from '../constants/actionTypes/user';
 
-export const registerUser$ = payload => {
+export const registerEmail$ = payload => {
     return {
-        type: types.USER_REGISTER,
+        type: types.USER_REGISTER_EMAIL,
+        data: payload
+    };
+};
+
+export const registerPhone$ = payload => {
+    return {
+        type: types.USER_REGISTER_PHONE,
         data: payload
     };
 };
@@ -17,14 +24,22 @@ export const verifyUser$ = data => ({
     data
 });
 
-export const loginUser$ = ({ email, password }) => ({
-    type: types.USER_LOGIN,
+export const loginUserEmail$ = ({ email, password }) => ({
+    type: types.USER_LOGIN_EMAIL,
     data: {
         email,
         password
     }
 });
 
+export const loginUserPhone$ = ({ phone, countryCode, password }) => ({
+    type: types.USER_LOGIN_EMAIL,
+    data: {
+        phone,
+        countryCode,
+        password
+    }
+});
 export const authUserSuccess = data => ({
     type: types.USER_AUTH_SUCCESS,
     data
