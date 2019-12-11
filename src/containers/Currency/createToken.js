@@ -1,14 +1,16 @@
-import React, { Component, Fragment } from 'react';
-
+import React, { Component } from 'react';
 import produce from 'immer';
-import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCbasic, SCstepControl, SCupload, SCshowOption, SCfinishField } from './style';
-import SelectedItem from '../../components/selectItem';
-import InputField from '../../components/inputField';
-import input from '../../utils/model/input.model';
-import { WGmainButton } from '../../widgets/button';
+
+import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCstepControl, SCfinishField } from './style';
 import Overview from './overview';
+import CreateProgram from './createProgram';
+import CreatData from './createData';
+import { WGmainButton } from '../../widgets/button';
+import input from '../../utils/model/input.model';
+import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
 import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
-import { validateCurrencyName, validateCurrencyAbbreviation, validateCurrencyAmount } from '../../utils/validation';
+
+import { createFund, checkAddress } from '../../utils/api';
 
 const commonField = {
     [CURRENCY.SYMBOL]: {
@@ -16,7 +18,7 @@ const commonField = {
         title: '英文縮寫',
         placeholder: '小於8位英文及數字，例：BCC 或 XPA123',
         error: '格式不符合',
-        validCheck: validateCurrencyAbbreviation,
+        validCheck: validateCurrencySymbol,
     },
     [CURRENCY.AMOUNT]: {
         ...input,
@@ -63,16 +65,38 @@ class CreateToken extends Component {
                 ...commonField
             },
             existInfo: {
-                [CURRENCY.SYMBOL]: {
+                [CURRENCY.ADDRESS]: {
                     ...input,
                     title: '合約地址',
-                    placeholder: '請輸入您的合約地址'
+                    placeholder: '請輸入您的合約地址',
+                    validCheck: this.checkAddress
                 },
                 ...commonField
             }
         };
 
         this.steps = ['選擇發幣方式', '填寫基本資訊', '總覽', '填寫付款資訊', '完成'];
+    }
+
+    checkAddress = (address) => {
+        return new Promise((resolve) => {
+            if (!validateAddress(address)) {
+                this.setState(
+                    produce(draft => {
+                        draft.existInfo[CURRENCY.ADDRESS].error = '合約地址格式錯誤';
+                    })
+                );
+
+                return resolve(false);
+            }
+
+            // TODO check api
+            checkAddress(/^0x/.test(address) ? address : `0x${address}`).then(res => {
+                console.log(res);
+            });
+
+            return true;
+        });
     }
 
     handleProgram = program => {
@@ -111,10 +135,9 @@ class CreateToken extends Component {
         // check
 
         const { step, program, newInfo, existInfo } = this.state;
+        const inputs = program === 1 ? newInfo : existInfo;
 
         if (step === 2) {
-            const inputs = program === 1 ? newInfo : existInfo;
-
             for (let i in inputs) {
                 const field = inputs[i];
                 if (field.validCheck && !field.valid) {
@@ -123,6 +146,16 @@ class CreateToken extends Component {
                     }));
                 }
             }
+        }
+
+        if (step === 3) {
+
+            const body = {};
+
+            for (let i in inputs) {
+                body[i] = inputs[i].value;
+            }
+            createFund(body);
         }
 
         this.setState(prevState => ({
@@ -153,75 +186,24 @@ class CreateToken extends Component {
 
     renderContent() {
         const { step, program, newInfo, existInfo } = this.state;
+        const inputs = program === 1 ? newInfo : existInfo; // if program = 1 show new token, else show hosting token
 
         switch (step) {
             case 1:
                 return (
-                    <Fragment>
-                        <SelectedItem onClick={() => this.handleProgram(1)} selected={program === 1} img="/static/images/bolt_d_new_currency.svg" title="新發幣" desc="適用於無任何Token之用戶" />
-
-                        <SelectedItem onClick={() => this.handleProgram(2)} selected={program === 2} img="/static/images/bolt_d_exchange.svg" title="已發幣託管" desc="適用於已有Token之用戶" />
-                    </Fragment>
+                    <CreateProgram program={program} handleProgram={this.handleProgram} />
                 );
-
             case 2:
-                const info = program === 1 ? newInfo : existInfo; // if program = 1 show new token, else show hosting token
                 return (
-                    <SCbasic>
-                        <ul>
-                            {Object.keys(info).map(key => {
-                                const inputProps = {
-                                    ...info[key],
-                                    name: key,
-                                    inputValue: info[key].value,
-                                    setInput: this.handleInput.bind(this)
-                                };
-
-                                return (
-                                    <li key={key}>
-                                        <span>{info[key].title}</span>
-
-                                        {key === 'address' ? (
-                                            <div>
-                                                <InputField {...inputProps} />
-                                                <WGmainButton style={{ width: 'initial', height: '25.5px', minWidth: '102px' }}>相容性檢視</WGmainButton>
-                                            </div>
-                                        ) : (<InputField {...inputProps} />)}
-                                    </li>
-                                );
-                            })}
-                        </ul>
-
-                        <div>
-                            <SCupload>
-                                <h4>上傳 Logo</h4>
-
-                                <input type="file" />
-
-                                <img src="/static/images/ic-cloud-upload.svg" alt="upload" />
-
-                                <p>
-                                    最大尺寸 1 mb<br />
-                                    檔案類型限 jpg, png, gif
-                                </p>
-
-                            </SCupload>
-
-                            <SCshowOption>
-                                <input type="checkbox" />
-
-                                是否顯示於平台首頁
-                            </SCshowOption>
-
-                        </div>
-
-                    </SCbasic>
+                    <CreatData
+                        handleInput={this.handleInput.bind(this)}
+                        inputs={inputs}
+                    />
                 );
             case 3:
-                const infos = program === 1 ? newInfo : existInfo;
                 const field = {};
-                Object.keys(infos).forEach(key => {
-                    field[key] = infos[key].value;
+                Object.keys(inputs).forEach(key => {
+                    field[key] = inputs[key].value;
                 });
 
                 return (

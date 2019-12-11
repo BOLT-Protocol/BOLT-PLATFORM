@@ -18,7 +18,7 @@ const authGuard = async ctx => {
     }
 
     if (!token) {
-        Router.push('/signin');
+        Router.replace('/signin');
     }
 
     const state = ctx.store.getState();

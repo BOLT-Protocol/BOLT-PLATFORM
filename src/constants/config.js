@@ -1,8 +1,7 @@
-const env = process.env.NODE_ENV;
-
-const prefix = 'http://';
+const prefix = 'https://';
 const keystone = 'rest.boltchain.io';
-
-export const serverUrl = env === 'development' ? 'http://127.0.0.1:3000' : 'https://DOMAIN';
+const server = 'api.boltchain.io';
 
 export const keystoneUrl = prefix + keystone;
+
+export const serverUrl = prefix + server;

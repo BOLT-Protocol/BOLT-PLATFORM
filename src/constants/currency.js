@@ -2,9 +2,11 @@ const CURRNECY = {
     NAME: 'name',
     ADDRESS: 'address',
     SYMBOL: 'symbol',
-    AMOUNT: 'amount',
-    WEB: 'web',
-    INTRODUCTION: 'introduction'
+    AMOUNT: 'totalSupply',
+    WEB: 'website',
+    INTRODUCTION: 'info',
+    PUBLISH: 'publish',
+    LOGO: 'logo'
 };
 
 export const MIN_AMOUNT = 1000;

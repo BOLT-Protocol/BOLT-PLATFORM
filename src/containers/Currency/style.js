@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { secondColor, fontGray, fontWhite, bgDark, devices } from '../../widgets/styleGuid';
+import { secondColor, fontGray, devices } from '../../widgets/styleGuid';
 
 export const SCcontainer = styled.div`
     display: flex;
@@ -71,42 +71,6 @@ export const SCstep = styled.li`
     }
 `;
 
-export const SCbasic = styled.div`
-    padding: 50px;
-    display: flex;
-    justify-content: space-between;
-    flex: 1;
-
-    > div {
-        display: flex;
-        flex-direction: column;
-        min-width: 150px;
-        margin-left: 4rem;
-        align-items: center;
-    }
-
-    ul {
-        flex: 1;
-
-        li {
-            display: flex;
-
-            span {
-                flex: 1;
-                text-align: right;
-                margin-right: .875rem;
-                font-size: .875rem;
-                padding-top: .3rem;
-            }
-
-            > div {
-                flex: 6;
-                display: flex;
-            }
-        }
-    }
-`;
-
 export const SCstepControl = styled.div`
     display: flex;
     justify-content: flex-end;
@@ -125,52 +89,6 @@ export const SCstepControl = styled.div`
     }
 `;
 
-export const SCupload = styled.label`
-    display: flex;
-    flex-direction: column;
-    color: ${fontGray};
-    font-size: 0.75rem;
-    width: 150px;
-    height: 150px;
-    background-color: ${bgDark};
-    border-radius: 8px;
-    align-items: center;
-    cursor: pointer;
-    
-    h4 {
-        color: ${fontWhite};
-        font-size: 0.75rem;
-        margin: 1.5rem 0 0 0;
-    }
-
-    img {
-        margin: 1.25rem 0;
-        width: 22.7px;
-        height: 14.7px;
-    }
-    
-    input {
-        display: none;
-    }
-
-    p {
-        text-align: center;
-    }
-`;
-
-export const SCshowOption = styled.div`
-    display: flex;
-    color: ${fontWhite};
-    margin-top: 38px;
-    align-items: center;
-
-    input {
-        background-color: ${fontGray};
-        margin-right: 0.5rem;
-        height: 1rem;
-        width: 1rem;
-    }
-`;
 
 export const SCoverview = styled.div`
     display: flex;

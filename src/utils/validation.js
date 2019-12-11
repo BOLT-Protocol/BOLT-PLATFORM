@@ -28,7 +28,7 @@ export const validateCurrencyName = name => {
     return re.test(name);
 };
 
-export const validateCurrencyAbbreviation = name => {
+export const validateCurrencySymbol = name => {
     const re = new RegExp('^(?=.*[a-zA-Z0-9]).{1,8}$');
 
     return re.test(name);
@@ -41,4 +41,17 @@ export const validateCurrencyAmount = amount => {
     }
 
     return value >= MIN_AMOUNT && value <= MAX_AMOUNT;
+};
+
+export const validateAddress = address => {
+    const startWith = /^0x/;
+
+    // 如果 0x 開頭
+    if (startWith.test(address)) {
+        const re = /^0x[a-fA-F0-9]{40}$/;
+        return re.test(address);
+    } else {
+        const re = /[a-fA-F0-9]{40}$/;
+        return re.test(address);
+    }
 };
