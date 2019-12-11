@@ -14,7 +14,7 @@ const items = [
     },
     {
         title: '英文縮寫',
-        key: CURRENCY.ABBREVIATION
+        key: CURRENCY.SYMBOL
     },
     {
         title: '發行數量',

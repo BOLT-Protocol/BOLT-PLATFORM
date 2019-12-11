@@ -11,7 +11,7 @@ import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
 import { validateCurrencyName, validateCurrencyAbbreviation, validateCurrencyAmount } from '../../utils/validation';
 
 const commonField = {
-    [CURRENCY.ABBREVIATION]: {
+    [CURRENCY.SYMBOL]: {
         ...input,
         title: '英文縮寫',
         placeholder: '小於8位英文及數字，例：BCC 或 XPA123',
@@ -23,7 +23,7 @@ const commonField = {
         title: '發行數量',
         placeholder: `請輸入最少 ${MIN_AMOUNT.toLocaleString()} 枚至最多 ${MAX_AMOUNT.toLocaleString()} 枚數量`,
         error: `最少 ${MIN_AMOUNT.toLocaleString()}，最多 ${MAX_AMOUNT.toLocaleString()}`,
-        validCheck: validateCurrencyAmount
+        validCheck: validateCurrencyAmount,
     },
     [CURRENCY.WEB]: {
         ...input,
@@ -39,7 +39,7 @@ const commonField = {
     }
 };
 
-class Currency extends Component {
+class CreateToken extends Component {
     static async getInitialProps() {
         return {
             namespacesRequired: []
@@ -63,7 +63,7 @@ class Currency extends Component {
                 ...commonField
             },
             existInfo: {
-                [CURRENCY.ADDRESS]: {
+                [CURRENCY.SYMBOL]: {
                     ...input,
                     title: '合約地址',
                     placeholder: '請輸入您的合約地址'
@@ -109,6 +109,21 @@ class Currency extends Component {
 
     nextStep = () => {
         // check
+
+        const { step, program, newInfo, existInfo } = this.state;
+
+        if (step === 2) {
+            const inputs = program === 1 ? newInfo : existInfo;
+
+            for (let i in inputs) {
+                const field = inputs[i];
+                if (field.validCheck && !field.valid) {
+                    return this.setState(produce((draft) => {
+                        draft[program === 1 ? 'newInfo' : 'existInfo'][i].showError = true;
+                    }));
+                }
+            }
+        }
 
         this.setState(prevState => ({
             ...prevState,
@@ -248,4 +263,4 @@ class Currency extends Component {
     }
 }
 
-export default Currency;
+export default CreateToken;

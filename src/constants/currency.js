@@ -1,7 +1,7 @@
 const CURRNECY = {
     NAME: 'name',
     ADDRESS: 'address',
-    ABBREVIATION: 'abbreviation',
+    SYMBOL: 'symbol',
     AMOUNT: 'amount',
     WEB: 'web',
     INTRODUCTION: 'introduction'
