@@ -89,31 +89,6 @@ export const SCstepControl = styled.div`
     }
 `;
 
-
-export const SCoverview = styled.div`
-    display: flex;
-    width: 100%;
-
-    > div {
-        flex: 6;
-        display: flex;
-        flex-direction: column;
-
-        > div {
-            margin-bottom: 20px;
-            display: flex;
-        }
-
-        p {
-            white-space: pre-wrap;
-        }
-
-        &:first-child {
-            flex: 1;
-        }
-    }
-`;
-
 export const SCfinishField = styled.div`
     width: 100%;
     display: flex;

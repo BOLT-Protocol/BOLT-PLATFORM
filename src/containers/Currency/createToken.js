@@ -37,7 +37,6 @@ const commonField = {
         title: '簡介',
         placeholder: '內容',
         type: 'textarea',
-
     }
 };
 
@@ -72,7 +71,9 @@ class CreateToken extends Component {
                     validCheck: this.checkAddress
                 },
                 ...commonField
-            }
+            },
+            image: null,
+            publish: false
         };
 
         this.steps = ['選擇發幣方式', '填寫基本資訊', '總覽', '填寫付款資訊', '完成'];
@@ -121,6 +122,27 @@ class CreateToken extends Component {
         }));
     }
 
+    handleImage = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            this.setState(produce(draft => {
+                draft.image = reader.result;
+            }));
+        };
+        // 註冊onerror事件，若發生error則reject
+        reader.onerror = () => { console.error(reader.error); };
+        // 讀取檔案
+        reader.readAsDataURL(file);
+    }
+
+    handlePublish = () => {
+        this.setState(produce(draft => {
+            draft.publish = !draft.publish;
+        }));
+    }
+
     goBack = () => {
         const { step } = this.state;
 
@@ -149,13 +171,7 @@ class CreateToken extends Component {
         }
 
         if (step === 3) {
-
-            const body = {};
-
-            for (let i in inputs) {
-                body[i] = inputs[i].value;
-            }
-            createFund(body);
+            this.sendToken(inputs);
         }
 
         this.setState(prevState => ({
@@ -166,6 +182,24 @@ class CreateToken extends Component {
 
     togglePayModal = () => {
 
+    }
+
+    sendToken(inputs) {
+        const { image, publish, program } = this.state;
+        const body = {};
+
+        for (let i in inputs) {
+            body[i] = inputs[i].value;
+        }
+        if (image) body[CURRENCY.LOGO] = image;
+
+        body.publish = publish;
+
+        if (program === 1) {
+            createFund(body);
+        } else {
+            // TODO
+        }
     }
 
     renderStep() {
@@ -185,7 +219,7 @@ class CreateToken extends Component {
     }
 
     renderContent() {
-        const { step, program, newInfo, existInfo } = this.state;
+        const { step, program, newInfo, existInfo, image, publish } = this.state;
         const inputs = program === 1 ? newInfo : existInfo; // if program = 1 show new token, else show hosting token
 
         switch (step) {
@@ -196,8 +230,12 @@ class CreateToken extends Component {
             case 2:
                 return (
                     <CreatData
-                        handleInput={this.handleInput.bind(this)}
+                        handleInput={this.handleInput}
                         inputs={inputs}
+                        handleImage={this.handleImage}
+                        image={image}
+                        handlePublish={this.handlePublish}
+                        publish={publish}
                     />
                 );
             case 3:
@@ -207,7 +245,7 @@ class CreateToken extends Component {
                 });
 
                 return (
-                    <Overview {...field} />
+                    <Overview {...field} image={image} />
                 );
 
             default:

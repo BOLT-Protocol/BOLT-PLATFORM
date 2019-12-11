@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-import { SCoverview } from './style';
 import CURRENCY from '../../constants/currency';
 
 const items = [
@@ -30,11 +31,45 @@ const items = [
     }
 ];
 
+export const SCoverview = styled.div`
+    display: flex;
+    width: 100%;
+
+    > div {
+        flex: 6;
+        display: flex;
+        flex-direction: column;
+
+        > div {
+            margin-bottom: 20px;
+            display: flex;
+        }
+
+        p {
+            white-space: pre-wrap;
+        }
+
+        &:first-child {
+            flex: 1;
+        }
+    }
+
+    img {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        margin: 0 auto;
+    }
+`;
+
 const Overview = (props) => {
+    const { image } = props;
     return (
         <SCoverview>
             <div>
-                <img src="" alt="" />
+                {image && (
+                    <img src={image} alt="Logo" />
+                )}
             </div>
 
             <div>
@@ -51,6 +86,10 @@ const Overview = (props) => {
 
         </SCoverview>
     );
+};
+
+Overview.propTypes = {
+    image: PropTypes.string.isRequired
 };
 
 export default Overview;

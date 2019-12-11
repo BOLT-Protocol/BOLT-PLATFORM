@@ -67,6 +67,10 @@ const SCupload = styled.label`
     border-radius: 8px;
     align-items: center;
     cursor: pointer;
+    ${props => props.image ? `background-image: url(${props.image});` : ''}
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
     
     h4 {
         color: ${fontWhite};
@@ -89,7 +93,7 @@ const SCupload = styled.label`
     }
 `;
 
-const CreateData = ({ handleInput, inputs }) => (
+const CreateData = ({ handleInput, inputs, handleImage, image, handlePublish, publish }) => (
     <SCbasic>
         <ul>
             {Object.keys(inputs).map(key => {
@@ -116,22 +120,27 @@ const CreateData = ({ handleInput, inputs }) => (
         </ul>
 
         <div>
-            <SCupload>
-                <h4>上傳 Logo</h4>
+            <SCupload image={image}>
 
-                <input type="file" />
+                <input type="file" onChange={handleImage} accept="image/*" />
 
-                <img src="/static/images/ic-cloud-upload.svg" alt="upload" />
+                {!image && (
+                    <>
+                        <h4>上傳 Logo</h4>
 
-                <p>
-                    最大尺寸 1 mb<br />
-                    檔案類型限 jpg, png, gif
-                </p>
+                        <img src="/static/images/ic-cloud-upload.svg" alt="upload" />
+
+                        <p>
+                            最大尺寸 1 mb<br />
+                            檔案類型限 jpg, png, gif
+                        </p>
+                    </>
+                )}
 
             </SCupload>
 
             <SCshowOption>
-                <input type="checkbox" />
+                <input type="checkbox" onChange={handlePublish} checked={publish} />
 
                 是否顯示於平台首頁
             </SCshowOption>
@@ -143,7 +152,11 @@ const CreateData = ({ handleInput, inputs }) => (
 
 CreateData.propTypes = {
     handleInput: PropTypes.func.isRequired,
-    inputs: PropTypes.object.isRequired
+    inputs: PropTypes.object.isRequired,
+    handleImage: PropTypes.func.isRequired,
+    image: PropTypes.string.isRequired,
+    handlePublish: PropTypes.func.isRequired,
+    publish: PropTypes.bool.isRequired
 };
 
 export default CreateData;
