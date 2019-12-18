@@ -17,6 +17,7 @@ export default class WrapperDocument extends Document {
                     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet" />
                     <script type="text/javascript" src="static/js/qrcode.min.js"></script>
                     {this.props.styleTags}
+                    <script src="https://js.braintreegateway.com/web/dropin/1.20.4/js/dropin.min.js"></script>
                 </Head>
                 <body>
                     <Main />

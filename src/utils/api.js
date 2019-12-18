@@ -19,7 +19,7 @@ export const checkVerifyCode = ({ code, phone }) => {
 
 // TODO for test
 agent.setHeaders({
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1ZGYwOTA2ODYzOGYwNTZmNzJiNzUxZGMiLCJpYXQiOjE1NzYwNDY2OTc4MjcsImV4cCI6MTU3NjEzMzA5NzgyN30.Jo9pC7MYZpq94ciZUs2erOD3uiNXmvnmDvdPF6GUweU'
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1ZGY2YjE5YTY3NjQzMzFjNDExOTdjNDQiLCJpYXQiOjE1NzY0Nzk1OTc0MTMsImV4cCI6MTU3NjU2NTk5NzQxM30.6c4pgY_bV3aaxYff0q753jCLTS3g3Derb2xvCOGYFyo'
 });
 
 export const createFund = agent.request('/fund/create', 'POST');
@@ -29,3 +29,7 @@ export const escrowFund = agent.request('/fund/escrow', 'POST');
 export const checkAddress = address => agent.request(`/check/contractAddress/${address}`)();
 
 export const getUserCard = agent.request('/user/card');
+
+export const getPaymentToken = agent.request('/payment/token');
+
+export const payment = agent.request('/payment', 'POST');

@@ -5,11 +5,11 @@ import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCstepCo
 import Overview from './overview';
 import CreateProgram from './createProgram';
 import CreatData from './createData';
+// import CreatePayment from './createPayment';
 import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
 import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
-
 import { createFund, checkAddress } from '../../utils/api';
 
 const commonField = {
@@ -73,7 +73,8 @@ class CreateToken extends Component {
                 ...commonField
             },
             image: null,
-            publish: false
+            publish: false,
+            orderID: null,
         };
 
         this.steps = ['選擇發幣方式', '填寫基本資訊', '總覽', '填寫付款資訊', '完成'];
@@ -131,7 +132,6 @@ class CreateToken extends Component {
                 draft.image = reader.result;
             }));
         };
-        // 註冊onerror事件，若發生error則reject
         reader.onerror = () => { console.error(reader.error); };
         // 讀取檔案
         reader.readAsDataURL(file);
@@ -153,6 +153,13 @@ class CreateToken extends Component {
             }));
     };
 
+    goNext = () => {
+        this.setState(prevState => ({
+            ...prevState,
+            step: prevState.step + 1
+        }));
+    }
+
     nextStep = () => {
         // check
 
@@ -168,21 +175,25 @@ class CreateToken extends Component {
                     }));
                 }
             }
+            this.goNext();
+        } else if (step === 3) {
+            this.sendToken(inputs)
+                .then(({ data, success, message }) => {
+                    if (!success) {
+                        return console.error(message);
+                    }
+                    const { orderID } = data;
+                    this.setState(produce(draft => {
+                        draft.orderID = orderID;
+                    }));
+                    this.goNext();
+                })
+                .catch(err => console.error(err));
+        } else {
+            this.goNext();
         }
 
-        if (step === 3) {
-            this.sendToken(inputs);
-        }
-
-        this.setState(prevState => ({
-            ...prevState,
-            step: prevState.step + 1
-        }));
     };
-
-    togglePayModal = () => {
-
-    }
 
     sendToken(inputs) {
         const { image, publish, program } = this.state;
@@ -196,10 +207,12 @@ class CreateToken extends Component {
         body.publish = publish;
 
         if (program === 1) {
-            createFund(body);
+            return createFund(body);
         } else {
             // TODO
         }
+
+        return Promise.resolve({});
     }
 
     renderStep() {
@@ -239,15 +252,19 @@ class CreateToken extends Component {
                     />
                 );
             case 3:
+            case 4:
                 const field = {};
                 Object.keys(inputs).forEach(key => {
                     field[key] = inputs[key].value;
                 });
 
+                if (step === 4) {
+                    // open modal
+                }
+
                 return (
                     <Overview {...field} image={image} />
                 );
-
             default:
                 return null;
         }
@@ -278,6 +295,7 @@ class CreateToken extends Component {
                     {step === 3 && <WGmainButton onClick={this.nextStep}>前往付款</WGmainButton>}
                     {step === 5 && <SCfinishField>付款完成，您可開始使用您的 BC Token<WGmainButton onClick={this.nextStep}>開始使用</WGmainButton></SCfinishField>}
                 </SCstepControl>
+
             </SCcontainer>
         );
     }
