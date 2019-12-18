@@ -23,7 +23,7 @@ module.exports = {
             'repo': 'git@github.com:BOLT-Protocol/BOLT-PLATFORM.git',
             'ref': 'origin/develop',
             'path': '/home/ubuntu/BOLT_PLATFORM',
-            'post-deploy': 'npm i && npm run build & pm2 startOrRestart ecosystem.config.js --env dev'
+            'post-deploy': 'npm i && npm run build && pm2 startOrRestart ecosystem.config.js --env dev'
         },
         production: {
             'user': 'SERVER_USER',
@@ -32,7 +32,7 @@ module.exports = {
             'ref': 'GIT_BRANCH',
             'repo': 'git@bitbucket.org:tidenet/nextjs_tide_startkit.git',
             'path': 'PATH_ON_SERVER',
-            'post-deploy': '. ~/.profile && yarn && yarn build & pm2 startOrRestart ecosystem.js --env production'
+            'post-deploy': '. ~/.profile && yarn && yarn build && pm2 startOrRestart ecosystem.js --env production'
         }
     }
 };
