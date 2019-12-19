@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-case-declarations */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
@@ -67,14 +69,14 @@ class ForgetPassword extends Component {
         this.handleStep = handleStep.bind(this);
     }
 
-    sendEmail = () => {
-        console.log('send email');
-    };
+    sendEmail () {
+        // console.log('send email');
+    }
 
-    handleSubmit = () => {
-        console.log('submit');
+    handleSubmit () {
+        // console.log('submit');
         this.handleStep(4);
-    };
+    }
 
     renderHeader() {
         const { page } = this.state;

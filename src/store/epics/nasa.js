@@ -14,6 +14,7 @@ const fetchDataEpic = action$ =>
         .pipe(
             ofType(types.START_FETCH_DATA),
             mergeMap(() => from(axios.get(url))),
+            // eslint-disable-next-line no-console
             tap(console.log),
             map(res => actions.fetchDataSuccess(res.data)),
             catchError(error => of(actions.fetchDataFailure(error))),

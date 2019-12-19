@@ -17,8 +17,9 @@ const scrollListener = ({ children, events }) => {
             stream.map(s => {
                 if (s.pos >= y && s.pos + s.height / 2 <= y + s.height) {
                     s.event();
-                }
-                return s;
+                    return s;
+                };
+                return undefined;
             });
         };
 

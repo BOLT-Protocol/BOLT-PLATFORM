@@ -1,7 +1,10 @@
 import styled from 'styled-components';
-import { fontWhite, fontGray } from '../../widgets/styleGuid';
+import {
+    fontWhite,
+    fontGray
+} from '../../widgets/styleGuid';
 
-export const SCinputField = styled.div`
+export const SCinputField = styled.div `
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -11,6 +14,7 @@ export const SCinputField = styled.div`
         border-bottom: 1px solid ${fontGray};
         color: ${fontWhite};
         padding: 0.3rem 0;
+        font-size: 0.875rem;
 
         &::placeholder {
             color: ${fontGray};
@@ -25,7 +29,7 @@ export const SCinputField = styled.div`
     }
 `;
 
-export const SCinputMessage = styled.div`
+export const SCinputMessage = styled.div `
     height: 2rem;
     padding-top: 0.3rem;
     width: 100%;
