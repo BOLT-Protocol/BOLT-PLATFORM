@@ -4,6 +4,7 @@ import { SCcontainer, SCmessage, SCmain, SCcardHolder, SCuserField } from './sty
 import CurrencyCard from '../../components/currency/currencyCard';
 import Wallet from '../../components/currency/wallet';
 import TrusteeShip from '../../components/currency/trusteeship';
+import { getUserCard } from '../../utils/api';
 
 const tokens = [
     {
@@ -67,6 +68,16 @@ const Currency = () => {
             </SCmain>
         </SCcontainer>
     );
+
 };
+
+Currency.getInitialProps = async () => {
+    const res = await getUserCard();
+    console.log(res);
+    return {
+        namespacesRequired: []
+    };
+};
+
 
 export default Currency;

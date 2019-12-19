@@ -6,8 +6,9 @@ const initialState = {
 };
 
 const currency = (state = initialState, action = {}) => {
-    return produce(state, draft => {
-        console.log(draft);
+    return produce(state, (
+
+    ) => {
         switch (action.type) {
             default:
                 return state;

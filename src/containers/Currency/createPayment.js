@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-// import Modal from 'react-modal';
+import Modal from 'react-modal';
 
 import { WGmainButton } from '../../widgets/button';
 import { getPaymentToken } from '../../utils/api';
 
-const CreatePayment = ({ orderID }) => {
+const CreatePayment = ({ orderID, show }) => {
     let submitEl = null;
 
     useEffect(() => {
@@ -44,7 +44,9 @@ const CreatePayment = ({ orderID }) => {
     };
 
     return (
-        <>
+        <Modal
+            isOpen={show}
+        >
             <div id="dropin-container">
 
             </div>
@@ -52,12 +54,13 @@ const CreatePayment = ({ orderID }) => {
             <WGmainButton onClick={handleSubmit}>
                 確認付款
             </WGmainButton>
-        </>
+        </Modal>
     );
 };
 
 CreatePayment.propTypes = {
-    orderID: PropTypes.string.isRequired
+    orderID: PropTypes.string.isRequired,
+    show: PropTypes.bool.isRequired
 };
 
 export default CreatePayment;

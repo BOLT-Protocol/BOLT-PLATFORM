@@ -5,7 +5,7 @@ import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCstepCo
 import Overview from './overview';
 import CreateProgram from './createProgram';
 import CreatData from './createData';
-// import CreatePayment from './createPayment';
+import CreatePayment from './createPayment';
 import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
@@ -75,6 +75,7 @@ class CreateToken extends Component {
             image: null,
             publish: false,
             orderID: null,
+            showModal: false
         };
 
         this.steps = ['選擇發幣方式', '填寫基本資訊', '總覽', '填寫付款資訊', '完成'];
@@ -162,7 +163,6 @@ class CreateToken extends Component {
 
     nextStep = () => {
         // check
-
         const { step, program, newInfo, existInfo } = this.state;
         const inputs = program === 1 ? newInfo : existInfo;
 
@@ -187,13 +187,20 @@ class CreateToken extends Component {
                         draft.orderID = orderID;
                     }));
                     this.goNext();
+
+                    this.toggleModal();
                 })
                 .catch(err => console.error(err));
         } else {
             this.goNext();
         }
-
     };
+
+    toggleModal = () => {
+        this.setState(produce(draft => {
+            draft.showModal = !draft.showModal;
+        }));
+    }
 
     sendToken(inputs) {
         const { image, publish, program } = this.state;
@@ -258,10 +265,6 @@ class CreateToken extends Component {
                     field[key] = inputs[key].value;
                 });
 
-                if (step === 4) {
-                    // open modal
-                }
-
                 return (
                     <Overview {...field} image={image} />
                 );
@@ -271,7 +274,7 @@ class CreateToken extends Component {
     }
 
     render() {
-        const { step } = this.state;
+        const { step, showModal } = this.state;
         return (
             <SCcontainer>
                 <SCmessage>BOLT Currency 提供了數字貨幣發行與管理功能，每個用户可在BOLTCHAIN發行多次通證。除了通過BOLTCHAIN直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到BOLTCHAIN系統上，以享有BOLT scaling system帶來的強大效能與便利性。</SCmessage>
@@ -280,6 +283,8 @@ class CreateToken extends Component {
                     <SCstepList>{this.renderStep()}</SCstepList>
 
                     <SCcontent>{this.renderContent()}</SCcontent>
+
+                    <CreatePayment show={showModal} />
                 </SCmain>
 
                 <SCstepControl>

@@ -30,6 +30,10 @@ export const checkAddress = address => agent.request(`/check/contractAddress/${a
 
 export const getUserCard = agent.request('/user/card');
 
+export const getBalance = address => agent.request(`/user/address?currencyAddress${address}`);
+
 export const getPaymentToken = agent.request('/payment/token');
 
 export const payment = agent.request('/payment', 'POST');
+
+
