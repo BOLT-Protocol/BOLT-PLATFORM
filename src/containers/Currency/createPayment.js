@@ -9,30 +9,30 @@ const CreatePayment = ({ orderID, show }) => {
     let submitEl = null;
 
     useEffect(() => {
-        getPaymentToken()
-            .then(({ data }) => {
-                const { token } = data;
-                return window.braintree.dropin.create({
-                    authorization: token,
-                    selector: '#dropin-container',
-                    locale: 'zh_TW'
+        if (orderID) {
+            getPaymentToken()
+                .then(({ data }) => {
+                    const { token } = data;
+                    return window.braintree.dropin.create({
+                        authorization: token,
+                        selector: '#dropin-container',
+                        locale: 'zh_TW'
+                    });
+                    // return payment({
+                    //     orderID,
+                    //     type,
+                    //     nonce: token
+                    // });
+                })
+                .then((instance) => {
+                    console.log(instance, orderID);
+                    submitEl = instance;
+                })
+                .catch(err => {
+                    console.error(err);
                 });
-                // return payment({
-                //     orderID,
-                //     type,
-                //     nonce: token
-                // });
-            })
-            .then((instance) => {
-                console.log(instance, orderID);
-                submitEl = instance;
-            })
-            .catch(err => {
-                console.error(err);
-
-            });
-
-    }, []);
+        }
+    }, [orderID]);
 
     const handleSubmit = () => {
         if (!submitEl) return;
@@ -58,8 +58,12 @@ const CreatePayment = ({ orderID, show }) => {
     );
 };
 
+CreatePayment.defaultProps = {
+    orderID: ''
+};
+
 CreatePayment.propTypes = {
-    orderID: PropTypes.string.isRequired,
+    orderID: PropTypes.string,
     show: PropTypes.bool.isRequired
 };
 

@@ -150,11 +150,15 @@ const CreateData = ({ handleInput, inputs, handleImage, image, handlePublish, pu
     </SCbasic>
 );
 
+CreateData.defaultProps = {
+    image: ''
+};
+
 CreateData.propTypes = {
     handleInput: PropTypes.func.isRequired,
     inputs: PropTypes.object.isRequired,
     handleImage: PropTypes.func.isRequired,
-    image: PropTypes.string.isRequired,
+    image: PropTypes.string,
     handlePublish: PropTypes.func.isRequired,
     publish: PropTypes.bool.isRequired
 };

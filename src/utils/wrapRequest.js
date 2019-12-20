@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { serverUrl } from '../constants/config';
 
 class WrapRequest {

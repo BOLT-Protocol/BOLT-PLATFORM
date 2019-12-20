@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import produce from 'immer';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCstepControl, SCfinishField } from './style';
 import Overview from './overview';
@@ -11,6 +13,9 @@ import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
 import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
 import { createFund, checkAddress } from '../../utils/api';
+import { TOAST_OPTIONS } from '../../utils/toast';
+
+toast.configure(TOAST_OPTIONS);
 
 const commonField = {
     [CURRENCY.SYMBOL]: {
@@ -72,10 +77,11 @@ class CreateToken extends Component {
                 },
                 ...commonField
             },
-            image: null,
-            publish: false,
-            orderID: null,
-            showModal: false
+            image: null, // Token 圖片
+            publish: false, // 是否發布
+            orderID: null, // 付款用訂單 id
+            showModal: false,
+            error: null
         };
 
         this.steps = ['選擇發幣方式', '填寫基本資訊', '總覽', '填寫付款資訊', '完成'];
@@ -126,6 +132,13 @@ class CreateToken extends Component {
 
     handleImage = (e) => {
         const file = e.target.files[0];
+        if (!file) {
+            e.target.value = '';
+            this.setState(produce(draft => {
+                draft.image = null;
+            }));
+            return false;
+        }
         const reader = new FileReader();
 
         reader.onload = () => {
@@ -163,7 +176,7 @@ class CreateToken extends Component {
 
     nextStep = () => {
         // check
-        const { step, program, newInfo, existInfo } = this.state;
+        const { step, program, newInfo, existInfo, image } = this.state;
         const inputs = program === 1 ? newInfo : existInfo;
 
         if (step === 2) {
@@ -175,6 +188,11 @@ class CreateToken extends Component {
                     }));
                 }
             }
+
+            if (!image) {
+                return toast.error('請上傳圖片');
+            }
+
             this.goNext();
         } else if (step === 3) {
             this.sendToken(inputs)

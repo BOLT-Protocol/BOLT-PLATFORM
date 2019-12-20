@@ -283,11 +283,6 @@ export const destroyToken = ({ token, tokenSecret }) => {
     });
 };
 
-// TODO for test
-agent.setHeaders({
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1ZGY2YjE5YTY3NjQzMzFjNDExOTdjNDQiLCJpYXQiOjE1NzY0Nzk1OTc0MTMsImV4cCI6MTU3NjU2NTk5NzQxM30.6c4pgY_bV3aaxYff0q753jCLTS3g3Derb2xvCOGYFyo'
-});
-
 export const createFund = agent.request('/fund/create', 'POST');
 
 export const escrowFund = agent.request('/fund/escrow', 'POST');
