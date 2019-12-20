@@ -12,8 +12,9 @@ import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
 import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
-import { createFund, checkAddress } from '../../utils/api';
+import { createFund, checkAddress, getCost } from '../../utils/api';
 import { TOAST_OPTIONS } from '../../utils/toast';
+import authGuard from '../../utils/auth';
 
 toast.configure(TOAST_OPTIONS);
 
@@ -46,7 +47,8 @@ const commonField = {
 };
 
 class CreateToken extends Component {
-    static async getInitialProps() {
+    static async getInitialProps(ctx) {
+        authGuard(ctx);
         return {
             namespacesRequired: []
         };
@@ -81,7 +83,12 @@ class CreateToken extends Component {
             publish: false, // 是否發布
             orderID: null, // 付款用訂單 id
             showModal: false,
-            error: null
+            payment: { // 支付
+                type: null, // 支付方式
+                cost: 0,// 花費
+                unit: '新台幣', // 幣種
+                cardNumber: '' // 卡號
+            }
         };
 
         this.steps = ['選擇發幣方式', '填寫基本資訊', '總覽', '填寫付款資訊', '完成'];
@@ -193,7 +200,14 @@ class CreateToken extends Component {
                 return toast.error('請上傳圖片');
             }
 
-            this.goNext();
+            getCost(inputs[CURRENCY.AMOUNT].value)
+                .then(({ data }) => {
+                    this.setState(produce(draft => {
+                        draft.payment.cost = parseFloat(data.cost, 10);
+                    }), () => {
+                        this.goNext();
+                    });
+                });
         } else if (step === 3) {
             this.sendToken(inputs)
                 .then(({ data, success, message }) => {
@@ -213,6 +227,29 @@ class CreateToken extends Component {
             this.goNext();
         }
     };
+
+    paymentCallback = ({
+        lastFour,
+        type
+    }) => {
+        this.toggleModal();
+        this.setState(produce(draft => {
+            draft.payment = {
+                ...draft.payment,
+                type,
+                cardNumber: lastFour
+            };
+        }));
+
+        this.nextStep();
+    }
+
+    cancelPayment = () => {
+        this.goBack();
+        this.setState(produce(draft => {
+            draft.showModal = false;
+        }));
+    }
 
     toggleModal = () => {
         this.setState(produce(draft => {
@@ -257,7 +294,7 @@ class CreateToken extends Component {
     }
 
     renderContent() {
-        const { step, program, newInfo, existInfo, image, publish } = this.state;
+        const { step, program, newInfo, existInfo, image, publish, payment } = this.state;
         const inputs = program === 1 ? newInfo : existInfo; // if program = 1 show new token, else show hosting token
 
         switch (step) {
@@ -278,13 +315,14 @@ class CreateToken extends Component {
                 );
             case 3:
             case 4:
+            case 5:
                 const field = {};
                 Object.keys(inputs).forEach(key => {
                     field[key] = inputs[key].value;
                 });
 
                 return (
-                    <Overview {...field} image={image} />
+                    <Overview {...field} image={image} payment={payment} />
                 );
             default:
                 return null;
@@ -292,7 +330,7 @@ class CreateToken extends Component {
     }
 
     render() {
-        const { step, showModal } = this.state;
+        const { step, showModal, orderID } = this.state;
         return (
             <SCcontainer>
                 <SCmessage>BOLT Currency 提供了數字貨幣發行與管理功能，每個用户可在BOLTCHAIN發行多次通證。除了通過BOLTCHAIN直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到BOLTCHAIN系統上，以享有BOLT scaling system帶來的強大效能與便利性。</SCmessage>
@@ -302,7 +340,12 @@ class CreateToken extends Component {
 
                     <SCcontent>{this.renderContent()}</SCcontent>
 
-                    <CreatePayment show={showModal} />
+                    <CreatePayment
+                        show={showModal}
+                        orderID={orderID}
+                        paymentCallback={this.paymentCallback}
+                        cancel={this.cancelPayment}
+                    />
                 </SCmain>
 
                 <SCstepControl>

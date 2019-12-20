@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { secondColor, fontGray, devices } from '../../widgets/styleGuid';
+import { secondColor, fontGrey, devices, bgLight } from '../../widgets/styleGuid';
 
 export const SCcontainer = styled.div`
     display: flex;
@@ -26,7 +26,7 @@ export const SCcontent = styled.div`
     flex: 3.125;
     border-radius: 6px;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.21);
-    background-color: #3a3b4d;
+    background-color: ${bgLight};
     justify-content: center;
     align-items: center;
 
@@ -40,7 +40,7 @@ export const SCstepList = styled.ul`
     flex: 1;
     border-radius: 6px;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.21);
-    background-color: #3a3b4d;
+    background-color: ${bgLight};
     margin-right: 10px;
     padding: 40px;
     flex-direction: column;
@@ -61,9 +61,9 @@ export const SCstep = styled.li`
         align-items: center;
         justify-content: center;
         background-color: ${props => (props.active ? secondColor : 'transparent')};
-        border: 1px solid ${props => (props.active ? secondColor : fontGray)};
+        border: 1px solid ${props => (props.active ? secondColor : fontGrey)};
         font-size: 0.875rem;
-        ${props => props.done && `background-color: ${fontGray}; border: none;`}
+        ${props => props.done && `background-color: ${fontGrey}; border: none;`}
     }
 
     img {

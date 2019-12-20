@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 import InputField from '../../components/inputField';
-import { fontWhite, fontGray, bgDark } from '../../widgets/styleGuid';
+import { fontWhite, fontGrey, bgDark } from '../../widgets/styleGuid';
 import { WGmainButton } from '../../widgets/button';
 
 const SCbasic = styled.div`
@@ -49,7 +49,7 @@ const SCshowOption = styled.div`
     align-items: center;
 
     input {
-        background-color: ${fontGray};
+        background-color: ${fontGrey};
         margin-right: 0.5rem;
         height: 1rem;
         width: 1rem;
@@ -59,7 +59,7 @@ const SCshowOption = styled.div`
 const SCupload = styled.label`
     display: flex;
     flex-direction: column;
-    color: ${fontGray};
+    color: ${fontGrey};
     font-size: 0.75rem;
     width: 150px;
     height: 150px;

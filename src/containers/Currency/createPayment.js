@@ -1,12 +1,45 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
+import styled from 'styled-components';
 
-import { WGmainButton } from '../../widgets/button';
-import { getPaymentToken } from '../../utils/api';
+import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
+import { getPaymentToken, payment } from '../../utils/api';
+import { bgLight, fontWhite } from '../../widgets/styleGuid';
+import { CREATE } from '../../constants/currency';
 
-const CreatePayment = ({ orderID, show }) => {
-    let submitEl = null;
+const SCpay = styled.div`
+    .braintree-heading {
+        color: ${fontWhite};
+    }
+
+    min-height: 100px;
+
+    & + div {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 62px;
+    } 
+`;
+
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        transform: 'translate(-50%, -50%)',
+        width: '672px',
+        backgroundColor: bgLight,
+        border: 0
+    },
+    overlay: { backgroundColor: 'rgba(0, 0, 0, .62)' }
+};
+
+Modal.setAppElement('#__next');
+
+const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
+    const [submitEl, setSubmitEl] = useState(null);
 
     useEffect(() => {
         if (orderID) {
@@ -25,8 +58,7 @@ const CreatePayment = ({ orderID, show }) => {
                     // });
                 })
                 .then((instance) => {
-                    console.log(instance, orderID);
-                    submitEl = instance;
+                    setSubmitEl(instance);
                 })
                 .catch(err => {
                     console.error(err);
@@ -37,23 +69,45 @@ const CreatePayment = ({ orderID, show }) => {
     const handleSubmit = () => {
         if (!submitEl) return;
 
-        submitEl.requestPaymentMethod(function (err, payload) {
-            console.log('payload:', payload);
-            // Submit payload.nonce to your server
+        submitEl.requestPaymentMethod((err, payload) => {
+            if (err) {
+                return console.error(err);
+            }
+            console.log('braintree payload', payload);
+            const { nonce, details, type } = payload;
+
+            payment({
+                nonce,
+                orderID,
+                type: CREATE
+            })
+                .then(({ success }) => {
+                    if (success) {
+                        paymentCallback({ lastFour: details.lastFour, type });
+                    }
+                })
+                .catch(e => console.error(e));
         });
     };
 
     return (
         <Modal
             isOpen={show}
+            style={
+                customStyles
+            }
         >
-            <div id="dropin-container">
+            <SCpay id="dropin-container" />
 
+            <div>
+                <WGsecondaryButton onClick={cancel} style={{ maxWidth: 120, border: 0 }}>
+                    取消
+                </WGsecondaryButton>
+
+                <WGmainButton onClick={handleSubmit} style={{ maxWidth: 120 }}>
+                    確認付款
+                </WGmainButton>
             </div>
-
-            <WGmainButton onClick={handleSubmit}>
-                確認付款
-            </WGmainButton>
         </Modal>
     );
 };
@@ -64,7 +118,9 @@ CreatePayment.defaultProps = {
 
 CreatePayment.propTypes = {
     orderID: PropTypes.string,
-    show: PropTypes.bool.isRequired
+    show: PropTypes.bool.isRequired,
+    paymentCallback: PropTypes.func.isRequired,
+    cancel: PropTypes.func.isRequired
 };
 
 export default CreatePayment;

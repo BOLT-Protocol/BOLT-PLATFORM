@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { fontWhite, errorRed, fontGray } from './styleGuid';
+import { fontWhite, errorRed, fontGrey } from './styleGuid';
 
 export const WGmainP = styled.p`
     font-size: 0.875rem;
@@ -12,6 +12,6 @@ export const WGerrorP = styled.p`
 `;
 
 export const WGhintP = styled.p`
-    color: ${fontGray};
+    color: ${fontGrey};
     font-size: 0.75rem;
 `;

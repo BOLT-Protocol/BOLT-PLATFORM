@@ -9,7 +9,7 @@ export const bgHeader = 'rgba(0, 0, 0, .49)';
 
 export const fontBlack = '#4a4a4a';
 export const fontWhite = '#fff';
-export const fontGray = '#9b9b9b';
+export const fontGrey = '#9b9b9b';
 
 export const errorRed = '#ff001f';
 

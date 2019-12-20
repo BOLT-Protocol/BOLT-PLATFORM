@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import CURRENCY from '../../constants/currency';
+import { fontGrey } from '../../widgets/styleGuid';
 
 const items = [
     {
@@ -31,9 +32,10 @@ const items = [
     }
 ];
 
-export const SCoverview = styled.div`
+const SCoverview = styled.div`
     display: flex;
     width: 100%;
+    padding-right: 40px;
 
     > div {
         flex: 6;
@@ -62,8 +64,27 @@ export const SCoverview = styled.div`
     }
 `;
 
+const SCpayment = styled.div`
+    border-top: 1px solid ${fontGrey};
+    padding-top: 10px;
+
+    p {
+        color: #f8e71c;
+        margin-left: auto;
+    }
+
+    ul {
+        display: flex;
+        flex-direction: column;
+
+        li {
+            margin-bottom: 20px;
+        }
+    }
+`;
+
 const Overview = (props) => {
-    const { image } = props;
+    const { image, payment } = props;
     return (
         <SCoverview>
             <div>
@@ -82,6 +103,27 @@ const Overview = (props) => {
                     </div>
                 ))}
 
+                <SCpayment>
+                    {
+                        payment.type ? (
+                            <ul>
+                                <li>
+                                    付款方式：{payment.type}
+                                </li>
+
+                                <li>
+                                    卡號：**** **** **** {payment.cardNumber.pa}
+                                </li>
+
+                                <li>
+                                    付款金額 ({payment.unit})：{payment.cost.toLocaleString()} 元
+                                </li>
+                            </ul>
+                        ) : (
+                            <p>應付總額 ({payment.unit})：${payment.cost.toLocaleString()} 元</p>
+                        )
+                    }
+                </SCpayment>
             </div>
 
         </SCoverview>
@@ -89,7 +131,8 @@ const Overview = (props) => {
 };
 
 Overview.propTypes = {
-    image: PropTypes.string.isRequired
+    image: PropTypes.string.isRequired,
+    payment: PropTypes.object.isRequired
 };
 
 export default Overview;
