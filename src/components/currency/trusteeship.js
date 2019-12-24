@@ -24,7 +24,7 @@ const SCtrust = styled.div`
         justify-content: space-between;
         height: 40px;
 
-        > button {
+        button {
             width: 100px;
             font-size: .75rem;
         }
@@ -90,7 +90,9 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source }) =
                 我的 {token} Token
 
                 <Link href="/createCurrency">
-                    <WGmainButton>新增Token</WGmainButton>
+                    <a>
+                        <WGmainButton>新增Token</WGmainButton>
+                    </a>
                 </Link>
             </h2>
 
@@ -148,11 +150,10 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source }) =
                             <WGmainButton>增發</WGmainButton>
                         </SCbuttonField>
                     </div>
-                ) : (
-                    <SCempty>
-                            您目前無任何 Token
-                    </SCempty>
-                )
+                ) :
+                    (
+                        <SCempty>您目前無任何 Token</SCempty>
+                    )
             }
         </SCtrust>
     );

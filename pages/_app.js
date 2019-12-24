@@ -3,6 +3,7 @@ import React from 'react';
 import withRedux from 'next-redux-wrapper';
 import { Provider } from 'react-redux';
 import { createGlobalStyle } from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
 
 import createStore from '../src/store/configureStore';
 import Layout from '../src/components/layout';

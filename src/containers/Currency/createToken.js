@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import produce from 'immer';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCstepControl, SCfinishField } from './style';
 import Overview from './overview';
 import CreateProgram from './createProgram';
 import CreatData from './createData';
 import CreatePayment from './createPayment';
+import Loading from '../../components/loading';
 import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
@@ -88,7 +88,8 @@ class CreateToken extends Component {
                 cost: 0,// 花費
                 unit: '新台幣', // 幣種
                 cardNumber: '' // 卡號
-            }
+            },
+            loading: false
         };
 
         this.steps = ['選擇發幣方式', '填寫基本資訊', '總覽', '填寫付款資訊', '完成'];
@@ -200,33 +201,57 @@ class CreateToken extends Component {
                 return toast.error('請上傳圖片');
             }
 
-            getCost(inputs[CURRENCY.AMOUNT].value)
-                .then(({ data }) => {
-                    this.setState(produce(draft => {
-                        draft.payment.cost = parseFloat(data.cost, 10);
-                    }), () => {
-                        this.goNext();
-                    });
-                });
-        } else if (step === 3) {
-            this.sendToken(inputs)
-                .then(({ data, success, message }) => {
-                    if (!success) {
-                        return console.error(message);
-                    }
-                    const { orderID } = data;
-                    this.setState(produce(draft => {
-                        draft.orderID = orderID;
-                    }));
-                    this.goNext();
+            const { start, end } = this.loading();
 
-                    this.toggleModal();
-                })
-                .catch(err => console.error(err));
+            start(
+                () => getCost(inputs[CURRENCY.AMOUNT].value)
+                    .then(({ data }) => {
+                        this.setState(produce(draft => {
+                            draft.payment.cost = parseFloat(data.cost, 10);
+                        }), () => {
+                            this.goNext();
+                            end();
+                        });
+                    })
+            );
+        } else if (step === 3) {
+            const { start, end } = this.loading();
+
+            start(
+                () => this.sendToken(inputs)
+                    .then(({ data, success, message }) => {
+                        if (!success) {
+                            console.error(message);
+                            return end();
+                        }
+                        const { orderID } = data;
+                        this.setState(produce(draft => {
+                            draft.orderID = orderID;
+                        }));
+                        this.goNext();
+
+                        this.toggleModal();
+
+                        end();
+                    })
+            );
         } else {
             this.goNext();
         }
     };
+
+    loading = () => ({
+        start: (func) => {
+            this.setState(produce(draft => {
+                draft.loading = true;
+            }), () => func());
+        },
+        end: () => {
+            this.setState(produce(draft => {
+                draft.loading = false;
+            }));
+        }
+    })
 
     paymentCallback = ({
         lastFour,
@@ -330,7 +355,7 @@ class CreateToken extends Component {
     }
 
     render() {
-        const { step, showModal, orderID } = this.state;
+        const { step, showModal, orderID, loading } = this.state;
         return (
             <SCcontainer>
                 <SCmessage>BOLT Currency 提供了數字貨幣發行與管理功能，每個用户可在BOLTCHAIN發行多次通證。除了通過BOLTCHAIN直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到BOLTCHAIN系統上，以享有BOLT scaling system帶來的強大效能與便利性。</SCmessage>
@@ -362,6 +387,7 @@ class CreateToken extends Component {
                     {step === 5 && <SCfinishField>付款完成，您可開始使用您的 BC Token<WGmainButton onClick={this.nextStep}>開始使用</WGmainButton></SCfinishField>}
                 </SCstepControl>
 
+                <Loading show={loading} />
             </SCcontainer>
         );
     }

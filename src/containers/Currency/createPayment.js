@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
+import Loading from '../../components/loading';
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { getPaymentToken, payment } from '../../utils/api';
 import { bgLight, fontWhite } from '../../widgets/styleGuid';
@@ -40,6 +41,7 @@ Modal.setAppElement('#__next');
 
 const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
     const [submitEl, setSubmitEl] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (orderID) {
@@ -69,8 +71,10 @@ const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
     const handleSubmit = () => {
         if (!submitEl) return;
 
+        setLoading(true);
         submitEl.requestPaymentMethod((err, payload) => {
             if (err) {
+                setLoading(false);
                 return console.error(err);
             }
             console.log('braintree payload', payload);
@@ -85,30 +89,33 @@ const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
                     if (success) {
                         paymentCallback({ lastFour: details.lastFour, type });
                     }
-                })
-                .catch(e => console.error(e));
+                    setLoading(false);
+                });
         });
     };
 
     return (
-        <Modal
-            isOpen={show}
-            style={
-                customStyles
-            }
-        >
-            <SCpay id="dropin-container" />
+        <>
+            <Modal
+                isOpen={show}
+                style={
+                    customStyles
+                }
+            >
+                <SCpay id="dropin-container" />
 
-            <div>
-                <WGsecondaryButton onClick={cancel} style={{ maxWidth: 120, border: 0 }}>
-                    取消
-                </WGsecondaryButton>
+                <div>
+                    <WGsecondaryButton onClick={cancel} style={{ maxWidth: 120, border: 0 }}>
+                        取消
+                    </WGsecondaryButton>
 
-                <WGmainButton onClick={handleSubmit} style={{ maxWidth: 120 }}>
-                    確認付款
-                </WGmainButton>
-            </div>
-        </Modal>
+                    <WGmainButton onClick={handleSubmit} style={{ maxWidth: 120 }}>
+                        確認付款
+                    </WGmainButton>
+                </div>
+            </Modal>
+            <Loading show={loading} type="payment" />
+        </>
     );
 };
 
