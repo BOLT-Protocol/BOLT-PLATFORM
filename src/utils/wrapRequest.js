@@ -11,6 +11,7 @@ class WrapRequest {
     constructor() {
         const cookie = new Cookies();
         const token = cookie.get('boltToken');
+        this.tokenSecret = cookie.get('boltSecret');
 
         this.setHeaders({
             token
@@ -26,6 +27,8 @@ class WrapRequest {
         return this;
     }
 
+    renewToken = () => this.request('/renewToken', 'POST')({ tokenSecret: this.tokenSecret });
+
     request = (url, method = 'GET', customHeaders = {}) => (body = {}) => {
         const axiosInstance = axios.create({
             headers: {
@@ -35,10 +38,28 @@ class WrapRequest {
         });
 
         return new Promise(resolve => {
-            return axiosInstance
-                [method.toLowerCase()](`${serverUrl}${url}`, body)
+            const call = axiosInstance[method.toLowerCase()](`${serverUrl}${url}`, body);
+
+            return call
                 .then(({ data }) => resolve(data))
                 .catch(e => {
+                    if (e.code === '00003') {
+                        this.renewToken()
+                            .then(({ success, data }) => {
+                                if (success) {
+                                    const { token, tokenSecret } = data;
+                                    const cookie = new Cookies();
+                                    cookie.set('boltToken', token, { path: '/' });
+                                    cookie.set('boltSecret', tokenSecret, { path: '/' });
+
+                                    this.setHeaders({
+                                        token
+                                    });
+                                    return call.then(({ data: newData }) => resolve(newData));
+                                }
+                            })
+                            .catch(error => console.error(error));
+                    }
                     resolve({
                         data: {
                             message: e.message

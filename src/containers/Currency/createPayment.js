@@ -2,16 +2,33 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import styled from 'styled-components';
+import { toast } from 'react-toastify';
 
 import Loading from '../../components/loading';
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { getPaymentToken, payment } from '../../utils/api';
 import { bgLight, fontWhite } from '../../widgets/styleGuid';
 import { CREATE } from '../../constants/currency';
+import { TOAST_OPTIONS } from '../../utils/toast';
 
 const SCpay = styled.div`
     .braintree-heading {
         color: ${fontWhite};
+    }
+
+    .braintree-method {
+        background-color: ${bgLight};
+        color: ${fontWhite};
+    }
+
+    .braintree-methods {
+        background-color: ${bgLight};
+        color: ${fontWhite};
+    }
+
+    .braintree-card {
+        background-color: ${bgLight};
+        border: 0;
     }
 
     min-height: 100px;
@@ -38,6 +55,8 @@ const customStyles = {
 };
 
 Modal.setAppElement('#__next');
+
+toast.configure(TOAST_OPTIONS);
 
 const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
     const [submitEl, setSubmitEl] = useState(null);
@@ -85,9 +104,12 @@ const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
                 orderID,
                 type: CREATE
             })
-                .then(({ success }) => {
+                .then(({ success, message }) => {
                     if (success) {
                         paymentCallback({ lastFour: details.lastFour, type });
+                    } else {
+                        toast.error(message);
+                        cancel();
                     }
                     setLoading(false);
                 });

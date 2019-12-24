@@ -239,28 +239,6 @@ export const verifyToken = token => {
     });
 };
 
-export const renewToken = ({ token, tokenSecret }) => {
-    const axiosInstance = axios.create({
-        headers: {
-            token
-        }
-    });
-    return new Promise(resolve => {
-        return axiosInstance
-            .post(`${serverUrl}/renewToken`, {
-                tokenSecret
-            })
-            .then(res => resolve(res))
-            .catch(e => {
-                resolve({
-                    data: {
-                        message: e.message
-                    }
-                });
-            });
-    });
-};
-
 export const destroyToken = ({ token, tokenSecret }) => {
     const axiosInstance = axios.create({
         headers: {
