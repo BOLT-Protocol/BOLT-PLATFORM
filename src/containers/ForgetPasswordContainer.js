@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-case-declarations */
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Link from 'next/link';
 

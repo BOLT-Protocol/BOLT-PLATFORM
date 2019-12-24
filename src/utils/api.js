@@ -1,5 +1,9 @@
 import axios from 'axios';
+
 import { serverUrl } from '../constants/config';
+import agent from "./wrapRequest";
+
+// TODO refactor axios to wrapRequest
 
 // GetCountryCodes
 export const getCountryCodes = () => {
@@ -278,3 +282,19 @@ export const destroyToken = ({ token, tokenSecret }) => {
             });
     });
 };
+
+export const createFund = agent.request('/fund/create', 'POST');
+
+export const escrowFund = agent.request('/fund/escrow', 'POST');
+
+export const checkAddress = address => agent.request(`/check/contractAddress/${address}`)();
+
+export const getUserCard = agent.request('/user/card');
+
+export const getBalance = address => agent.request(`/user/address?currencyAddress${address}`);
+
+export const getPaymentToken = agent.request('/payment/token');
+
+export const payment = agent.request('/payment', 'POST');
+
+export const getCost = totalSupply => agent.request(`/payment/cost?totalSupply=${totalSupply}`)();

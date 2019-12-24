@@ -12,5 +12,8 @@
     "prettier.proseWrap": "always",
     "[javascript]": {
         "editor.formatOnSave": true
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
     }
 }
