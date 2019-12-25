@@ -296,7 +296,6 @@ class CreateToken extends Component {
         if (program === 1) {
             return createFund(body);
         } else {
-            // TODO
             return escrowFund(body);
         }
     }

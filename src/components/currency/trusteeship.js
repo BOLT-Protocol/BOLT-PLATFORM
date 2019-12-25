@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { bgLight, bgHeader } from '../../widgets/styleGuid';
+import { WGsecondarySelect } from '../../widgets/select';
 
 const SCtrust = styled.div`
     display: flex;
@@ -50,6 +51,8 @@ const SClist = styled.div`
             width: 60px;
             text-align: right;
             margin-right: 12px;
+            display: flex;
+            align-items: center;
         }
 
         &:last-child {
@@ -104,13 +107,13 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source }) =
                                 幣別
                             </div>
 
-                            <select name="token" id="tokenList">
+                            <WGsecondarySelect name="token" id="tokenList">
                                 {
                                     tokenList.map(tk => (
                                         <option key={tk.address} value={tk.address}>{tk.name}</option>
                                     ))
                                 }
-                            </select>
+                            </WGsecondarySelect>
                         </SClist>
 
                         <SClist>
