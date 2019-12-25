@@ -16,7 +16,7 @@ const SCpay = styled.div`
         color: ${fontWhite};
     }
 
-    .braintree-method {
+    /* .braintree-method {
         background-color: ${bgLight};
         color: ${fontWhite};
     }
@@ -29,7 +29,7 @@ const SCpay = styled.div`
     .braintree-card {
         background-color: ${bgLight};
         border: 0;
-    }
+    } */
 
     min-height: 100px;
 

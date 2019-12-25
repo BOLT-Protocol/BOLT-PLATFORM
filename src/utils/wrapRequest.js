@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'universal-cookie';
+import Router from 'next/router';
 
 import { serverUrl } from '../constants/config';
 
@@ -41,14 +42,14 @@ class WrapRequest {
             const call = axiosInstance[method.toLowerCase()](`${serverUrl}${url}`, body);
 
             return call
-                .then(({ data }) => resolve(data))
-                .catch(e => {
-                    if (e.code === '00003') {
+                .then(({ data }) => {
+                    if (data.code === '00116') {
+                        const cookie = new Cookies();
+
                         this.renewToken()
-                            .then(({ success, data }) => {
+                            .then(({ success, data: tokenData }) => {
                                 if (success) {
-                                    const { token, tokenSecret } = data;
-                                    const cookie = new Cookies();
+                                    const { token, tokenSecret } = tokenData;
                                     cookie.set('boltToken', token, { path: '/' });
                                     cookie.set('boltSecret', tokenSecret, { path: '/' });
 
@@ -56,10 +57,18 @@ class WrapRequest {
                                         token
                                     });
                                     return call.then(({ data: newData }) => resolve(newData));
+                                } else {
+                                    cookie.remove('boltToken');
+                                    cookie.remove('boltSecret');
+
+                                    Router.replace('/signin');
                                 }
                             })
                             .catch(error => console.error(error));
                     }
+                    resolve(data);
+                })
+                .catch(e => {
                     resolve({
                         data: {
                             message: e.message
