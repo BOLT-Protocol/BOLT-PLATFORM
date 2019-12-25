@@ -13,7 +13,7 @@ import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
 import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
-import { createFund, checkAddress, getCost, escrowFund } from '../../utils/api';
+import { createFund, checkAddress, getCost, escrowFund, checkCurrencyName, checkCurrencySymbol } from '../../utils/api';
 import { TOAST_OPTIONS } from '../../utils/toast';
 import authGuard from '../../utils/auth';
 
@@ -202,15 +202,35 @@ class CreateToken extends Component {
 
             const { start, end } = this.loading();
 
+            const checkPromise = Promise.all([checkCurrencyName(inputs[CURRENCY.NAME].value), checkCurrencySymbol(inputs[CURRENCY.SYMBOL].value)]);
+
             start(
-                () => getCost(inputs[CURRENCY.AMOUNT].value)
-                    .then(({ data }) => {
-                        this.setState(produce(draft => {
-                            draft.payment.cost = parseFloat(data.cost, 10);
-                        }), () => {
-                            this.goNext();
+                () => checkPromise
+                    .then(([nameRes, symbolRes]) => {
+
+                        if (!nameRes.success) {
+                            toast.error('名稱已被使用');
+                        }
+
+                        if (!symbolRes.success) {
+                            toast.error('縮寫已被使用');
+                        }
+
+                        if (!nameRes.success || !symbolRes.success) return Promise.resolve({ success: false });
+
+                        return getCost(inputs[CURRENCY.AMOUNT].value);
+                    })
+                    .then(({ data, success }) => {
+                        if (success) {
+                            this.setState(produce(draft => {
+                                draft.payment.cost = parseFloat(data.cost, 10);
+                            }), () => {
+                                this.goNext();
+                                end();
+                            });
+                        } else {
                             end();
-                        });
+                        }
                     })
             );
         } else if (step === 3) {
