@@ -276,3 +276,7 @@ export const getPaymentToken = agent.request('/payment/token');
 export const payment = agent.request('/payment', 'POST');
 
 export const getCost = totalSupply => agent.request(`/payment/cost?totalSupply=${totalSupply}`)();
+
+export const getCurrencyList = agent.request('/user/symbols');
+
+export const getSymbol = symbol => agent.request(`/user/token/${symbol}`)();

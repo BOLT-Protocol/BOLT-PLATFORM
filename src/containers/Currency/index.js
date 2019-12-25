@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { SCcontainer, SCmessage, SCmain, SCcardHolder, SCuserField } from './style';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
+import { SCcontainer, SCmessage, SCmain, SCcardHolder, SCuserField } from './style';
 import CurrencyCard from '../../components/currency/currencyCard';
 import Wallet from '../../components/currency/wallet';
 import TrusteeShip from '../../components/currency/trusteeship';
 import { getUserCard } from '../../utils/api';
+import { getCurrencyList } from '../../actions/currency';
 
 const tokens = [
     {
@@ -20,12 +23,13 @@ const user = {
     userName: 'Paul'
 };
 
-const Currency = () => {
+const Currency = ({ fetchList }) => {
 
     const [selectedToken, setSelectedToken] = useState(null);
 
     useEffect(() => {
         setSelectedToken(tokens[0]);
+        fetchList();
     }, []);
 
     return (
@@ -72,12 +76,23 @@ const Currency = () => {
 };
 
 Currency.getInitialProps = async () => {
-    const res = await getUserCard();
-    console.log(res);
+    const card = await getUserCard();
+    console.log(card);
     return {
         namespacesRequired: []
     };
 };
 
+Currency.propTypes = {
+    fetchList: PropTypes.func.isRequired
+};
 
-export default Currency;
+const mapStateToProps = state => ({
+    list: state.currency.currencyList
+});
+
+const mapDispatchToProps = {
+    fetchList: getCurrencyList
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Currency);

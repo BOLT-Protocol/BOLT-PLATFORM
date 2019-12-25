@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import produce from 'immer';
 import { toast } from 'react-toastify';
+import Router from 'next/router';
 
 import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCstepControl, SCfinishField } from './style';
 import Overview from './overview';
@@ -12,7 +13,7 @@ import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
 import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
-import { createFund, checkAddress, getCost } from '../../utils/api';
+import { createFund, checkAddress, getCost, escrowFund } from '../../utils/api';
 import { TOAST_OPTIONS } from '../../utils/toast';
 import authGuard from '../../utils/auth';
 
@@ -108,11 +109,9 @@ class CreateToken extends Component {
             }
 
             // TODO check api
-            checkAddress(/^0x/.test(address) ? address : `0x${address}`).then(res => {
-                console.log(res);
+            checkAddress(/^0x/.test(address) ? address : `0x${address}`).then(({ success }) => {
+                resolve(success);
             });
-
-            return true;
         });
     }
 
@@ -267,6 +266,7 @@ class CreateToken extends Component {
         }));
 
         this.nextStep();
+
     }
 
     cancelPayment = () => {
@@ -297,9 +297,8 @@ class CreateToken extends Component {
             return createFund(body);
         } else {
             // TODO
+            return escrowFund(body);
         }
-
-        return Promise.resolve({});
     }
 
     renderStep() {
@@ -355,7 +354,9 @@ class CreateToken extends Component {
     }
 
     render() {
-        const { step, showModal, orderID, loading } = this.state;
+        const { step, showModal, orderID, loading, program, newInfo, existInfo } = this.state;
+        const symbol = (program === 1 ? newInfo : existInfo)[CURRENCY.SYMBOL].value;
+
         return (
             <SCcontainer>
                 <SCmessage>BOLT Currency 提供了數字貨幣發行與管理功能，每個用户可在BOLTCHAIN發行多次通證。除了通過BOLTCHAIN直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到BOLTCHAIN系統上，以享有BOLT scaling system帶來的強大效能與便利性。</SCmessage>
@@ -384,7 +385,7 @@ class CreateToken extends Component {
                     {(step === 1 || step === 2) && <WGmainButton onClick={this.nextStep}>完成並下一步</WGmainButton>}
 
                     {step === 3 && <WGmainButton onClick={this.nextStep}>前往付款</WGmainButton>}
-                    {step === 5 && <SCfinishField>付款完成，您可開始使用您的 BC Token<WGmainButton onClick={this.nextStep}>開始使用</WGmainButton></SCfinishField>}
+                    {step === 5 && <SCfinishField>付款完成，您可開始使用您的 {symbol} Token<WGmainButton onClick={() => Router.replace('/currency')}>開始使用</WGmainButton></SCfinishField>}
                 </SCstepControl>
 
                 <Loading show={loading} />

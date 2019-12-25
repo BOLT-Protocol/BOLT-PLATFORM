@@ -6,7 +6,7 @@ const initialState = {
     isAuth: false,
     error: null,
     userID: '',
-    address: ''
+    address: '',
 };
 
 const user = (state = initialState, action = {}) => {
