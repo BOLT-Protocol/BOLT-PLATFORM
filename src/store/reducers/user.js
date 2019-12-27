@@ -6,7 +6,11 @@ const initialState = {
     isAuth: false,
     error: null,
     userID: '',
-    address: ''
+    address: '',
+    language: '',
+    email: '',
+    userName: '',
+    phone: ''
 };
 
 const user = (state = initialState, action = {}) => {
@@ -32,6 +36,14 @@ const user = (state = initialState, action = {}) => {
                 draft.token = '';
                 draft.isAuth = false;
                 draft.error = action.error;
+                break;
+            case types.USER_PROFILE_SUCCESS:
+                const { email, language, phone, userName, address } = action.payload;
+                draft.email = email;
+                draft.language = language;
+                draft.phone = phone;
+                draft.userName = userName;
+                draft.address = address;
                 break;
             default:
                 return state;

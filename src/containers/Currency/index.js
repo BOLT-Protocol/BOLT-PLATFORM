@@ -1,32 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { SCcontainer, SCmessage, SCmain, SCcardHolder, SCuserField } from './style';
+import React, { useState, useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
+import { SCcontainer, SCmessage, SCmain, SCcardHolder, SCuserField } from './style';
 import CurrencyCard from '../../components/currency/currencyCard';
 import Wallet from '../../components/currency/wallet';
 import TrusteeShip from '../../components/currency/trusteeship';
-import { getUserCard } from '../../utils/api';
+import Loading from '../../components/loading';
+// import { getUserCard } from '../../utils/api';
+import { getCurrencyList$, cancelCurrencyList$ } from '../../actions/currency';
 
-const tokens = [
-    {
-        address: '0x'.padEnd(42, 0),
-        name: 'ETH',
-        publishAmount: 2000,
-        remainAmount: 2000
-    }
-];
 
-const user = {
-    walletAddress: '123',
-    userName: 'Paul'
-};
-
-const Currency = () => {
-
+const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress }) => {
     const [selectedToken, setSelectedToken] = useState(null);
+    const isInitialMount = useRef(true); // 用來確認 didmount 執行
 
     useEffect(() => {
-        setSelectedToken(tokens[0]);
-    }, []);
+        if (isInitialMount.current) { // didmount
+            isInitialMount.current = false;
+            fetchList();
+
+            if (list.length > 0) {
+                setSelectedToken(list[0]);
+            }
+        } else { // didupdate
+            // Your useEffect code here to be run on update
+            // eslint-disable-next-line no-lonely-if
+            if (!selectedToken) {
+                setSelectedToken(list[0]);
+            }
+        }
+
+        return () => { cancelFetch(); };
+    }, [list]);
 
     return (
 
@@ -35,12 +41,14 @@ const Currency = () => {
 
             <SCmain style={{ flexDirection: 'column' }}>
                 <SCcardHolder>
-                    {tokens.map(token => (
+                    {list.map((token, index) => (
                         <CurrencyCard
-                            key={token.address}
-                            publish={token.publishAmount}
-                            remain={token.remainAmount}
-                            name={token.name}
+                            key={token.currencyAddress}
+                            publish={token.totalSupply}
+                            remain={token.balance}
+                            symbol={token.symbol}
+                            imgUrl={token.logo}
+                            onSelect={() => setSelectedToken(list[index])}
                         />
                     ))}
                 </SCcardHolder>
@@ -49,22 +57,25 @@ const Currency = () => {
                     {
                         selectedToken && (
                             <Wallet
-                                token={selectedToken.name}
-                                address={user.walletAddress}
-                                userName={user.userName}
-                                amount={selectedToken.remainAmount}
+                                token={selectedToken.symbol}
+                                address={userAddress}
+                                userName={userName}
+                                amount={selectedToken.balance}
                             />
                         )
                     }
 
                     <TrusteeShip
-                        token={selectedToken ? selectedToken.name : ""}
-                        tokenList={tokens}
-                        publishAmount={2000}
-                        publishType="託管發行"
-                        source="Ethereum"
+                        token={selectedToken ? selectedToken.symbol : ""}
+                        tokenList={list}
+                        publishAmount={selectedToken ? selectedToken.totalSupply : 0}
+                        publishType={selectedToken ? selectedToken.type : ''}
+                        source={selectedToken ? selectedToken.coinSource : ''}
+                        onSelect={setSelectedToken}
                     />
                 </SCuserField>
+
+                <Loading show={loading} />
             </SCmain>
         </SCcontainer>
     );
@@ -72,12 +83,32 @@ const Currency = () => {
 };
 
 Currency.getInitialProps = async () => {
-    const res = await getUserCard();
-    console.log(res);
+    // const card = await getUserCard();
+    // console.log(card);
     return {
         namespacesRequired: []
     };
 };
 
+Currency.propTypes = {
+    fetchList: PropTypes.func.isRequired,
+    cancelFetch: PropTypes.func.isRequired,
+    list: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired,
+    userName: PropTypes.string.isRequired,
+    userAddress: PropTypes.string.isRequired
+};
 
-export default Currency;
+const mapStateToProps = state => ({
+    list: state.currency.currencyList,
+    loading: state.currency.loading,
+    userAddress: state.user.address,
+    userName: state.user.userName
+});
+
+const mapDispatchToProps = {
+    fetchList: getCurrencyList$,
+    cancelFetch: cancelCurrencyList$
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Currency);

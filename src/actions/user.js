@@ -68,3 +68,17 @@ export const renewToken = data => ({
     type: types.USER_RENEW_TOKEN,
     data
 });
+
+export const fetchProfile$ = () => ({
+    type: types.USER_PROFILE_FETCH
+});
+
+export const fetchProfileSuccess = payload => ({
+    type: types.USER_PROFILE_SUCCESS,
+    payload
+});
+
+export const fetchProfileFail = () => ({
+    type: types.USER_PROFILE_FAIL
+});
+

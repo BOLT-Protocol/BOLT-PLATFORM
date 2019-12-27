@@ -36,6 +36,7 @@ const SCoverview = styled.div`
     display: flex;
     width: 100%;
     padding-right: 40px;
+    padding-top: 43px;
 
     > div {
         flex: 6;
@@ -112,16 +113,17 @@ const Overview = (props) => {
                                 </li>
 
                                 <li>
-                                    卡號：**** **** **** {payment.cardNumber.pa}
+                                    卡號：**** **** **** {payment.cardNumber}
                                 </li>
 
                                 <li>
                                     付款金額 ({payment.unit})：{payment.cost.toLocaleString()} 元
                                 </li>
                             </ul>
-                        ) : (
-                            <p>應付總額 ({payment.unit})：${payment.cost.toLocaleString()} 元</p>
-                        )
+                        ) :
+                            (
+                                <p>應付總額 ({payment.unit})：${payment.cost.toLocaleString()} 元</p>
+                            )
                     }
                 </SCpayment>
             </div>

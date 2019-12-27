@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { bgLight, bgHeader } from '../../widgets/styleGuid';
+import { WGsecondarySelect } from '../../widgets/select';
 
 const SCtrust = styled.div`
     display: flex;
@@ -50,6 +51,8 @@ const SClist = styled.div`
             width: 60px;
             text-align: right;
             margin-right: 12px;
+            display: flex;
+            align-items: center;
         }
 
         &:last-child {
@@ -83,7 +86,14 @@ const SCempty = styled.div`
     align-items: center;
 `;
 
-const Trusteeship = ({ token, tokenList, publishAmount, publishType, source }) => {
+const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onSelect }) => {
+    const handleSelect = (e) => {
+        const { value } = e.target;
+        const tk = tokenList.find(_token => _token.currencyAddress === value);
+
+        onSelect(tk);
+    };
+
     return (
         <SCtrust>
             <h2>
@@ -104,13 +114,13 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source }) =
                                 幣別
                             </div>
 
-                            <select name="token" id="tokenList">
+                            <WGsecondarySelect name="token" id="tokenList" onChange={handleSelect}>
                                 {
                                     tokenList.map(tk => (
-                                        <option key={tk.address} value={tk.address}>{tk.name}</option>
+                                        <option key={tk.currencyAddress} value={tk.currencyAddress}>{tk.symbol}</option>
                                     ))
                                 }
-                            </select>
+                            </WGsecondarySelect>
                         </SClist>
 
                         <SClist>
@@ -164,7 +174,8 @@ Trusteeship.propTypes = {
     tokenList: PropTypes.array.isRequired,
     publishAmount: PropTypes.number.isRequired,
     publishType: PropTypes.string.isRequired,
-    source: PropTypes.string.isRequired
+    source: PropTypes.string.isRequired,
+    onSelect: PropTypes.func.isRequired
 };
 
 export default Trusteeship;
