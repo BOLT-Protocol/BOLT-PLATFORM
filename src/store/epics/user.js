@@ -19,6 +19,7 @@ import {
     createToken,
     loginPhone,
     loginEmail,
+    getUserProfile
 } from '../../utils/api';
 
 const cookie = new Cookies();
@@ -157,9 +158,21 @@ const loginPhoneEpic = action$ =>
         })
     );
 
+const profileEpic = action$ =>
+    action$.pipe(
+        ofType(types.USER_PROFILE_FETCH),
+        switchMap(() => from(getUserProfile())),
+        map(res => actions.fetchProfileSuccess(res.data)),
+        catchError((err, obs) => {
+            console.error('Epic', err);
+            return obs;
+        })
+    );
+
 export default [
     registerEmailEpic,
     registerPhoneEpic,
     loginEmailEpic,
     loginPhoneEpic,
+    profileEpic
 ];

@@ -31,6 +31,7 @@ const currrncyListEpic = action$ =>
         ))
     );
 
+
 export default [
     currrncyListEpic
 ];

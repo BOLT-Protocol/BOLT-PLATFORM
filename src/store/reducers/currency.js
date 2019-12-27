@@ -4,7 +4,6 @@ import * as types from '../../constants/actionTypes/currency';
 
 const initialState = {
     currencyList: [],
-    walletAddress: '',
     loading: false,
     error: null
 };
@@ -24,6 +23,10 @@ const currency = (state = initialState, action = {}) => {
                 draft.currencyList = [];
                 draft.loading = false;
                 draft.error = action.payload;
+                break;
+            case types.CURRENCY_LIST_CANCEL:
+                draft.loading = false;
+                draft.error = null;
                 break;
             default:
                 return state;

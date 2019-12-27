@@ -6,16 +6,12 @@ import { SCcontainer, SCmessage, SCmain, SCcardHolder, SCuserField } from './sty
 import CurrencyCard from '../../components/currency/currencyCard';
 import Wallet from '../../components/currency/wallet';
 import TrusteeShip from '../../components/currency/trusteeship';
-import { getUserCard } from '../../utils/api';
-import { getCurrencyList } from '../../actions/currency';
+import Loading from '../../components/loading';
+// import { getUserCard } from '../../utils/api';
+import { getCurrencyList$, cancelCurrencyList$ } from '../../actions/currency';
 
-const user = {
-    walletAddress: '123',
-    userName: 'Paul'
-};
 
-const Currency = ({ fetchList, list }) => {
-
+const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress }) => {
     const [selectedToken, setSelectedToken] = useState(null);
     const isInitialMount = useRef(true); // 用來確認 didmount 執行
 
@@ -23,6 +19,10 @@ const Currency = ({ fetchList, list }) => {
         if (isInitialMount.current) { // didmount
             isInitialMount.current = false;
             fetchList();
+
+            if (list.length > 0) {
+                setSelectedToken(list[0]);
+            }
         } else { // didupdate
             // Your useEffect code here to be run on update
             // eslint-disable-next-line no-lonely-if
@@ -31,7 +31,7 @@ const Currency = ({ fetchList, list }) => {
             }
         }
 
-        return () => { };
+        return () => { cancelFetch(); };
     }, [list]);
 
     return (
@@ -58,8 +58,8 @@ const Currency = ({ fetchList, list }) => {
                         selectedToken && (
                             <Wallet
                                 token={selectedToken.symbol}
-                                address={user.walletAddress}
-                                userName={user.userName}
+                                address={userAddress}
+                                userName={userName}
                                 amount={selectedToken.balance}
                             />
                         )
@@ -74,6 +74,8 @@ const Currency = ({ fetchList, list }) => {
                         onSelect={setSelectedToken}
                     />
                 </SCuserField>
+
+                <Loading show={loading} />
             </SCmain>
         </SCcontainer>
     );
@@ -81,8 +83,8 @@ const Currency = ({ fetchList, list }) => {
 };
 
 Currency.getInitialProps = async () => {
-    const card = await getUserCard();
-    console.log(card);
+    // const card = await getUserCard();
+    // console.log(card);
     return {
         namespacesRequired: []
     };
@@ -90,15 +92,23 @@ Currency.getInitialProps = async () => {
 
 Currency.propTypes = {
     fetchList: PropTypes.func.isRequired,
-    list: PropTypes.array.isRequired
+    cancelFetch: PropTypes.func.isRequired,
+    list: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired,
+    userName: PropTypes.string.isRequired,
+    userAddress: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({
-    list: state.currency.currencyList
+    list: state.currency.currencyList,
+    loading: state.currency.loading,
+    userAddress: state.user.address,
+    userName: state.user.userName
 });
 
 const mapDispatchToProps = {
-    fetchList: getCurrencyList
+    fetchList: getCurrencyList$,
+    cancelFetch: cancelCurrencyList$
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Currency);

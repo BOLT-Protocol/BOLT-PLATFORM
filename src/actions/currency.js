@@ -1,6 +1,6 @@
 import * as types from '../constants/actionTypes/currency';
 
-export const getCurrencyList = () => ({
+export const getCurrencyList$ = () => ({
     type: types.CURRENCY_LIST_FETCH
 });
 
@@ -12,4 +12,8 @@ export const getCurrencyListSuccess = payload => ({
 export const getCurrencyListFail = error => ({
     type: types.CURRENCY_LIST_FAIL,
     payload: error
+});
+
+export const cancelCurrencyList$ = () => ({
+    type: types.CURRENCY_LIST_CANCEL
 });
