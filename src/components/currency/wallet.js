@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
 
 import { bgHeader, mainColor, bgLight } from '../../widgets/styleGuid';
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
+import { TOAST_OPTIONS } from '../../utils/toast';
 
 const SCwallet = styled.div`
     display: flex;
@@ -77,8 +79,34 @@ const SCaddress = styled.div`
         font-size: .75rem;
     }
 `;
+toast.configure(TOAST_OPTIONS);
 
 const Wallet = ({ token, amount, userName, address }) => {
+
+    const copy = (str = '') => {
+        const el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        const selected =
+            document.getSelection().rangeCount > 0 ? document.getSelection().getRangeAt(0) : false;
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        if (selected) {
+            document.getSelection().removeAllRanges();
+            document.getSelection().addRange(selected);
+        }
+
+        toast.dismiss(); // close all toast
+
+        setTimeout(() => {
+            toast('已複製');
+        }, 500);
+    };
+
     useEffect(() => {
         const qrcodeDOM = document.querySelector('#address_qrcode');
         const { QRCode } = window;
@@ -109,7 +137,7 @@ const Wallet = ({ token, amount, userName, address }) => {
                             {address}
                         </p>
 
-                        <a>
+                        <a onClick={() => copy(address)}>
                             複製
                         </a>
                     </div>

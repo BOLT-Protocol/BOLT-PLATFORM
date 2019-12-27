@@ -16,12 +16,7 @@ export const WGsecondarySelect = styled.select`
     -webkit-appearance: none;
     outline: 0;
     position: relative;
-
-    > img {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 6px;
-    }
+    background-image: url('/static/images/ic-dropdown.svg');
+    background-repeat: no-repeat;
+    background-position: calc(100% - 18px) 50%;
 `;
