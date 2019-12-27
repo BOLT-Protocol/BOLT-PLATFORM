@@ -64,20 +64,20 @@ class Wrapper extends App {
         const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
 
         if (ctx.isServer) {
-            const { store } = ctx;
-
-            const state$ = new StateObservable(new Subject(), store.getState());
-
             const cookie = new Cookies(ctx.req.headers.cookie);
             const token = cookie.get('boltToken');
 
-            agent.setHeaders({
-                token
-            });
+            if (token) {
+                agent.setHeaders({
+                    token
+                });
 
-            const resultAction = await rootEpic(of(fetchProfile$()), state$).toPromise();
+                const { store } = ctx;
+                const state$ = new StateObservable(new Subject(), store.getState());
+                const resultAction = await rootEpic(of(fetchProfile$()), state$).toPromise();
 
-            store.dispatch(resultAction);
+                store.dispatch(resultAction);
+            }
         }
 
         return { pageProps };
