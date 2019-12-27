@@ -92,7 +92,7 @@ const Wallet = ({ token, amount, userName, address }) => {
         });
 
         return () => qrcode.clear();
-    }, address);
+    }, [address]);
 
     return (
         <SCwallet>

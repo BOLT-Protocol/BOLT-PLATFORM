@@ -103,13 +103,14 @@ export const SCfinishField = styled.div`
 
 export const SCcardHolder = styled.div`
     display: flex;
-    margin-bottom: 15px;
+    flex-wrap: wrap;
 
     > div {
         width: calc(25% - 15px);
         margin-right: 20px;
+        margin-bottom: 1rem;
 
-        &:last-child {
+        &:nth-child(4n) {
             margin-right: 0;
         }
     }

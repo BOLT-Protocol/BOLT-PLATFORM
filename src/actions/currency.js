@@ -8,3 +8,8 @@ export const getCurrencyListSuccess = payload => ({
     type: types.CURRENCY_LIST_SUCCESS,
     payload
 });
+
+export const getCurrencyListFail = error => ({
+    type: types.CURRENCY_LIST_FAIL,
+    payload: error
+});

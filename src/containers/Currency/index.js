@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -9,28 +9,30 @@ import TrusteeShip from '../../components/currency/trusteeship';
 import { getUserCard } from '../../utils/api';
 import { getCurrencyList } from '../../actions/currency';
 
-const tokens = [
-    {
-        address: '0x'.padEnd(42, 0),
-        name: 'ETH',
-        publishAmount: 2000,
-        remainAmount: 2000
-    }
-];
-
 const user = {
     walletAddress: '123',
     userName: 'Paul'
 };
 
-const Currency = ({ fetchList }) => {
+const Currency = ({ fetchList, list }) => {
 
     const [selectedToken, setSelectedToken] = useState(null);
+    const isInitialMount = useRef(true); // 用來確認 didmount 執行
 
     useEffect(() => {
-        setSelectedToken(tokens[0]);
-        fetchList();
-    }, []);
+        if (isInitialMount.current) { // didmount
+            isInitialMount.current = false;
+            fetchList();
+        } else { // didupdate
+            // Your useEffect code here to be run on update
+            // eslint-disable-next-line no-lonely-if
+            if (!selectedToken) {
+                setSelectedToken(list[0]);
+            }
+        }
+
+        return () => { };
+    }, [list]);
 
     return (
 
@@ -39,12 +41,14 @@ const Currency = ({ fetchList }) => {
 
             <SCmain style={{ flexDirection: 'column' }}>
                 <SCcardHolder>
-                    {tokens.map(token => (
+                    {list.map((token, index) => (
                         <CurrencyCard
-                            key={token.address}
-                            publish={token.publishAmount}
-                            remain={token.remainAmount}
-                            name={token.name}
+                            key={token.currencyAddress}
+                            publish={token.totalSupply}
+                            remain={token.balance}
+                            symbol={token.symbol}
+                            imgUrl={token.logo}
+                            onSelect={() => setSelectedToken(list[index])}
                         />
                     ))}
                 </SCcardHolder>
@@ -53,20 +57,21 @@ const Currency = ({ fetchList }) => {
                     {
                         selectedToken && (
                             <Wallet
-                                token={selectedToken.name}
+                                token={selectedToken.symbol}
                                 address={user.walletAddress}
                                 userName={user.userName}
-                                amount={selectedToken.remainAmount}
+                                amount={selectedToken.balance}
                             />
                         )
                     }
 
                     <TrusteeShip
-                        token={selectedToken ? selectedToken.name : ""}
-                        tokenList={tokens}
-                        publishAmount={2000}
-                        publishType="託管發行"
-                        source="Ethereum"
+                        token={selectedToken ? selectedToken.symbol : ""}
+                        tokenList={list}
+                        publishAmount={selectedToken ? selectedToken.totalSupply : 0}
+                        publishType={selectedToken ? selectedToken.type : ''}
+                        source={selectedToken ? selectedToken.coinSource : ''}
+                        onSelect={setSelectedToken}
                     />
                 </SCuserField>
             </SCmain>
@@ -84,7 +89,8 @@ Currency.getInitialProps = async () => {
 };
 
 Currency.propTypes = {
-    fetchList: PropTypes.func.isRequired
+    fetchList: PropTypes.func.isRequired,
+    list: PropTypes.array.isRequired
 };
 
 const mapStateToProps = state => ({
