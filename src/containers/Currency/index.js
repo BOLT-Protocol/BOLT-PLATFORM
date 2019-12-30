@@ -10,7 +10,6 @@ import Loading from '../../components/loading';
 // import { getUserCard } from '../../utils/api';
 import { getCurrencyList$, cancelCurrencyList$ } from '../../actions/currency';
 
-
 const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress }) => {
     const [selectedToken, setSelectedToken] = useState(null);
     const isInitialMount = useRef(true); // 用來確認 didmount 執行

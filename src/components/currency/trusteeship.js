@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 
+import Modal from './currencyModal';
+import PaymentModal from './paymentModal';
+import ConfirmModal from '../modal/confirmModal';
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { bgLight, bgHeader } from '../../widgets/styleGuid';
 import { WGsecondarySelect } from '../../widgets/select';
+import { MINT, BURN } from '../../constants/currency';
 
 const SCtrust = styled.div`
     display: flex;
@@ -87,11 +91,69 @@ const SCempty = styled.div`
 `;
 
 const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onSelect }) => {
+    const [modal, setModal] = useState({ show: false, type: MINT });
+    const [openPayment, setOpenPayment] = useState(false);
+    const [orderID, setOrderID] = useState(null);
+    const [confirm, setConfirm] = useState({ show: false, type: MINT });
+    const [amount, setAmount] = useState(0);
+    const [error, setError] = useState(null);
+
+    const confirmMessage = () => {
+        if (confirm.type === MINT) return `付款完成，您可開始使用您的 ${token} Token`;
+        if (confirm.type === BURN) return `已銷毀 ${amount.toLocaleString()} 個 BC TOKEN`;
+
+        return error;
+    };
+
     const handleSelect = (e) => {
         const { value } = e.target;
         const tk = tokenList.find(_token => _token.currencyAddress === value);
 
         onSelect(tk);
+    };
+
+    const handleOpenpayment = ({ orderID: oId }) => {
+        setModal({ ...modal, show: false });
+        setOrderID(oId);
+        setOpenPayment(true);
+    };
+
+    const mintSuccess = () => {
+        setOpenPayment(false);
+        setConfirm({
+            show: true,
+            type: MINT
+        });
+    };
+
+    const burnSuccess = ({ value }) => {
+        setAmount(value);
+
+        setModal({
+            ...modal,
+            show: false
+        });
+
+        setConfirm({
+            show: true,
+            type: BURN
+        });
+    };
+
+    const hideSuccess = () => {
+        setConfirm({
+            ...confirm,
+            show: false
+        });
+    };
+
+    const handleError = (e) => {
+        setError(e);
+
+        setConfirm({
+            type: 'ERROR',
+            show: true
+        });
     };
 
     return (
@@ -155,10 +217,32 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
                         </SClist>
 
                         <SCbuttonField>
-                            <WGsecondaryButton>銷毀</WGsecondaryButton>
+                            <WGsecondaryButton onClick={() => setModal({ show: true, type: BURN })}>銷毀</WGsecondaryButton>
 
-                            <WGmainButton>增發</WGmainButton>
+                            <WGmainButton onClick={() => setModal({ show: true, type: MINT })}>增發</WGmainButton>
                         </SCbuttonField>
+
+                        <Modal
+                            show={modal.show}
+                            type={modal.type}
+                            token={token}
+                            cancel={() => setModal({ ...modal, show: false })}
+                            next={modal.type === MINT ? handleOpenpayment : burnSuccess}
+                            onError={handleError}
+                        />
+
+                        <PaymentModal
+                            show={openPayment}
+                            orderID={orderID}
+                            paymentCallback={mintSuccess}
+                            cancel={() => { setOpenPayment(false); }}
+                        />
+
+                        <ConfirmModal
+                            show={confirm.show}
+                            close={hideSuccess}
+                            message={confirmMessage()}
+                        />
                     </div>
                 ) :
                     (

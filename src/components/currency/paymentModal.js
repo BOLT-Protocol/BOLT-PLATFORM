@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 
-import Loading from '../../components/loading';
+import Loading from '../loading';
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { getPaymentToken, payment } from '../../utils/api';
 import { bgLight, fontWhite } from '../../widgets/styleGuid';

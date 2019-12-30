@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import CURRENCY from '../../constants/currency';
-import { fontGrey } from '../../widgets/styleGuid';
+import { fontGrey, fontYellow } from '../../widgets/styleGuid';
 
 const items = [
     {
@@ -70,7 +70,7 @@ const SCpayment = styled.div`
     padding-top: 10px;
 
     p {
-        color: #f8e71c;
+        color: ${fontYellow};
         margin-left: auto;
     }
 

@@ -7,7 +7,7 @@ import { SCcontainer, SCmessage, SCmain, SCcontent, SCstepList, SCstep, SCstepCo
 import Overview from './overview';
 import CreateProgram from './createProgram';
 import CreatData from './createData';
-import CreatePayment from './createPayment';
+import CreatePayment from '../../components/currency/paymentModal';
 import Loading from '../../components/loading';
 import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
