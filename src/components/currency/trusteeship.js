@@ -90,13 +90,15 @@ const SCempty = styled.div`
     align-items: center;
 `;
 
-const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onSelect }) => {
+const Trusteeship = ({ token, tokenList, onSelect, onUpdate }) => {
     const [modal, setModal] = useState({ show: false, type: MINT });
     const [openPayment, setOpenPayment] = useState(false);
     const [orderID, setOrderID] = useState(null);
     const [confirm, setConfirm] = useState({ show: false, type: MINT });
     const [amount, setAmount] = useState(0);
     const [error, setError] = useState(null);
+
+    const selectedToken = tokenList.find(tk => tk.symbol === token);
 
     const confirmMessage = () => {
         if (confirm.type === MINT) return `付款完成，您可開始使用您的 ${token} Token`;
@@ -124,6 +126,7 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
             show: true,
             type: MINT
         });
+        onUpdate(token);
     };
 
     const burnSuccess = ({ value }) => {
@@ -138,6 +141,8 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
             show: true,
             type: BURN
         });
+
+        onUpdate(token);
     };
 
     const hideSuccess = () => {
@@ -191,7 +196,7 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
                             </div>
 
                             <div>
-                                {publishAmount.toLocaleString()}
+                                {selectedToken.totalSupply.toLocaleString()}
                                 <span>{token}</span>
                             </div>
                         </SClist>
@@ -202,7 +207,7 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
                             </div>
 
                             <div>
-                                {publishType}
+                                {selectedToken.type}
                             </div>
                         </SClist>
 
@@ -212,7 +217,7 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
                             </div>
 
                             <div>
-                                {source}
+                                {selectedToken.coinSource}
                             </div>
                         </SClist>
 
@@ -236,6 +241,7 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
                             orderID={orderID}
                             paymentCallback={mintSuccess}
                             cancel={() => { setOpenPayment(false); }}
+                            actionType={modal.type}
                         />
 
                         <ConfirmModal
@@ -256,10 +262,8 @@ const Trusteeship = ({ token, tokenList, publishAmount, publishType, source, onS
 Trusteeship.propTypes = {
     token: PropTypes.string.isRequired,
     tokenList: PropTypes.array.isRequired,
-    publishAmount: PropTypes.number.isRequired,
-    publishType: PropTypes.string.isRequired,
-    source: PropTypes.string.isRequired,
-    onSelect: PropTypes.func.isRequired
+    onSelect: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired
 };
 
 export default Trusteeship;

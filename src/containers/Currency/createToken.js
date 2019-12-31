@@ -12,7 +12,7 @@ import Loading from '../../components/loading';
 import { WGmainButton } from '../../widgets/button';
 import input from '../../utils/model/input.model';
 import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, validateAddress } from '../../utils/validation';
-import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
+import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT, CREATE } from '../../constants/currency';
 import { createFund, checkAddress, getCost, escrowFund, checkCurrencyName, checkCurrencySymbol } from '../../utils/api';
 import { TOAST_OPTIONS } from '../../utils/toast';
 import authGuard from '../../utils/auth';
@@ -390,6 +390,7 @@ class CreateToken extends Component {
                         orderID={orderID}
                         paymentCallback={this.paymentCallback}
                         cancel={this.cancelPayment}
+                        actionType={CREATE}
                     />
                 </SCmain>
 

@@ -28,6 +28,11 @@ const currency = (state = initialState, action = {}) => {
                 draft.loading = false;
                 draft.error = null;
                 break;
+            case types.CURRENCY_LIST_UPDATE_SUCCESS:
+                const index = draft.currencyList.findIndex(curr => curr.symbol === action.payload.symbol);
+                draft.currencyList[index] = action.payload;
+                draft.error = null;
+                break;
             default:
                 return state;
         }

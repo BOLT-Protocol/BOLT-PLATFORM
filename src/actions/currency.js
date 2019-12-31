@@ -17,3 +17,13 @@ export const getCurrencyListFail = error => ({
 export const cancelCurrencyList$ = () => ({
     type: types.CURRENCY_LIST_CANCEL
 });
+
+export const updateListBySymbol$ = payload => ({
+    type: types.CURRENCY_LIST_UPDATE,
+    payload
+});
+
+export const updateListSuccess = payload => ({
+    type: types.CURRENCY_LIST_UPDATE_SUCCESS,
+    payload
+});

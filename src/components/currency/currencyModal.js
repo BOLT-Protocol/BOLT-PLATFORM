@@ -134,14 +134,14 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
     };
 
     const handleSubmit = () => {
-        if (loading || cost === 0) return;
+        if (loading || (!cost > 0)) return;
 
         setLoading(true);
 
         const callApi = type === MINT ? mintFund : burnFund;
 
         callApi({
-            name: token,
+            symbol: token,
             number: input.value
         })
             .then(({ success, data, message }) => {

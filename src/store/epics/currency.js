@@ -31,7 +31,24 @@ const currrncyListEpic = action$ =>
         ))
     );
 
+const updateBySymbolEpic = action$ =>
+    action$.pipe(
+        ofType(types.CURRENCY_LIST_UPDATE),
+        mergeMap(
+            action => from(getSymbol(action.payload))
+                .pipe(
+                    map(({ data }) => actions.updateListSuccess({
+                        ...data,
+                        symbol: action.payload,
+                        totalSupply: parseFloat(data.totalSupply, 10),
+                        balance: parseFloat(data.balance, 10)
+                    }))
+                )
+        ),
+        catchError(error => of(actions.getCurrencyListFail(error))),
+    );
 
 export default [
-    currrncyListEpic
+    currrncyListEpic,
+    updateBySymbolEpic
 ];
