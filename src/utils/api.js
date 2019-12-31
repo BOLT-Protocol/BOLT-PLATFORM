@@ -265,6 +265,10 @@ export const createFund = agent.request('/fund/create', 'POST');
 
 export const escrowFund = agent.request('/fund/escrow', 'POST');
 
+export const mintFund = agent.request('/fund/mint', 'POST');
+
+export const burnFund = agent.request('/fund/burn', 'POST');
+
 export const checkAddress = address => agent.request(`/check/contractAddress/${address}`)();
 
 export const getUserCard = agent.request('/user/card');

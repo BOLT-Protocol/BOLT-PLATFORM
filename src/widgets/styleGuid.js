@@ -10,10 +10,12 @@ export const bgHeader = 'rgba(0, 0, 0, .49)';
 export const fontBlack = '#4a4a4a';
 export const fontWhite = '#fff';
 export const fontGrey = '#9b9b9b';
+export const fontYellow = '#f8e71c';
 
 export const errorRed = '#ff001f';
 
 export const whiteDark = '#efefef';
+
 
 const size = {
     mobileS: '320px',

@@ -8,10 +8,9 @@ import Wallet from '../../components/currency/wallet';
 import TrusteeShip from '../../components/currency/trusteeship';
 import Loading from '../../components/loading';
 // import { getUserCard } from '../../utils/api';
-import { getCurrencyList$, cancelCurrencyList$ } from '../../actions/currency';
+import { getCurrencyList$, cancelCurrencyList$, updateListBySymbol$ } from '../../actions/currency';
 
-
-const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress }) => {
+const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress, updateList }) => {
     const [selectedToken, setSelectedToken] = useState(null);
     const isInitialMount = useRef(true); // 用來確認 didmount 執行
 
@@ -31,8 +30,12 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
             }
         }
 
-        return () => { cancelFetch(); };
     }, [list]);
+
+
+    useEffect(() => {
+        return () => { cancelFetch(); };
+    }, []);
 
     return (
 
@@ -68,10 +71,8 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
                     <TrusteeShip
                         token={selectedToken ? selectedToken.symbol : ""}
                         tokenList={list}
-                        publishAmount={selectedToken ? selectedToken.totalSupply : 0}
-                        publishType={selectedToken ? selectedToken.type : ''}
-                        source={selectedToken ? selectedToken.coinSource : ''}
                         onSelect={setSelectedToken}
+                        onUpdate={updateList}
                     />
                 </SCuserField>
 
@@ -96,7 +97,8 @@ Currency.propTypes = {
     list: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
     userName: PropTypes.string.isRequired,
-    userAddress: PropTypes.string.isRequired
+    userAddress: PropTypes.string.isRequired,
+    updateList: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -108,7 +110,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
     fetchList: getCurrencyList$,
-    cancelFetch: cancelCurrencyList$
+    cancelFetch: cancelCurrencyList$,
+    updateList: updateListBySymbol$
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Currency);

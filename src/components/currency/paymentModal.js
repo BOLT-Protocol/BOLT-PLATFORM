@@ -4,11 +4,10 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 import { toast } from 'react-toastify';
 
-import Loading from '../../components/loading';
+import Loading from '../loading';
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { getPaymentToken, payment } from '../../utils/api';
 import { bgLight, fontWhite } from '../../widgets/styleGuid';
-import { CREATE } from '../../constants/currency';
 import { TOAST_OPTIONS } from '../../utils/toast';
 
 const SCpay = styled.div`
@@ -58,7 +57,7 @@ Modal.setAppElement('#__next');
 
 toast.configure(TOAST_OPTIONS);
 
-const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
+const CreatePayment = ({ orderID, show, paymentCallback, cancel, actionType }) => {
     const [submitEl, setSubmitEl] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -102,7 +101,7 @@ const CreatePayment = ({ orderID, show, paymentCallback, cancel }) => {
             payment({
                 nonce,
                 orderID,
-                type: CREATE
+                type: actionType
             })
                 .then(({ success, message }) => {
                     if (success) {
@@ -149,7 +148,8 @@ CreatePayment.propTypes = {
     orderID: PropTypes.string,
     show: PropTypes.bool.isRequired,
     paymentCallback: PropTypes.func.isRequired,
-    cancel: PropTypes.func.isRequired
+    cancel: PropTypes.func.isRequired,
+    actionType: PropTypes.string.isRequired
 };
 
 export default CreatePayment;
