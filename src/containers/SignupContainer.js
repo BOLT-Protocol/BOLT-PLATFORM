@@ -227,7 +227,8 @@ class Signup extends Component {
             });
         });
     };
-
+    // where & when the phone is throwed in??
+    // eslint-disable-next-line lines-between-class-members
     checkPhone = (phone, phoneCode) => {
         return new Promise(resolve => {
             if (!validatePhone(phone)) {
@@ -239,28 +240,31 @@ class Signup extends Component {
 
                 return resolve(false);
             }
-            checkRegisteredPhone(phone, phoneCode).then(({ data }) => {
-                if (!data.isRegister) {
-                    return resolve(true);
-                } else if (data.isRegister) {
-                    this.setState(
-                        produce(draft => {
-                            draft.page2.cellphone.error = '手機郵件已被註冊';
-                        })
-                    );
+            setTimeout(
+                checkRegisteredPhone(phone, phoneCode).then(({ data }) => {
+                    if (!data.isRegister) {
+                        return resolve(true);
+                    } else if (data.isRegister) {
+                        this.setState(
+                            produce(draft => {
+                                draft.page2.cellphone.error = '手機已被註冊';
+                            })
+                        );
 
-                    return resolve(false);
-                } else {
-                    this.setState(
-                        produce(draft => {
-                            const { message } = data;
-                            draft.page1.email.error = message;
-                        })
-                    );
+                        return resolve(false);
+                    } else {
+                        this.setState(
+                            produce(draft => {
+                                const { message } = data;
+                                draft.page1.email.error = message;
+                            })
+                        );
 
-                    return resolve(false);
-                }
-            });
+                        return resolve(false);
+                    }
+                }),
+                1000
+            );
         });
     };
 
@@ -342,7 +346,7 @@ class Signup extends Component {
 
         this.setState(
             produce(draft => {
-                draft.page1.veriCode.hint = '已發送驗證碼';
+                // draft.page1.veriCode.hint = '已發送驗證碼';
             })
         );
 
@@ -388,7 +392,7 @@ class Signup extends Component {
 
         this.setState(
             produce(draft => {
-                draft.page2.veriCode.hint = '已發送驗證碼';
+                // draft.page2.veriCode.hint = '已發送驗證碼';
             })
         );
 
@@ -399,7 +403,8 @@ class Signup extends Component {
                 })
             );
         }
-
+        // eslint-disable-next-line no-console
+        console.log(page2.cellphone.valid);
         if (page2.cellphone.valid) {
             const pv = page2.cellphone.value;
             const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
@@ -566,11 +571,9 @@ class Signup extends Component {
     }
 
     renderInput() {
-        const { page } = this.state;
-
+        const { page, phoneCode } = this.state;
         // eslint-disable-next-line react/destructuring-assignment
         const inputs = this.state[`page${page}`];
-
         // if no input, don't render input
         if (!inputs) return null;
 
@@ -593,7 +596,7 @@ class Signup extends Component {
                     validCheck = v => vaildateEqual(inputs.password.value, v);
                     break;
                 case 'cellphone':
-                    validCheck = this.checkPhone;
+                    validCheck = _ => this.checkPhone(_, phoneCode);
                     break;
 
                 case 'veriCode':
@@ -652,7 +655,6 @@ class Signup extends Component {
                     </div>
                 );
             } else if (key === 'cellphone') {
-                const { phoneCode } = this.state;
                 return (
                     <div key={key}>
                         <WGmainSelect

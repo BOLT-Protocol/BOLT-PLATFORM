@@ -25,7 +25,7 @@ export function setInput({ key, value, valid }) {
         }),
         () => {
             // eslint-disable-next-line no-console
-            console.log(this.state);
+            // console.log(this.state);
         }
     );
 }

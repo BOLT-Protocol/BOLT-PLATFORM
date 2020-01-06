@@ -38,7 +38,6 @@ const layout = props => {
                 <div>
                     <img src="/static/images/bolt_logo.png" alt="BOLT"/>
                 </div>
-
             </SCheader>
 
             <SCcontainer>

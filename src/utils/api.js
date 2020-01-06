@@ -141,8 +141,9 @@ export const getVerifyCodeEmail = ({ email }) => {
 //     });
 // };
 
-// -- API 路徑可能有誤
 export const getVerifyCodePhone = ({ phone, phoneCode }) => {
+    // eslint-disable-next-line no-console
+    console.log('called');
     return axios.get(
         `${serverUrl}/verification/phone/${phone}?countryCode=${phoneCode}`
     );
@@ -266,6 +267,29 @@ export const destroyToken = ({ token, tokenSecret }) => {
     return new Promise(resolve => {
         return axiosInstance
             .post(`${serverUrl}/destroyToken`, {
+                tokenSecret
+            })
+            .then(res => resolve(res))
+            .catch(e => {
+                resolve({
+                    data: {
+                        message: e.message
+                    }
+                });
+            });
+    });
+};
+
+// Get USER PROFILE
+export const getUserProfile = ({ token, tokenSecret }) => {
+    const axiosInstance = axios.create({
+        headers: {
+            token
+        }
+    });
+    return new Promise(resolve => {
+        return axiosInstance
+            .get(`${serverUrl}/user/profile`, {
                 tokenSecret
             })
             .then(res => resolve(res))
