@@ -279,26 +279,3 @@ export const destroyToken = ({ token, tokenSecret }) => {
             });
     });
 };
-
-// Get USER PROFILE
-export const getUserProfile = ({ token, tokenSecret }) => {
-    const axiosInstance = axios.create({
-        headers: {
-            token
-        }
-    });
-    return new Promise(resolve => {
-        return axiosInstance
-            .get(`${serverUrl}/user/profile`, {
-                tokenSecret
-            })
-            .then(res => resolve(res))
-            .catch(e => {
-                resolve({
-                    data: {
-                        message: e.message
-                    }
-                });
-            });
-    });
-};
