@@ -27,6 +27,7 @@ const SCloading = styled.div`
     width: 100vw;
     display: ${props => props.show ? 'flex' : 'none'};
     z-index: 1000;
+    color: #fff;
 
     > * {
         animation: ${shining} 2s infinite;
