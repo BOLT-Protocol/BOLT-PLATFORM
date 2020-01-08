@@ -651,7 +651,6 @@ class Signup extends Component {
                     </div>
                 );
             } else if (key === 'cellphone') {
-                const { phoneCode } = this.state;
                 return (
                     <div key={key}>
                         <WGmainSelect

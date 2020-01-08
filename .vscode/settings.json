@@ -2,8 +2,6 @@
     // ***需先安裝eslint 與 prettier plugIn****
     // eslint 設定
     "eslint.alwaysShowStatus": true,
-    "eslint.autoFixOnSave": true,
-
     // pretiier 設定
     "prettier.eslintIntegration": true,
     "prettier.tabWidth": 4,
