@@ -207,9 +207,9 @@ class Signin extends Component {
                             );
                         }}
                     >
-                        信箱
+                            信箱
                     </WGmainA>
-                    &nbsp;|&nbsp;手機號碼
+                        &nbsp;|&nbsp;手機號碼
                 </WGmainP>
             );
         return (

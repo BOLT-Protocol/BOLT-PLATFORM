@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { secondColor, fontGray } from '../../src/widgets/styleGuid';
+import { secondColor, fontGrey, devices, bgLight } from '../../widgets/styleGuid';
 
 export const SCcontainer = styled.div`
     display: flex;
@@ -26,9 +26,13 @@ export const SCcontent = styled.div`
     flex: 3.125;
     border-radius: 6px;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.21);
-    background-color: #3a3b4d;
+    background-color: ${bgLight};
     justify-content: center;
     align-items: center;
+
+    @media ${devices.laptop} {
+        flex: 4;
+    }
 `;
 
 export const SCstepList = styled.ul`
@@ -36,7 +40,7 @@ export const SCstepList = styled.ul`
     flex: 1;
     border-radius: 6px;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.21);
-    background-color: #3a3b4d;
+    background-color: ${bgLight};
     margin-right: 10px;
     padding: 40px;
     flex-direction: column;
@@ -57,47 +61,13 @@ export const SCstep = styled.li`
         align-items: center;
         justify-content: center;
         background-color: ${props => (props.active ? secondColor : 'transparent')};
-        border: 1px solid ${props => (props.active ? secondColor : fontGray)};
+        border: 1px solid ${props => (props.active ? secondColor : fontGrey)};
         font-size: 0.875rem;
-        ${props => props.done && `background-color: ${fontGray}; border: none;`}
+        ${props => props.done && `background-color: ${fontGrey}; border: none;`}
     }
 
     img {
         width: 0.8rem;
-    }
-`;
-
-export const SCbasic = styled.div`
-    padding: 50px;
-    display: flex;
-    justify-content: space-between;
-    flex: 1;
-
-    > div {
-        display: flex;
-        flex-direction: column;
-        min-width: 150px;
-        margin-left: 4rem;
-    }
-
-    ul {
-        flex: 1;
-
-        li {
-            display: flex;
-
-            span {
-                flex: 1
-                text-align: right;
-                margin-right: .875rem;
-                font-size: .875rem;
-                padding-top: .3rem;
-            }
-
-            > div {
-                flex: 6;
-            }
-        }
     }
 `;
 
@@ -116,5 +86,46 @@ export const SCstepControl = styled.div`
     > button {
         max-width: 120px;
         font-size: 0.75rem;
+    }
+`;
+
+export const SCfinishField = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    > button {
+        width: 120px;
+        margin-left: 18px;
+    }
+`;
+
+export const SCcardHolder = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+
+    > div {
+        width: calc(25% - 15px);
+        margin-right: 20px;
+        margin-bottom: 1rem;
+
+        &:nth-child(4n) {
+            margin-right: 0;
+        }
+    }
+`;
+
+export const SCuserField = styled.div`
+    display: flex;
+    min-height: 376px;
+
+    > div {
+        min-height: 100%;
+
+        &:first-child {
+            margin-right: 20px;
+            width: calc(25% - 15px);
+        }
     }
 `;

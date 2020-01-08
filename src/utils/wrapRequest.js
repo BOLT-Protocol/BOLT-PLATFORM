@@ -64,7 +64,6 @@ class WrapRequest {
                                     Router.replace('/signin');
                                 }
                             })
-                            // eslint-disable-next-line no-console
                             .catch(error => console.error(error));
                     }
                     resolve(data);

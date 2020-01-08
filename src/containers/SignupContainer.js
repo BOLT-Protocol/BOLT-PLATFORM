@@ -240,31 +240,28 @@ class Signup extends Component {
 
                 return resolve(false);
             }
-            setTimeout(
-                checkRegisteredPhone(phone, phoneCode).then(({ data }) => {
-                    if (!data.isRegister) {
-                        return resolve(true);
-                    } else if (data.isRegister) {
-                        this.setState(
-                            produce(draft => {
-                                draft.page2.cellphone.error = '手機已被註冊';
-                            })
-                        );
+            checkRegisteredPhone(phone, phoneCode).then(({ data }) => {
+                if (!data.isRegister) {
+                    return resolve(true);
+                } else if (data.isRegister) {
+                    this.setState(
+                        produce(draft => {
+                            draft.page2.cellphone.error = '手機郵件已被註冊';
+                        })
+                    );
 
-                        return resolve(false);
-                    } else {
-                        this.setState(
-                            produce(draft => {
-                                const { message } = data;
-                                draft.page1.email.error = message;
-                            })
-                        );
+                    return resolve(false);
+                } else {
+                    this.setState(
+                        produce(draft => {
+                            const { message } = data;
+                            draft.page1.email.error = message;
+                        })
+                    );
 
-                        return resolve(false);
-                    }
-                }),
-                1000
-            );
+                    return resolve(false);
+                }
+            });
         });
     };
 
@@ -403,8 +400,7 @@ class Signup extends Component {
                 })
             );
         }
-        // eslint-disable-next-line no-console
-        console.log(page2.cellphone.valid);
+      
         if (page2.cellphone.valid) {
             const pv = page2.cellphone.value;
             const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
@@ -655,6 +651,7 @@ class Signup extends Component {
                     </div>
                 );
             } else if (key === 'cellphone') {
+                const { phoneCode } = this.state;
                 return (
                     <div key={key}>
                         <WGmainSelect

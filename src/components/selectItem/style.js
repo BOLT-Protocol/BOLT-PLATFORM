@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { fontWhite, fontGray, secondColor } from '../../widgets/styleGuid';
+import { fontWhite, fontGrey, secondColor } from '../../widgets/styleGuid';
 
 export const SCholder = styled.a`
     transition: 0.3s;
@@ -29,7 +29,7 @@ export const SCholder = styled.a`
 
     p {
         font-size: 0.75rem;
-        color: ${fontGray};
+        color: ${fontGrey};
     }
 
     span {

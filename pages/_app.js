@@ -3,12 +3,19 @@ import React from 'react';
 import withRedux from 'next-redux-wrapper';
 import { Provider } from 'react-redux';
 import { createGlobalStyle } from 'styled-components';
+import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'universal-cookie';
+import { Subject, of } from 'rxjs';
+import { StateObservable } from 'redux-observable';
 
 import createStore from '../src/store/configureStore';
 import Layout from '../src/components/layout';
 import UnauthLayout from '../src/components/unauthLayout';
 import { appWithTranslation } from '../i18n';
 import { bgColor } from '../src/widgets/styleGuid';
+import { fetchProfile$ } from '../src/actions/user';
+import agent from '../src/utils/wrapRequest';
+import rootEpic from '../src/store/epics';
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -55,6 +62,24 @@ const GlobalStyle = createGlobalStyle`
 class Wrapper extends App {
     static async getInitialProps({ Component, ctx }) {
         const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
+
+        if (ctx.isServer) {
+            const cookie = new Cookies(ctx.req.headers.cookie);
+            const token = cookie.get('boltToken');
+
+            if (token) {
+                agent.setHeaders({
+                    token
+                });
+
+                const { store } = ctx;
+                const state$ = new StateObservable(new Subject(), store.getState());
+                const resultAction = await rootEpic(of(fetchProfile$()), state$).toPromise();
+
+                store.dispatch(resultAction);
+            }
+        }
+
         return { pageProps };
     }
 
