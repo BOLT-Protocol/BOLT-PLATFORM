@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import Router from 'next/router';
 
 import InputField from '../components/inputField';
+import Loading from '../components/loading';
 import Term from '../components/term';
 // import BackArrow from '../components/backArrow';
 import { WGH1 } from '../widgets/h';
@@ -31,7 +32,7 @@ import {
     // checkVerifyCodeEmail,
     // checkVerifyCodePhone
 } from '../utils/api';
-import countryCode from '../constants/countryCode.json';
+import countryCodeArr from '../constants/countryCode.json';
 
 const mapStateToProps = state => ({
     user: state.user
@@ -105,7 +106,7 @@ class Signup extends Component {
                 cellphone: {
                     ...initialInput,
                     placeholder: '您的手機號碼',
-                    error: '手機格式錯誤'
+                    error: '手機格式錯誤',
                 },
                 password: {
                     ...initialInput,
@@ -139,7 +140,7 @@ class Signup extends Component {
                 }
             ],
             termError: false,
-            phoneCode: '+886',
+            countryCode: '+886',
             verifyError: false
         };
         this.setInput = setInput.bind(this);
@@ -203,10 +204,10 @@ class Signup extends Component {
 
                 return resolve(false);
             }
-            checkRegisteredEmail(email).then(({ data }) => {
-                if (!data.isRegister) {
+            checkRegisteredEmail(email).then(({ success, message, code }) => {
+                if (success) {
                     return resolve(true);
-                } else if (data.isRegister) {
+                } else if (code === '00107') {
                     this.setState(
                         produce(draft => {
                             draft.page1.email.error = '電子郵件已被註冊';
@@ -217,7 +218,6 @@ class Signup extends Component {
                 } else {
                     this.setState(
                         produce(draft => {
-                            const { message } = data;
                             draft.page1.email.error = message;
                         })
                     );
@@ -227,9 +227,10 @@ class Signup extends Component {
             });
         });
     };
-    // where & when the phone is throwed in??
-    // eslint-disable-next-line lines-between-class-members
-    checkPhone = (phone, phoneCode) => {
+
+    checkPhone = (phone) => {
+        const { countryCode } = this.state;
+
         return new Promise(resolve => {
             if (!validatePhone(phone)) {
                 this.setState(
@@ -240,13 +241,13 @@ class Signup extends Component {
 
                 return resolve(false);
             }
-            checkRegisteredPhone(phone, phoneCode).then(({ data }) => {
-                if (!data.isRegister) {
+            checkRegisteredPhone(phone, countryCode).then(({ success, message, code }) => {
+                if (success) {
                     return resolve(true);
-                } else if (data.isRegister) {
+                } else if (code === '00108') {
                     this.setState(
                         produce(draft => {
-                            draft.page2.cellphone.error = '手機郵件已被註冊';
+                            draft.page2.cellphone.error = '手機號碼已被註冊';
                         })
                     );
 
@@ -254,7 +255,6 @@ class Signup extends Component {
                 } else {
                     this.setState(
                         produce(draft => {
-                            const { message } = data;
                             draft.page1.email.error = message;
                         })
                     );
@@ -265,13 +265,21 @@ class Signup extends Component {
         });
     };
 
-    handlePhoneCode = e => {
+    handleCountryCode = e => {
         const { value } = e.target;
 
         this.setState(
             produce(draft => {
-                draft.phoneCode = value;
-            })
+                draft.countryCode = value;
+            }), () => {
+                const { page2 } = this.state;
+                const { cellphone } = page2;
+
+                if (cellphone.value !== 2 && cellphone.valid) {
+
+                    this.checkPhone(cellphone.value);
+                }
+            }
         );
     };
 
@@ -313,7 +321,7 @@ class Signup extends Component {
                 code: veriCode.value
             });
         } else if (page === 2) {
-            const { page2, phoneCode } = this.state;
+            const { page2, countryCode } = this.state;
             const { cellphone, password, veriCode } = page2;
             const { onRegisterPhone$ } = this.props;
             // check all validation
@@ -331,7 +339,7 @@ class Signup extends Component {
             onRegisterPhone$({
                 phone: cellphone.value,
                 password: password.value,
-                phoneCode,
+                countryCode,
                 code: veriCode.value
             });
         }
@@ -385,7 +393,7 @@ class Signup extends Component {
 
     sendVeriCodePhone = e => {
         e.preventDefault();
-        const { page2, phoneCode } = this.state;
+        const { page2, countryCode } = this.state;
 
         this.setState(
             produce(draft => {
@@ -404,7 +412,7 @@ class Signup extends Component {
         if (page2.cellphone.valid) {
             const pv = page2.cellphone.value;
             const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
-            getVerifyCodePhone({ phone, phoneCode })
+            getVerifyCodePhone({ phone, countryCode })
                 .then(res => {
                     const { data } = res;
                     if (!data.success) {
@@ -461,10 +469,10 @@ class Signup extends Component {
     // };
 
     // checkVeriCodePhone = code => {
-    //     const { page2, phoneCode } = this.state;
+    //     const { page2, countryCode } = this.state;
     //     const pv = page2.cellphone.value;
     //     const phone =
-    //         phoneCode + (pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv);
+    //         countryCode + (pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv);
 
     //     this.setState(
     //         produce(draft => {
@@ -483,7 +491,7 @@ class Signup extends Component {
     //     if (pv.trim() === '') return false;
 
     //     return new Promise(resolve => {
-    //         checkVerifyCodePhone({ phone, phoneCode, code }).then(res => {
+    //         checkVerifyCodePhone({ phone, countryCode, code }).then(res => {
     //             const { data } = res;
 
     //             if (data.error) {
@@ -521,28 +529,29 @@ class Signup extends Component {
                             手機註冊
                         </WGmainA>
                     </WGmainP>
-                ) : (
-                    <WGmainP
-                        style={{
-                            textAlign: 'center',
-                            fontSize: '14px',
-                            color: '#9b9b9b'
-                        }}
-                    >
-                        <WGmainA
-                            onClick={() => {
-                                this.setState(
-                                    produce(draft => {
-                                        draft.page = 1;
-                                    })
-                                );
+                )
+                    : (
+                        <WGmainP
+                            style={{
+                                textAlign: 'center',
+                                fontSize: '14px',
+                                color: '#9b9b9b'
                             }}
                         >
-                            電子郵件註冊
-                        </WGmainA>
-                        &nbsp;|&nbsp;手機註冊
-                    </WGmainP>
-                );
+                            <WGmainA
+                                onClick={() => {
+                                    this.setState(
+                                        produce(draft => {
+                                            draft.page = 1;
+                                        })
+                                    );
+                                }}
+                            >
+                                電子郵件註冊
+                            </WGmainA>
+                            &nbsp;|&nbsp;手機註冊
+                        </WGmainP>
+                    );
             return (
                 <div
                     style={{
@@ -651,12 +660,14 @@ class Signup extends Component {
                     </div>
                 );
             } else if (key === 'cellphone') {
+                const { countryCode } = this.state;
+
                 return (
                     <div key={key}>
                         <WGmainSelect
                             name="countryCode"
-                            value={phoneCode}
-                            onChange={this.handlePhoneCode}
+                            value={countryCode}
+                            onChange={this.handleCountryCode}
                             style={{
                                 height: '28px',
                                 margin: '1rem 0',
@@ -665,7 +676,7 @@ class Signup extends Component {
                                 color: '#ffffff'
                             }}
                         >
-                            {countryCode.map(c => (
+                            {countryCodeArr.map(c => (
                                 <option key={c.countryName} value={c.phoneCode}>
                                     {c.countryName} {c.phoneCode}
                                 </option>
@@ -795,14 +806,21 @@ class Signup extends Component {
     }
 
     render() {
+        const { user } = this.props;
+
         return (
-            <WGloginField>
-                {this.renderHeader()}
+            <>
+                <WGloginField>
+                    {this.renderHeader()}
 
-                <form>{this.renderInput()}</form>
+                    <form>{this.renderInput()}</form>
 
-                {this.renderStep()}
-            </WGloginField>
+                    {this.renderStep()}
+
+                </WGloginField>
+
+                <Loading show={user.loading} />
+            </>
         );
     }
 }

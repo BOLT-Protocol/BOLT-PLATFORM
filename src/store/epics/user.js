@@ -15,8 +15,6 @@ import * as types from '../../constants/actionTypes/user';
 import {
     registerEmail,
     registerPhone,
-    // eslint-disable-next-line no-unused-vars
-    createToken,
     loginPhone,
     loginEmail,
     getUserProfile
@@ -30,35 +28,14 @@ const registerEmailEpic = action$ =>
         debounceTime(1000),
         switchMap(action =>
             from(registerEmail(action.data)).pipe(
-                concatMap(res => {
-                    const { data } = res;
-                    const { token, tokenSecret, message } = data.data;
+                concatMap(({ message, data }) => {
+                    const { token, tokenSecret } = data;
                     if (!token) return of(actions.authUserFail(message));
                     cookie.set('boltToken', token, { path: '/' });
                     cookie.set('boltSecret', tokenSecret, {
                         path: '/'
                     });
                     return of(actions.authUserSuccess(token));
-                    // if (!data.profile) {
-                    //     return of(actions.authUserFail(res.data.message));
-                    // }
-
-                    // return from(
-                    //     createToken({
-                    //         apiKey: data.profile.apiKey,
-                    //         apiSecret: data.profile.apiSecret
-                    //     })
-                    // ).pipe(
-                    //     map(response => {
-                    //         if (!response.data.token)
-                    //             return actions.authUserFail(response.data.message);
-                    //         cookie.set('boltToken', response.data.token, { path: '/' });
-                    //         cookie.set('boltSecret', response.data.tokenSecret, {
-                    //             path: '/'
-                    //         });
-                    //         return actions.authUserSuccess(response.data.token);
-                    //     })
-                    // );
                 })
             )),
         catchError((err, obs) => {
@@ -73,43 +50,15 @@ const registerPhoneEpic = action$ =>
         debounceTime(1000),
         switchMap(action =>
             from(registerPhone(action.data)).pipe(
-                concatMap(res => {
-                    const { data } = res;
-                    const { token, tokenSecret, message } = data.data;
+                concatMap(({ message, data }) => {
+                    const { token, tokenSecret } = data;
+
                     if (!token) return of(actions.authUserFail(message));
                     cookie.set('boltToken', token, { path: '/' });
                     cookie.set('boltSecret', tokenSecret, {
                         path: '/'
                     });
                     return of(actions.authUserSuccess(token));
-                    // if (!data.profile) {
-                    //     return of(actions.authUserFail(res.data.message));
-                    // }
-
-                    // return from(
-                    //     createToken({
-                    //         apiKey: data.profile.apiKey,
-                    //         apiSecret: data.profile.apiSecret
-                    //     })
-                    // ).pipe(
-                    //     map(response => {
-                    //         if (!response.data.token)
-                    //             return actions.authUserFail(
-                    //                 response.data.message
-                    //             );
-                    //         cookie.set('boltToken', response.data.token, {
-                    //             path: '/'
-                    //         });
-                    //         cookie.set(
-                    //             'boltSecret',
-                    //             response.data.tokenSecret,
-                    //             {
-                    //                 path: '/'
-                    //             }
-                    //         );
-                    //         return actions.authUserSuccess(response.data.token);
-                    //     })
-                    // );
                 })
             )),
         catchError((err, obs) => {
@@ -122,8 +71,9 @@ const loginEmailEpic = action$ =>
     action$.pipe(
         ofType(types.USER_LOGIN_EMAIL),
         switchMap(action => from(loginEmail(action.data))),
-        map(res => {
-            const { token, tokenSecret, message } = res.data.data;
+        map(({ message, data }) => {
+            const { token, tokenSecret } = data;
+
             if (token) {
                 cookie.set('boltToken', token, { path: '/' });
                 cookie.set('boltSecret', tokenSecret, { path: '/' });
@@ -142,8 +92,9 @@ const loginPhoneEpic = action$ =>
     action$.pipe(
         ofType(types.USER_LOGIN_PHONE),
         switchMap(action => from(loginPhone(action.data))),
-        map(res => {
-            const { token, tokenSecret, message } = res.data.data;
+        map(({ message, data }) => {
+            const { token, tokenSecret } = data;
+
             if (token) {
                 cookie.set('boltToken', token, { path: '/' });
                 cookie.set('boltSecret', tokenSecret, { path: '/' });

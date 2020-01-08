@@ -7,6 +7,7 @@ import produce from 'immer';
 import Router from 'next/router';
 
 import InputField from '../components/inputField';
+import Loading from '../components/loading';
 import { WGH1 } from '../widgets/h';
 import { WGmainP, WGerrorP } from '../widgets/p';
 import { WGmainA } from '../widgets/a';
@@ -190,28 +191,29 @@ class Signin extends Component {
                         手機號碼
                     </WGmainA>
                 </WGmainP>
-            ) : (
-                <WGmainP
-                    style={{
-                        textAlign: 'center',
-                        fontSize: '14px',
-                        color: '#9b9b9b'
-                    }}
-                >
-                    <WGmainA
-                        onClick={() => {
-                            this.setState(
-                                produce(draft => {
-                                    draft.page = 1;
-                                })
-                            );
+            ) :
+                (
+                    <WGmainP
+                        style={{
+                            textAlign: 'center',
+                            fontSize: '14px',
+                            color: '#9b9b9b'
                         }}
                     >
+                        <WGmainA
+                            onClick={() => {
+                                this.setState(
+                                    produce(draft => {
+                                        draft.page = 1;
+                                    })
+                                );
+                            }}
+                        >
                             信箱
-                    </WGmainA>
+                        </WGmainA>
                         &nbsp;|&nbsp;手機號碼
-                </WGmainP>
-            );
+                    </WGmainP>
+                );
         return (
             <div
                 style={{
@@ -275,20 +277,21 @@ class Signin extends Component {
                         valid={item.valid}
                     />
                 </div>
-            ) : (
-                <InputField
-                    key={key + page}
-                    inputValue={item.value}
-                    type={item.type}
-                    setInput={this.setInput}
-                    name={key}
-                    error={item.error}
-                    placeholder={item.placeholder}
-                    showError={item.showError}
-                    validCheck={validCheck}
-                    valid={item.valid}
-                />
-            );
+            ) :
+                (
+                    <InputField
+                        key={key + page}
+                        inputValue={item.value}
+                        type={item.type}
+                        setInput={this.setInput}
+                        name={key}
+                        error={item.error}
+                        placeholder={item.placeholder}
+                        showError={item.showError}
+                        validCheck={validCheck}
+                        valid={item.valid}
+                    />
+                );
         });
     }
 
@@ -296,51 +299,56 @@ class Signin extends Component {
         const { user } = this.props;
 
         return (
-            <WGloginField>
-                {this.renderHeader()}
+            <>
+                <WGloginField>
+                    {this.renderHeader()}
 
-                <form>{this.renderInput()}</form>
+                    <form>{this.renderInput()}</form>
 
-                <WGbuttonField>
+                    <WGbuttonField>
+                        <div
+                            style={{
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'center',
+                                marginBottom: '1rem'
+                            }}
+                        >
+                            <input type="checkbox" />
+
+                            <WGmainP>記住我</WGmainP>
+                        </div>
+                        <WGmainButton onClick={this.handleSubmit}>
+                            登入
+                        </WGmainButton>
+                    </WGbuttonField>
+
+                    {user.error && this.count && <WGerrorP>{user.error}</WGerrorP>}
+
                     <div
                         style={{
-                            width: '100%',
+                            fontSize: '0.875rem',
+                            marginTop: '18px',
                             display: 'flex',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                            marginBottom: '1rem'
+                            justifyContent: 'space-between'
                         }}
                     >
-                        <input type="checkbox" />
-
-                        <WGmainP>記住我</WGmainP>
-                    </div>
-                    <WGmainButton onClick={this.handleSubmit}>
-                        登入
-                    </WGmainButton>
-                </WGbuttonField>
-
-                {user.error && this.count && <WGerrorP>{user.error}</WGerrorP>}
-
-                <div
-                    style={{
-                        fontSize: '0.875rem',
-                        marginTop: '18px',
-                        display: 'flex',
-                        justifyContent: 'space-between'
-                    }}
-                >
-                    <Link href="/forgetPassword">
-                        <WGmainA>忘記密碼？</WGmainA>
-                    </Link>
-                    <WGmainP>
-                        或 &nbsp;
-                        <Link href="/signup">
-                            <WGmainA>或建立帳戶</WGmainA>
+                        <Link href="/forgetPassword">
+                            <WGmainA>忘記密碼？</WGmainA>
                         </Link>
-                    </WGmainP>
-                </div>
-            </WGloginField>
+                        <WGmainP>
+                            或 &nbsp;
+                            <Link href="/signup">
+                                <WGmainA>或建立帳戶</WGmainA>
+                            </Link>
+                        </WGmainP>
+                    </div>
+                </WGloginField>
+
+                <Loading show={user.loading} />
+
+            </>
         );
     }
 }

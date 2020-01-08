@@ -9,6 +9,7 @@ import TrusteeShip from '../../components/currency/trusteeship';
 import Loading from '../../components/loading';
 // import { getUserCard } from '../../utils/api';
 import { getCurrencyList$, cancelCurrencyList$, updateListBySymbol$ } from '../../actions/currency';
+import authGuard from '../../utils/auth';
 
 const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress, updateList }) => {
     const [selectedToken, setSelectedToken] = useState(null);
@@ -83,9 +84,11 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
 
 };
 
-Currency.getInitialProps = async () => {
+Currency.getInitialProps = async (ctx) => {
     // const card = await getUserCard();
     // console.log(card);
+    authGuard(ctx);
+
     return {
         namespacesRequired: []
     };
