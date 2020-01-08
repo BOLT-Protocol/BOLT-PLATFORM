@@ -4,7 +4,7 @@ import {
     fontGrey
 } from '../../widgets/styleGuid';
 
-export const SCinputField = styled.div`
+export const SCinputField = styled.div `
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -29,7 +29,7 @@ export const SCinputField = styled.div`
     }
 `;
 
-export const SCinputMessage = styled.div`
+export const SCinputMessage = styled.div `
     height: 2rem;
     padding-top: 0.3rem;
     width: 100%;

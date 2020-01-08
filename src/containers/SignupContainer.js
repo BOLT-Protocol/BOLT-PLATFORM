@@ -227,7 +227,8 @@ class Signup extends Component {
             });
         });
     };
-
+    // where & when the phone is throwed in??
+    // eslint-disable-next-line lines-between-class-members
     checkPhone = (phone, phoneCode) => {
         return new Promise(resolve => {
             if (!validatePhone(phone)) {
@@ -342,7 +343,7 @@ class Signup extends Component {
 
         this.setState(
             produce(draft => {
-                draft.page1.veriCode.hint = '已發送驗證碼';
+                // draft.page1.veriCode.hint = '已發送驗證碼';
             })
         );
 
@@ -388,7 +389,7 @@ class Signup extends Component {
 
         this.setState(
             produce(draft => {
-                draft.page2.veriCode.hint = '已發送驗證碼';
+                // draft.page2.veriCode.hint = '已發送驗證碼';
             })
         );
 
@@ -399,7 +400,7 @@ class Signup extends Component {
                 })
             );
         }
-
+      
         if (page2.cellphone.valid) {
             const pv = page2.cellphone.value;
             const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
@@ -566,11 +567,9 @@ class Signup extends Component {
     }
 
     renderInput() {
-        const { page } = this.state;
-
+        const { page, phoneCode } = this.state;
         // eslint-disable-next-line react/destructuring-assignment
         const inputs = this.state[`page${page}`];
-
         // if no input, don't render input
         if (!inputs) return null;
 
@@ -593,7 +592,7 @@ class Signup extends Component {
                     validCheck = v => vaildateEqual(inputs.password.value, v);
                     break;
                 case 'cellphone':
-                    validCheck = this.checkPhone;
+                    validCheck = _ => this.checkPhone(_, phoneCode);
                     break;
 
                 case 'veriCode':
