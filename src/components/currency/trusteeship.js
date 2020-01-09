@@ -184,7 +184,7 @@ const Trusteeship = ({ token, tokenList, onSelect, onUpdate }) => {
                             <WGsecondarySelect name="token" id="tokenList" onChange={handleSelect}>
                                 {
                                     tokenList.map(tk => (
-                                        <option key={tk.currencyAddress} value={tk.currencyAddress}>{tk.symbol}</option>
+                                        <option key={tk.currencyID} value={tk.currencyID}>{tk.symbol}</option>
                                     ))
                                 }
                             </WGsecondarySelect>

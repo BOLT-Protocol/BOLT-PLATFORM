@@ -19,6 +19,7 @@ import {
     loginEmail,
     getUserProfile
 } from '../../utils/api';
+import agent from '../../utils/wrapRequest';
 
 const cookie = new Cookies();
 
@@ -28,15 +29,7 @@ const registerEmailEpic = action$ =>
         debounceTime(1000),
         switchMap(action =>
             from(registerEmail(action.data)).pipe(
-                concatMap(({ message, data }) => {
-                    const { token, tokenSecret } = data;
-                    if (!token) return of(actions.authUserFail(message));
-                    cookie.set('boltToken', token, { path: '/' });
-                    cookie.set('boltSecret', tokenSecret, {
-                        path: '/'
-                    });
-                    return of(actions.authUserSuccess(token));
-                })
+                concatMap((res) => of(actions.authCheck(res)))
             )),
         catchError((err, obs) => {
             console.error(err);
@@ -50,16 +43,7 @@ const registerPhoneEpic = action$ =>
         debounceTime(1000),
         switchMap(action =>
             from(registerPhone(action.data)).pipe(
-                concatMap(({ message, data }) => {
-                    const { token, tokenSecret } = data;
-
-                    if (!token) return of(actions.authUserFail(message));
-                    cookie.set('boltToken', token, { path: '/' });
-                    cookie.set('boltSecret', tokenSecret, {
-                        path: '/'
-                    });
-                    return of(actions.authUserSuccess(token));
-                })
+                concatMap(res => actions.authCheck(res))
             )),
         catchError((err, obs) => {
             console.error(err);
@@ -71,17 +55,7 @@ const loginEmailEpic = action$ =>
     action$.pipe(
         ofType(types.USER_LOGIN_EMAIL),
         switchMap(action => from(loginEmail(action.data))),
-        map(({ message, data }) => {
-            const { token, tokenSecret } = data;
-
-            if (token) {
-                cookie.set('boltToken', token, { path: '/' });
-                cookie.set('boltSecret', tokenSecret, { path: '/' });
-                return actions.authUserSuccess(token);
-            } else {
-                return actions.authUserFail(message);
-            }
-        }),
+        map(res => actions.authCheck(res)),
         catchError((err, obs) => {
             console.error('Epic', err);
             return obs;
@@ -92,17 +66,7 @@ const loginPhoneEpic = action$ =>
     action$.pipe(
         ofType(types.USER_LOGIN_PHONE),
         switchMap(action => from(loginPhone(action.data))),
-        map(({ message, data }) => {
-            const { token, tokenSecret } = data;
-
-            if (token) {
-                cookie.set('boltToken', token, { path: '/' });
-                cookie.set('boltSecret', tokenSecret, { path: '/' });
-                return actions.authUserSuccess(token);
-            } else {
-                return actions.authUserFail(message);
-            }
-        }),
+        map(res => actions.authCheck(res)),
         catchError((err, obs) => {
             console.error('Epic', err);
             return obs;
@@ -120,10 +84,34 @@ const profileEpic = action$ =>
         })
     );
 
+const authCheckEpic = action$ =>
+    action$.pipe(
+        ofType(types.AUTH_CHECK),
+        switchMap((action) => {
+            const { message, data } = action.payload;
+            const { token, tokenSecret } = data;
+            if (token) {
+                cookie.set('boltToken', token, { path: '/' });
+                cookie.set('boltSecret', tokenSecret, { path: '/' });
+                agent.setHeaders({
+                    token
+                });
+
+                return of(
+                    actions.authUserSuccess(token),
+                    actions.fetchProfile$()
+                );
+            } else {
+                return actions.authUserFail(message);
+            }
+        })
+    );
+
 export default [
     registerEmailEpic,
     registerPhoneEpic,
     loginEmailEpic,
     loginPhoneEpic,
-    profileEpic
+    profileEpic,
+    authCheckEpic
 ];

@@ -82,3 +82,7 @@ export const fetchProfileFail = () => ({
     type: types.USER_PROFILE_FAIL
 });
 
+export const authCheck = payload => ({
+    type: types.AUTH_CHECK,
+    payload
+});

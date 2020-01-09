@@ -47,7 +47,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
                 <SCcardHolder>
                     {list.map((token, index) => (
                         <CurrencyCard
-                            key={token.currencyAddress}
+                            key={token.currencyID}
                             publish={token.totalSupply}
                             remain={token.balance}
                             symbol={token.symbol}

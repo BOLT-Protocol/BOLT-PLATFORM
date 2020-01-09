@@ -82,6 +82,7 @@ const SCaddress = styled.div`
 toast.configure(TOAST_OPTIONS);
 
 const Wallet = ({ token, amount, userName, address }) => {
+    // console.log(userName, address);
 
     const copy = (str = '') => {
         const el = document.createElement('textarea');
