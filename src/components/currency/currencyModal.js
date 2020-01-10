@@ -7,14 +7,26 @@ import InputField from '../inputField';
 import Loading from '../loading';
 import { bgLight, fontWhite, fontYellow } from '../../widgets/styleGuid';
 import { WGsecondaryButton, WGmainButton } from '../../widgets/button';
-import { MINT, MAX_AMOUNT, MIN_AMOUNT } from '../../constants/currency';
+import { MINT, MAX_AMOUNT, MIN_AMOUNT, BURN, WITHDRAW } from '../../constants/currency';
 import { getCost, mintFund, burnFund } from '../../utils/api';
 import { validateCurrencyAmount } from '../../utils/validation';
 
-const mintInfo = tk => `增加發行 ${tk} Token 的費用，是依照您的發幣類型與數量即時提供報價。增發成功後，
-新的Token會匯入您發行時的綁定錢包中，並更新發行總量。`;
-const burnInfo = tk => `您可能因某些原因需要銷毀 ${tk} Token，您可以對綁定錢包中您指定的Token數量進行銷毀，
-請謹慎使用此功能。`;
+const CURRENCY_ACTION = {
+    [MINT]: {
+        info: tk => `增加發行 ${tk} Token 的費用，是依照您的發幣類型與數量即時提供報價。增發成功後，
+        新的Token會匯入您發行時的綁定錢包中，並更新發行總量。`,
+        method: mintFund
+    },
+    [BURN]: {
+        info: tk => `您可能因某些原因需要銷毀 ${tk} Token，您可以對綁定錢包中您指定的Token數量進行銷毀，
+        請謹慎使用此功能。`,
+        method: burnFund
+    },
+    [WITHDRAW]: {
+        info: tk => `提領 ${tk} Token 到錢包`,
+        method: () => { }
+    }
+};
 
 const customStyles = {
     content: {
@@ -138,7 +150,7 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
 
         setLoading(true);
 
-        const callApi = type === MINT ? mintFund : burnFund;
+        const callApi = CURRENCY_ACTION[type].method;
 
         callApi({
             symbol: token,
@@ -169,7 +181,7 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
             <Modal isOpen={show} style={customStyles}>
                 <SCholder>
                     <p>
-                        {type === MINT ? mintInfo(token) : burnInfo(token)}
+                        {CURRENCY_ACTION[type].info(token)}
                     </p>
 
                     <div>
@@ -213,9 +225,13 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
     );
 };
 
+CurrencyModal.defaultProps = {
+    type: MINT
+};
+
 CurrencyModal.propTypes = {
     show: PropTypes.bool.isRequired,
-    type: PropTypes.string.isRequired,
+    type: PropTypes.string,
     cancel: PropTypes.func.isRequired,
     token: PropTypes.string.isRequired,
     next: PropTypes.func.isRequired,

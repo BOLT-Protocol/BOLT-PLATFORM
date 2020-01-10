@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 
+import CurrencyModal from './currencyModal';
 import { bgHeader, mainColor, bgLight } from '../../widgets/styleGuid';
 import { WGmainButton, WGsecondaryButton } from '../../widgets/button';
 import { TOAST_OPTIONS } from '../../utils/toast';
+import { WITHDRAW } from '../../constants/currency';
 
 const SCwallet = styled.div`
     display: flex;
@@ -82,7 +84,7 @@ const SCaddress = styled.div`
 toast.configure(TOAST_OPTIONS);
 
 const Wallet = ({ token, amount, userName, address }) => {
-    // console.log(userName, address);
+    const [modal, setModal] = useState({ type: WITHDRAW, show: false });
 
     const copy = (str = '') => {
         const el = document.createElement('textarea');
@@ -106,6 +108,10 @@ const Wallet = ({ token, amount, userName, address }) => {
         setTimeout(() => {
             toast('已複製');
         }, 500);
+    };
+
+    const handleWithdrawModal = () => {
+        setModal({ type: WITHDRAW, show: true });
     };
 
     useEffect(() => {
@@ -158,9 +164,21 @@ const Wallet = ({ token, amount, userName, address }) => {
                     <WGsecondaryButton>
                         入幣
                     </WGsecondaryButton>
-                    <WGmainButton>提幣</WGmainButton>
+
+                    <WGmainButton onClick={handleWithdrawModal}>提幣</WGmainButton>
                 </div>
             </div>
+
+            <CurrencyModal
+                show={modal.show}
+                type={modal.type}
+                token={token}
+                cancel={() => setModal({ ...modal, show: false })}
+                next={() => {
+                    console.log('success');
+                }}
+                onError={() => { }}
+            />
         </SCwallet>
     );
 };

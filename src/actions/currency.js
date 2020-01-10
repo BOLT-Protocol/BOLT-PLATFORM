@@ -27,3 +27,8 @@ export const updateListSuccess = payload => ({
     type: types.CURRENCY_LIST_UPDATE_SUCCESS,
     payload
 });
+
+export const withDraw$ = payload => ({
+    type: types.WITHDRAW_FETCH,
+    payload
+});
