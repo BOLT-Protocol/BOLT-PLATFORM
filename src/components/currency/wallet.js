@@ -179,6 +179,8 @@ const Wallet = ({ token, amount, userName, address }) => {
                 }}
                 onError={() => { }}
             />
+
+
         </SCwallet>
     );
 };

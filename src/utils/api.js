@@ -37,6 +37,8 @@ export const createFund = agent.request('/fund/create', 'POST');
 
 export const escrowFund = agent.request('/fund/escrow', 'POST');
 
+export const withdrawFund = agent.request('/fund/withdraw', 'POST');
+
 export const mintFund = agent.request('/fund/mint', 'POST');
 
 export const burnFund = agent.request('/fund/burn', 'POST');

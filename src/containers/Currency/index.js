@@ -7,13 +7,23 @@ import CurrencyCard from '../../components/currency/currencyCard';
 import Wallet from '../../components/currency/wallet';
 import TrusteeShip from '../../components/currency/trusteeship';
 import Loading from '../../components/loading';
+import CurrencyModal from '../../components/currency/currencyModal';
+import PaymentModal from '../../components/currency/paymentModal';
+import ConfirmModal from '../../components/modal/confirmModal';
 // import { getUserCard } from '../../utils/api';
 import { getCurrencyList$, cancelCurrencyList$, updateListBySymbol$ } from '../../actions/currency';
 import authGuard from '../../utils/auth';
+import { MINT, BURN } from '../../constants/currency';
 
 const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress, updateList }) => {
     const [selectedToken, setSelectedToken] = useState(null);
     const isInitialMount = useRef(true); // 用來確認 didmount 執行
+    const [modal, setModal] = useState({ show: false, type: MINT });
+    const [openPayment, setOpenPayment] = useState(false);
+    const [orderID, setOrderID] = useState(null);
+    const [confirm, setConfirm] = useState({ show: false, type: MINT });
+    const [error, setError] = useState(null);
+    const [amount, setAmount] = useState(0); // 顯示用數量
 
     useEffect(() => {
         if (isInitialMount.current) { // didmount
@@ -37,6 +47,68 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
     useEffect(() => {
         return () => { cancelFetch(); };
     }, []);
+
+    const handleOpenpayment = ({ orderID: oId }) => {
+        setModal({ ...modal, show: false });
+        setOrderID(oId);
+        setOpenPayment(true);
+    };
+
+    const handleOpenMint = () => {
+        setModal({ type: MINT, show: true });
+    };
+
+    const handleOpenBurn = () => {
+        setModal({ type: BURN, show: true });
+    };
+
+    const mintSuccess = () => {
+        setOpenPayment(false);
+        setConfirm({
+            show: true,
+            type: MINT
+        });
+        updateList(selectedToken);
+    };
+
+    const burnSuccess = ({ value }) => {
+        setAmount(value);
+
+        setModal({
+            ...modal,
+            show: false
+        });
+
+        setConfirm({
+            show: true,
+            type: BURN
+        });
+
+        updateList(selectedToken);
+    };
+
+    const hideSuccess = () => {
+        setConfirm({
+            ...confirm,
+            show: false
+        });
+    };
+
+    const handleError = (e) => {
+        setError(e);
+
+        setConfirm({
+            type: 'ERROR',
+            show: true
+        });
+    };
+
+    const confirmMessage = () => {
+        if (confirm.type === MINT) return `付款完成，您可開始使用您的 ${selectedToken} Token`;
+        if (confirm.type === BURN) return `已銷毀 ${amount.toLocaleString()} 個 ${selectedToken} TOKEN`;
+
+        return error;
+    };
 
     return (
 
@@ -73,9 +145,34 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
                         token={selectedToken ? selectedToken.symbol : ""}
                         tokenList={list}
                         onSelect={setSelectedToken}
-                        onUpdate={updateList}
+                        openPayment={handleOpenpayment}
+                        openMint={handleOpenMint}
+                        openBurn={handleOpenBurn}
                     />
                 </SCuserField>
+
+                <CurrencyModal
+                    show={modal.show}
+                    type={modal.type}
+                    token={selectedToken || ''}
+                    cancel={() => setModal({ ...modal, show: false })}
+                    next={modal.type === BURN ? burnSuccess : handleOpenpayment}
+                    onError={handleError}
+                />
+
+                <PaymentModal
+                    show={openPayment}
+                    orderID={orderID}
+                    paymentCallback={mintSuccess}
+                    cancel={() => { setOpenPayment(false); }}
+                    actionType={modal.type}
+                />
+
+                <ConfirmModal
+                    show={confirm.show}
+                    close={hideSuccess}
+                    message={confirmMessage()}
+                />
 
                 <Loading show={loading} />
             </SCmain>

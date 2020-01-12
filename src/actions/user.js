@@ -33,7 +33,7 @@ export const loginUserEmail$ = ({ email, password }) => ({
 });
 
 export const loginUserPhone$ = ({ phone, countryCode, password }) => ({
-    type: types.USER_LOGIN_EMAIL,
+    type: types.USER_LOGIN_PHONE,
     data: {
         phone,
         countryCode,

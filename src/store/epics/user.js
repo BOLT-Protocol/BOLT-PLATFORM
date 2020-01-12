@@ -43,7 +43,7 @@ const registerPhoneEpic = action$ =>
         debounceTime(1000),
         switchMap(action =>
             from(registerPhone(action.data)).pipe(
-                concatMap(res => actions.authCheck(res))
+                concatMap(res => of(actions.authCheck(res)))
             )),
         catchError((err, obs) => {
             console.error(err);
@@ -102,7 +102,7 @@ const authCheckEpic = action$ =>
                     actions.fetchProfile$()
                 );
             } else {
-                return actions.authUserFail(message);
+                return of(actions.authUserFail(message));
             }
         })
     );

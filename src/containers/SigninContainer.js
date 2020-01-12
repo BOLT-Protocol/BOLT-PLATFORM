@@ -17,7 +17,7 @@ import { WGmainSelect } from '../widgets/select';
 import { setInput } from '../utils/loginService';
 import { validateEmail } from '../utils/validation';
 import { loginUserEmail$, loginUserPhone$ } from '../actions/user';
-import countryCode from '../constants/countryCode.json';
+import CountryCode from '../constants/countryCode.json';
 
 const mapStateToProps = state => ({
     user: state.user
@@ -87,7 +87,7 @@ class Signin extends Component {
                     error: '帳號與密碼不符'
                 }
             },
-            phoneCode: '+886'
+            countryCode: '+886'
         };
 
         this.setInput = setInput.bind(this);
@@ -136,7 +136,7 @@ class Signin extends Component {
             });
         } else if (page === 2) {
             const { onLoginPhone$ } = this.props;
-            const { page2, phoneCode } = this.state;
+            const { page2, countryCode } = this.state;
             const { cellphone, password } = page2;
             for (let el in page2) {
                 // eslint-disable-next-line react/destructuring-assignment
@@ -149,20 +149,24 @@ class Signin extends Component {
                     return false;
                 }
             }
+
+            const pv = cellphone.value;
+            const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
+
             onLoginPhone$({
-                phone: cellphone.value,
-                phoneCode,
+                phone,
+                countryCode,
                 password: password.value
             });
         }
     };
 
-    handlePhoneCode = e => {
+    handleCountryCode = e => {
         const { value } = e.target;
 
         this.setState(
             produce(draft => {
-                draft.phoneCode = value;
+                draft.countryCode = value;
             })
         );
     };
@@ -242,13 +246,13 @@ class Signin extends Component {
             }
             // eslint-disable-next-line react/destructuring-assignment
             const item = inputs[key];
-            const { phoneCode } = key === 'cellphone' ? this.state : {};
+            const { countryCode } = key === 'cellphone' ? this.state : {};
             return key === 'cellphone' ? (
                 <div key={key}>
                     <WGmainSelect
                         name="countryCode"
-                        value={phoneCode}
-                        onChange={this.handlePhoneCode}
+                        value={countryCode}
+                        onChange={this.handleCountryCode}
                         style={{
                             height: '28px',
                             margin: '1rem 0',
@@ -257,7 +261,7 @@ class Signin extends Component {
                             color: '#ffffff'
                         }}
                     >
-                        {countryCode.map(c => (
+                        {CountryCode.map(c => (
                             <option key={c.countryName} value={c.phoneCode}>
                                 {c.countryName} {c.phoneCode}
                             </option>
