@@ -21,7 +21,7 @@ module.exports = {
             'key': `${process.env.HOME}/Documents/ssh/BOLTCHAIN.pem`,
             'host': '35.174.53.23',
             'repo': 'git@github.com:BOLT-Protocol/BOLT-PLATFORM.git',
-            'ref': 'origin/feature/withdraw',
+            'ref': 'origin/develop',
             'path': '/home/ubuntu/BOLT_PLATFORM',
             'post-deploy': 'npm i && npm run build && pm2 startOrRestart ecosystem.config.js --env dev'
         },
