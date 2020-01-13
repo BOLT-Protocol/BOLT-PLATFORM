@@ -46,3 +46,9 @@ export const getUserBalanceSuccess = payload => ({
 export const getUserBalanceFail = () => ({
     type: types.USER_BALANCE_FAIL,
 });
+
+
+export const selectToken = payload => ({
+    type: types.SET_SELECTED_TOKEN,
+    payload
+});

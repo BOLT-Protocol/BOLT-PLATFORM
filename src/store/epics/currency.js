@@ -22,7 +22,8 @@ const currrncyListEpic = action$ =>
                     ...res.data,
                     symbol: symbolsList[i],
                     totalSupply: parseFloat(res.data.totalSupply, 10),
-                    balance: parseFloat(res.data.balance, 10)
+                    totalBalance: parseFloat(res.data.balance, 10),
+                    balance: 0
                 }));
                 return actions.getCurrencyListSuccess(result);
             }),
@@ -41,7 +42,8 @@ const updateBySymbolEpic = action$ =>
                         ...data,
                         symbol: action.payload,
                         totalSupply: parseFloat(data.totalSupply, 10),
-                        balance: parseFloat(data.balance, 10)
+                        totalBalance: parseFloat(data.balance, 10),
+                        balance: 0
                     }))
                 )
         ),
@@ -54,7 +56,7 @@ const getBalanceEpic = action$ =>
         mergeMap(
             action => from(getUserBalance(action.payload))
                 .pipe(
-                    map(({ data }) => actions.getUserBalanceSuccess(data))
+                    map(({ data }) => actions.getUserBalanceSuccess(data)),
                 )
         ),
         catchError(() => of(actions.getCurrencyListFail())),

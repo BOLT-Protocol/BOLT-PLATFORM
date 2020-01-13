@@ -91,7 +91,7 @@ const Trusteeship = ({ token, tokenList, onSelect, openMint, openBurn }) => {
 
     const handleSelect = (e) => {
         const { value } = e.target;
-        const tk = tokenList.find(_token => _token.currencyAddress === value);
+        const tk = tokenList.find(_token => _token.currencyID === value);
 
         onSelect(tk);
     };
