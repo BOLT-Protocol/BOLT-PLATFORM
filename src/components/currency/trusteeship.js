@@ -87,7 +87,7 @@ const SCempty = styled.div`
 `;
 
 const Trusteeship = ({ token, tokenList, onSelect, openMint, openBurn }) => {
-    const selectedToken = tokenList.find(tk => tk.symbol === token);
+    const selectedToken = tokenList.find(tk => tk.symbol === token) || {};
 
     const handleSelect = (e) => {
         const { value } = e.target;

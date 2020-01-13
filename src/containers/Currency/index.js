@@ -33,9 +33,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
             // eslint-disable-next-line no-lonely-if
             if (!selectedToken) {
                 setSelectedToken(list[0]);
-            }
-
-            if (selectedToken && !selectedToken.balance) {
+            } else {
                 getBalance(selectedToken.currencyID);
             }
         }
@@ -46,7 +44,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
         return () => { cancelFetch(); };
     }, []);
 
-    const handleOpenpayment = ({ orderID: oId }) => {
+    const handleOpenPayment = ({ orderID: oId }) => {
         setModal({ ...modal, show: false });
         setOrderID(oId);
         setOpenPayment(true);
@@ -150,7 +148,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
                         token={selectedToken ? selectedToken.symbol : ""}
                         tokenList={list}
                         onSelect={setSelectedToken}
-                        openPayment={handleOpenpayment}
+                        openPayment={handleOpenPayment}
                         openMint={handleOpenMint}
                         openBurn={handleOpenBurn}
                     />
@@ -161,7 +159,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
                     type={modal.type}
                     token={selectedToken ? selectedToken.symbol : ''}
                     cancel={() => setModal({ ...modal, show: false })}
-                    next={modal.type === MINT ? handleOpenpayment : activeSuccess}
+                    next={modal.type === MINT ? handleOpenPayment : activeSuccess}
                     onError={handleError}
                 />
 
