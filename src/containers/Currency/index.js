@@ -13,7 +13,7 @@ import ConfirmModal from '../../components/modal/confirmModal';
 // import { getUserCard } from '../../utils/api';
 import { getCurrencyList$, cancelCurrencyList$, updateListBySymbol$ } from '../../actions/currency';
 import authGuard from '../../utils/auth';
-import { MINT, BURN } from '../../constants/currency';
+import { MINT, BURN, WITHDRAW } from '../../constants/currency';
 
 const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress, updateList }) => {
     const [selectedToken, setSelectedToken] = useState(null);
@@ -62,16 +62,20 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
         setModal({ type: BURN, show: true });
     };
 
-    const mintSuccess = () => {
+    const handleOpenWithdraw = () => {
+        setModal({ type: WITHDRAW, show: true });
+    };
+
+    const paymentSuccess = () => {
         setOpenPayment(false);
         setConfirm({
             show: true,
-            type: MINT
+            type: modal.type
         });
-        updateList(selectedToken);
+        updateList(selectedToken.symbol);
     };
 
-    const burnSuccess = ({ value }) => {
+    const activeSuccess = ({ value }) => {
         setAmount(value);
 
         setModal({
@@ -81,10 +85,10 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
 
         setConfirm({
             show: true,
-            type: BURN
+            type: modal.type
         });
 
-        updateList(selectedToken);
+        updateList(selectedToken.symbol);
     };
 
     const hideSuccess = () => {
@@ -104,8 +108,10 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
     };
 
     const confirmMessage = () => {
-        if (confirm.type === MINT) return `付款完成，您可開始使用您的 ${selectedToken} Token`;
-        if (confirm.type === BURN) return `已銷毀 ${amount.toLocaleString()} 個 ${selectedToken} TOKEN`;
+        if (!selectedToken) return '';
+        if (confirm.type === MINT) return `付款完成，您可開始使用您的 ${selectedToken.symbol} Token`;
+        if (confirm.type === BURN) return `已銷毀 ${amount.toLocaleString()} 個 ${selectedToken.symbol} TOKEN`;
+        if (confirm.type === WITHDRAW) return `已提領 ${amount.toLocaleString()} 個 ${selectedToken.symbol} TOKEN 至錢包`;
 
         return error;
     };
@@ -137,6 +143,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
                                 address={userAddress}
                                 userName={userName}
                                 amount={selectedToken.balance}
+                                openWithdrawModal={handleOpenWithdraw}
                             />
                         )
                     }
@@ -154,16 +161,16 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
                 <CurrencyModal
                     show={modal.show}
                     type={modal.type}
-                    token={selectedToken || ''}
+                    token={selectedToken ? selectedToken.symbol : ''}
                     cancel={() => setModal({ ...modal, show: false })}
-                    next={modal.type === BURN ? burnSuccess : handleOpenpayment}
+                    next={modal.type === MINT ? handleOpenpayment : activeSuccess}
                     onError={handleError}
                 />
 
                 <PaymentModal
                     show={openPayment}
                     orderID={orderID}
-                    paymentCallback={mintSuccess}
+                    paymentCallback={paymentSuccess}
                     cancel={() => { setOpenPayment(false); }}
                     actionType={modal.type}
                 />

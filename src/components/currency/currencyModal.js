@@ -28,9 +28,9 @@ const CURRENCY_ACTION = {
     },
     [WITHDRAW]: {
         info: tk => `提領 ${tk} Token 到錢包`,
-        confirmText: '前往付款',
+        confirmText: '提領',
         inputTitle: '輸入提領數量',
-        method: () => withdrawFund
+        method: withdrawFund
     }
 };
 
@@ -126,6 +126,8 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
     const hanldeInput = ({ value, valid }) => {
         setInput({ ...input, value, valid });
 
+        if (type !== MINT) return; // 不需要手續費
+
         if (!valid) {
             return setCost(0);
         }
@@ -152,16 +154,14 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
     };
 
     const handleSubmit = () => {
-        if (loading || (!cost > 0)) return;
+        if (loading || (!cost > 0 && type === MINT) || !input.valid) return;
 
         setLoading(true);
 
         const callApi = CURRENCY_ACTION[type].method;
+        const apiPayload = type === WITHDRAW ? { symbol: token, value: input.value } : { symbol: token, number: input.value };
 
-        callApi({
-            symbol: token,
-            number: input.value
-        })
+        callApi(apiPayload)
             .then(({ success, data, message }) => {
                 setLoading(false);
                 setCost(0);
@@ -210,9 +210,13 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
                     </div>
 
 
-                    <p>
-                        應付總額 (新台幣)：{cost.toLocaleString()} 元
-                    </p>
+                    {
+                        type === MINT && (
+                            <p>
+                                應付總額 (新台幣)：{cost.toLocaleString()} 元
+                            </p>
+                        )
+                    }
 
                     <div>
                         <WGsecondaryButton onClick={cancel} style={{ maxWidth: 120, border: 0 }}>

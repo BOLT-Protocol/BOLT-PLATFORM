@@ -25,7 +25,7 @@ const SCloading = styled.div`
     align-items: center;
     height: 100vh;
     width: 100vw;
-    display: ${props => props.show ? 'flex' : 'none'};
+    display: ${props => props.show ? 'flex' : 'none'} !important;
     z-index: 1000;
     color: #fff;
 
