@@ -61,6 +61,9 @@ export const getSymbol = symbol => agent.request(`/user/token/${symbol}`)();
 
 export const getUserProfile = agent.request('/user/profile');
 
+export const getUserBalance = currencyID => agent.request(`/user/address/${currencyID}`)();
+
 export const checkCurrencyName = name => agent.request(`/check/name/${name}`)();
 
 export const checkCurrencySymbol = symbol => agent.request(`/check/symbol/${symbol}`)();
+

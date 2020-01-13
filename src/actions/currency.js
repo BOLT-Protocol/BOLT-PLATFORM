@@ -32,3 +32,17 @@ export const withDraw$ = payload => ({
     type: types.WITHDRAW_FETCH,
     payload
 });
+
+export const getUserBalance$ = payload => ({
+    type: types.USER_BALANCE_FETCH,
+    payload
+});
+
+export const getUserBalanceSuccess = payload => ({
+    type: types.USER_BALANCE_SUCCESS,
+    payload
+});
+
+export const getUserBalanceFail = () => ({
+    type: types.USER_BALANCE_FAIL,
+});
