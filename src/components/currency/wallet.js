@@ -81,9 +81,7 @@ const SCaddress = styled.div`
 `;
 toast.configure(TOAST_OPTIONS);
 
-const Wallet = ({ token, amount, userName, address }) => {
-    // console.log(userName, address);
-
+const Wallet = ({ token, amount, userName, address, openWithdrawModal }) => {
     const copy = (str = '') => {
         const el = document.createElement('textarea');
         el.value = str;
@@ -158,9 +156,11 @@ const Wallet = ({ token, amount, userName, address }) => {
                     <WGsecondaryButton>
                         入幣
                     </WGsecondaryButton>
-                    <WGmainButton>提幣</WGmainButton>
+
+                    <WGmainButton onClick={openWithdrawModal}>提幣</WGmainButton>
                 </div>
             </div>
+
         </SCwallet>
     );
 };
@@ -169,7 +169,8 @@ Wallet.propTypes = {
     token: PropTypes.string.isRequired,
     amount: PropTypes.number.isRequired,
     userName: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired
+    address: PropTypes.string.isRequired,
+    openWithdrawModal: PropTypes.func.isRequired
 };
 
 export default Wallet;

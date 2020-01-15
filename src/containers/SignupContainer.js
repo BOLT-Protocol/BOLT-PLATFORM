@@ -336,8 +336,11 @@ class Signup extends Component {
                     return false;
                 }
             }
+            const pv = cellphone.value;
+            const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
+
             onRegisterPhone$({
-                phone: cellphone.value,
+                phone,
                 password: password.value,
                 countryCode,
                 code: veriCode.value
@@ -395,12 +398,6 @@ class Signup extends Component {
         e.preventDefault();
         const { page2, countryCode } = this.state;
 
-        this.setState(
-            produce(draft => {
-                // draft.page2.veriCode.hint = '已發送驗證碼';
-            })
-        );
-
         if (page2.cellphone.value.trim() === '') {
             this.setState(
                 produce(draft => {
@@ -408,7 +405,7 @@ class Signup extends Component {
                 })
             );
         }
-      
+
         if (page2.cellphone.valid) {
             const pv = page2.cellphone.value;
             const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
@@ -601,7 +598,7 @@ class Signup extends Component {
                     validCheck = v => vaildateEqual(inputs.password.value, v);
                     break;
                 case 'cellphone':
-                    validCheck = _ => this.checkPhone(_, phoneCode);
+                    validCheck = this.checkPhone;
                     break;
 
                 case 'veriCode':

@@ -37,6 +37,8 @@ export const createFund = agent.request('/fund/create', 'POST');
 
 export const escrowFund = agent.request('/fund/escrow', 'POST');
 
+export const withdrawFund = agent.request('/fund/withdraw', 'POST');
+
 export const mintFund = agent.request('/fund/mint', 'POST');
 
 export const burnFund = agent.request('/fund/burn', 'POST');
@@ -59,6 +61,9 @@ export const getSymbol = symbol => agent.request(`/user/token/${symbol}`)();
 
 export const getUserProfile = agent.request('/user/profile');
 
+export const getUserBalance = currencyID => agent.request(`/user/address/${currencyID}`)();
+
 export const checkCurrencyName = name => agent.request(`/check/name/${name}`)();
 
 export const checkCurrencySymbol = symbol => agent.request(`/check/symbol/${symbol}`)();
+

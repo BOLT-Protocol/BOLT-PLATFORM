@@ -4,7 +4,7 @@ import { ofType } from "redux-observable";
 
 import * as types from '../../constants/actionTypes/currency';
 import * as actions from '../../actions/currency';
-import { getCurrencyList, getSymbol } from '../../utils/api';
+import { getCurrencyList, getSymbol, getUserBalance } from '../../utils/api';
 
 const currrncyListEpic = action$ =>
     action$.pipe(
@@ -22,7 +22,8 @@ const currrncyListEpic = action$ =>
                     ...res.data,
                     symbol: symbolsList[i],
                     totalSupply: parseFloat(res.data.totalSupply, 10),
-                    balance: parseFloat(res.data.balance, 10)
+                    totalBalance: parseFloat(res.data.balance, 10),
+                    balance: 0
                 }));
                 return actions.getCurrencyListSuccess(result);
             }),
@@ -41,14 +42,28 @@ const updateBySymbolEpic = action$ =>
                         ...data,
                         symbol: action.payload,
                         totalSupply: parseFloat(data.totalSupply, 10),
-                        balance: parseFloat(data.balance, 10)
+                        totalBalance: parseFloat(data.balance, 10),
+                        balance: 0
                     }))
                 )
         ),
         catchError(error => of(actions.getCurrencyListFail(error))),
     );
 
+const getBalanceEpic = action$ =>
+    action$.pipe(
+        ofType(types.USER_BALANCE_FETCH),
+        mergeMap(
+            action => from(getUserBalance(action.payload))
+                .pipe(
+                    map(({ data }) => actions.getUserBalanceSuccess(data)),
+                )
+        ),
+        catchError(() => of(actions.getCurrencyListFail())),
+    );
+
 export default [
     currrncyListEpic,
-    updateBySymbolEpic
+    updateBySymbolEpic,
+    getBalanceEpic
 ];
