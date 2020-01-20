@@ -33,7 +33,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
             // eslint-disable-next-line no-lonely-if
             if (!selectedToken) {
                 setSelectedToken(list[0]);
-            } else {
+            } else if (list.length > 0 && selectedToken.currencyID) {
                 getBalance(selectedToken.currencyID);
             }
         }

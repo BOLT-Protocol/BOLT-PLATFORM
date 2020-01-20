@@ -159,7 +159,7 @@ const CurrencyModal = ({ type, show, cancel, token, next, onError }) => {
         setLoading(true);
 
         const callApi = CURRENCY_ACTION[type].method;
-        const apiPayload = type === WITHDRAW ? { symbol: token, value: input.value } : { symbol: token, number: input.value };
+        const apiPayload = { symbol: token, number: input.value };
 
         callApi(apiPayload)
             .then(({ success, data, message }) => {
