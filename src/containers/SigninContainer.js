@@ -344,7 +344,7 @@ class Signin extends Component {
                         <WGmainP>
                             或 &nbsp;
                             <Link href="/signup">
-                                <WGmainA>或建立帳戶</WGmainA>
+                                <WGmainA>建立帳戶</WGmainA>
                             </Link>
                         </WGmainP>
                     </div>

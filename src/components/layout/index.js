@@ -17,7 +17,7 @@ const navList = [
         icon: 'currency'
     },
     {
-        name: 'Bolt PAY',
+        name: 'Bolt Pay',
         link: '/pay',
         icon: 'pay'
     },

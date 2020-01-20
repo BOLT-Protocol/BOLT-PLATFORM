@@ -37,7 +37,7 @@ export default function () {
                 <img src="/static/images/cones.svg" alt="Cones" />
 
                 <span>
-                    趕工中
+                    仍在趕工中請見諒
                 </span>
 
                 <img src="/static/images/cones.svg" alt="Cones" />
