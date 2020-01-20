@@ -3,6 +3,8 @@ import { fontWhite, fontGrey, secondColor } from '../../widgets/styleGuid';
 
 export const SCholder = styled.a`
     transition: 0.3s;
+    cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+    pointer-events: ${props => props.disabled ? 'none' : 'initial'};
 
     > div {
         display: flex;

@@ -3,9 +3,9 @@ import PropType from 'prop-types';
 
 import { SCholder } from './style';
 
-const selectItem = ({ selected, img, title, desc, onClick }) => {
+const selectItem = ({ selected, img, title, desc, onClick, disabled = false }) => {
     return (
-        <SCholder selected={selected} onClick={onClick}>
+        <SCholder selected={selected} onClick={onClick} disabled={disabled}>
             <div>
                 <img src={img} alt={title} />
 
@@ -26,7 +26,8 @@ selectItem.propTypes = {
     img: PropType.string.isRequired,
     title: PropType.string.isRequired,
     desc: PropType.string.isRequired,
-    onClick: PropType.func.isRequired
+    onClick: PropType.func.isRequired,
+    disabled: PropType.bool.isRequired
 };
 
 export default selectItem;
