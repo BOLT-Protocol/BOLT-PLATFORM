@@ -6,23 +6,23 @@ import PropTypes from 'prop-types';
 import { SCheader, SCnav, SCcontainer, SCli } from './style';
 
 const navList = [
+    // {
+    //     name: 'Home',
+    //     link: '/',
+    //     icon: 'home'
+    // },
     {
-        name: 'Home',
-        link: '/',
-        icon: 'home'
-    },
-    {
-        name: 'BOLT Currency',
+        name: 'Bolt Currency',
         link: '/currency',
         icon: 'currency'
     },
     {
-        name: 'BOLT PAY',
+        name: 'Bolt PAY',
         link: '/pay',
         icon: 'pay'
     },
     {
-        name: 'BOLT Trust',
+        name: 'Bolt Trust',
         link: '/trust',
         icon: 'trust'
     }
@@ -36,7 +36,7 @@ const layout = props => {
         <Fragment>
             <SCheader>
                 <div>
-                    <img src="/static/images/bolt_logo.png" alt="BOLT"/>
+                    <img src="/static/images/bolt_logo.png" alt="BOLT" />
                 </div>
             </SCheader>
 
@@ -49,7 +49,7 @@ const layout = props => {
                             <SCli key={n.name} active={n.link === nav} onClick={() => setNav(n.link)}>
                                 <Link href={n.link}>
                                     <a>
-                                        <img src={`/static/images/ic_${n.icon}.svg`} alt={n.name}/>
+                                        <img src={`/static/images/ic_${n.icon}.svg`} alt={n.name} />
                                         {n.name}
                                         {n.link === nav && (
                                             <span>

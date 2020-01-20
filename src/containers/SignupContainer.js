@@ -164,7 +164,7 @@ class Signup extends Component {
                     })
                 );
                 this.timmer = setTimeout(() => {
-                    Router.push('/');
+                    Router.push('/currenncy');
                 }, 3000);
             }, 200);
         }

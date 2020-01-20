@@ -65,7 +65,7 @@ class CreateToken extends Component {
                 [CURRENCY.NAME]: {
                     ...input,
                     title: '新幣名稱',
-                    placeholder: '小於30位英文及數字，例：BOLTChain Coin',
+                    placeholder: '小於30位英文及數字，例：Boltchain Coin',
                     validCheck: validateCurrencyName,
                     error: '格式不符合'
                 },
@@ -378,7 +378,7 @@ class CreateToken extends Component {
 
         return (
             <SCcontainer>
-                <SCmessage>BOLT Currency 提供了數字貨幣發行與管理功能，每個用户可在BOLTCHAIN發行多次通證。除了通過BOLTCHAIN直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到BOLTCHAIN系統上，以享有BOLT scaling system帶來的強大效能與便利性。</SCmessage>
+                <SCmessage>Bolt Currency 提供了數字貨幣發行與管理功能，每個用户可在Boltchain發行多次通證。除了通過Boltchain直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到Boltchain系統上，以享有Bolt scaling system帶來的強大效能與便利性。</SCmessage>
 
                 <SCmain>
                     <SCstepList>{this.renderStep()}</SCstepList>

@@ -1,5 +1,6 @@
 import React from 'react';
+import Working from '../../src/components/working';
 
-const trust = () => <div>Trust</div>;
+const trust = () => <Working />;
 
 export default trust;

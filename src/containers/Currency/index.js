@@ -115,7 +115,7 @@ const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress
     return (
 
         <SCcontainer>
-            <SCmessage>BOLT Currency 提供了數字貨幣發行與管理功能，每個用户可在BOLTCHAIN發行多次通證。除了通過BOLTCHAIN直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到BOLTCHAIN系統上，以享有BOLT scaling system帶來的強大效能與便利性。</SCmessage>
+            <SCmessage>Bolt Currency 提供了數字貨幣發行與管理功能，每個用户可在Boltchain發行多次通證。除了通過Boltchain直接新發行通證；您也可以將已經發行的代幣，通過託管功能轉換等量通證到Boltchain系統上，以享有Bolt scaling system帶來的強大效能與便利性。</SCmessage>
 
             <SCmain style={{ flexDirection: 'column' }}>
                 <SCcardHolder>

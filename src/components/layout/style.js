@@ -60,6 +60,7 @@ export const SCli = styled.li`
         > img {
             width: 20px;
             margin-right: 1rem;
+            height: 21px;
         }
 
         > span {

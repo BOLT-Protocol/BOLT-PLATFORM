@@ -15,6 +15,7 @@ export const SCinputField = styled.div`
         color: ${fontWhite};
         padding: 0.3rem 0;
         font-size: 0.875rem;
+        padding-left: 0.3rem;
 
         &::placeholder {
             color: ${fontGrey};
