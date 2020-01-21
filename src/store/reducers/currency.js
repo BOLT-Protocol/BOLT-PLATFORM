@@ -36,7 +36,7 @@ const currency = (state = initialState, action = {}) => {
                 break;
             case types.USER_BALANCE_SUCCESS:
                 const i = draft.currencyList.findIndex(curr => curr.symbol === action.payload.symbol);
-                draft.currencyList[i].balance = parseFloat(action.payload.balance, 10);
+                if (draft.currencyList[i]) draft.currencyList[i].balance = parseFloat(action.payload.balance, 10);
                 draft.selectedToken = draft.currencyList[i];
                 draft.error = null;
                 break;

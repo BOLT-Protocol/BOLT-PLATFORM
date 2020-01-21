@@ -1,9 +1,13 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, memo } from 'react';
+import { connect } from 'react-redux';
 import Link from 'next/link';
-import { withRouter } from 'next/router';
+import Router, { withRouter } from 'next/router';
 import PropTypes from 'prop-types';
+import Cookies from 'universal-cookie';
 
-import { SCheader, SCnav, SCcontainer, SCli } from './style';
+import { SCheader, SCnav, SCcontainer, SCli, SCMenu, SCAvatar } from './style';
+import hashColor from '../../utils/hashColor';
+import { logout } from '../../actions/user';
 
 const navList = [
     // {
@@ -29,8 +33,16 @@ const navList = [
 ];
 
 const layout = props => {
-    const { router } = props;
+    const { router, user, logoutAction } = props;
     const [nav, setNav] = useState(router.pathname);
+
+    const onLogout = () => {
+        const cookie = new Cookies();
+        logoutAction();
+        cookie.remove('boltToken');
+        cookie.remove('boltSecret');
+        Router.replace('/signin');
+    };
 
     return (
         <Fragment>
@@ -38,6 +50,30 @@ const layout = props => {
                 <div>
                     <img src="/static/images/bolt_logo.png" alt="BOLT" />
                 </div>
+
+                <SCMenu>
+                    <SCAvatar color={hashColor(user.userName)}>
+                        {user.userName.substr(0, 1).toUpperCase()}
+                    </SCAvatar>
+
+                    <div style={{ justifyContent: 'space-between' }}>
+                        {user.userName}
+
+                        <span>
+                            <img src="/static/images/flash.svg" alt="Boltcoin" />
+                        </span>
+                    </div>
+
+                    <nav>
+                        <ul>
+                            <li>
+                                <a onClick={onLogout}>
+                                    登出
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </SCMenu>
             </SCheader>
 
             <SCcontainer>
@@ -77,7 +113,17 @@ const layout = props => {
 
 layout.propTypes = {
     children: PropTypes.object.isRequired,
-    router: PropTypes.object.isRequired
+    router: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    logoutAction: PropTypes.func.isRequired
 };
 
-export default withRouter(layout);
+const mapStateToProps = state => ({
+    user: state.user,
+});
+
+const mapDispatchToProps = {
+    logoutAction: logout
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(memo(layout)));
