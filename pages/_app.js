@@ -84,8 +84,8 @@ class Wrapper extends App {
     }
 
     renderLayout() {
-        const { pageProps, Component } = this.props;
-        const { user } = pageProps;
+        const { pageProps, Component, store } = this.props;
+        const { user } = store.getState();
 
         if (user && !user.isAuth) {
             const { page } = pageProps;

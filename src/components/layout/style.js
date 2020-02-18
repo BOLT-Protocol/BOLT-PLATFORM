@@ -69,3 +69,73 @@ export const SCli = styled.li`
         }
     }
 `;
+
+export const SCMenu = styled.div`
+    display: flex;
+    position: relative;
+    margin-left: auto;
+    margin-right: 60px;
+    color: ${fontWhite};
+    font-size: 0.875rem;
+
+    &:hover {
+        > nav {
+            max-height: 300px;
+        }
+    }
+
+    > div, nav {
+        display: flex;
+        flex-direction: column;
+
+        span > img {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    > nav {
+        z-index: 100;
+        /* max-height: ${props => props.show ? '300px' : '0'}; */
+        max-height: 0;
+        top: calc(100% + 10px);
+        left: 0;
+        overflow: hidden;
+        transition: .3s;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.5);
+        background-color: #fff;
+        position: absolute;
+        min-width: 129px;
+        font-size: 0.75rem;
+        color: #7a7a7a;
+        box-sizing: border-box;
+
+        li {
+            padding: .5rem 1rem;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #d8d8d8;
+                color: #000;
+            }
+
+            a {
+                display: flex;
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    }
+`;
+
+export const SCAvatar = styled.div`
+    background-color: ${props => props.color};
+    border-radius: 50%;
+    height: 44px;
+    width: 44px;
+    font-size: 30px;
+    justify-content: center;
+    align-items: center;
+    margin-right: 14px;
+`;

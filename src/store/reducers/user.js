@@ -55,6 +55,17 @@ const user = (state = initialState, action = {}) => {
                 draft.phone = phone;
                 draft.userName = userName;
                 draft.address = address;
+                if (!draft.isAuth) draft.isAuth = true;
+                break;
+            case types.LOGOUT:
+                draft.token = '';
+                draft.isAuth = false;
+                draft.userID = '';
+                draft.address = '';
+                draft.language = '';
+                draft.email = '';
+                draft.userName = '';
+                draft.phone = '';
                 break;
             default:
                 return state;

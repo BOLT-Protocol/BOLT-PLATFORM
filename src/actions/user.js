@@ -86,3 +86,7 @@ export const authCheck = payload => ({
     type: types.AUTH_CHECK,
     payload
 });
+
+export const logout = () => ({
+    type: types.LOGOUT
+});
