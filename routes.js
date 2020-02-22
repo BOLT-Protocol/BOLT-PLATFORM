@@ -18,6 +18,10 @@ const APP_ROUTES = [
     {
         page: 'forgetPassword',
         pattern: '/forgetpassword'
+    },
+    {
+        page: 'evidence',
+        pattern: '/evidence'
     }
 ];
 

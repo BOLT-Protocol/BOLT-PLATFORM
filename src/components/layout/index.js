@@ -1,20 +1,19 @@
-import React, { Fragment, useState, memo } from 'react';
+import React, { Fragment, useState, memo, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
 import Router, { withRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Cookies from 'universal-cookie';
 
-import { SCheader, SCnav, SCcontainer, SCli, SCMenu, SCAvatar } from './style';
-import hashColor from '../../utils/hashColor';
-import { logout } from '../../actions/user';
+import { SCheader, SCnav, SCcontainer, SCli, SCMenu, SCAvatar, BoltCoinBalance } from './style';
+import { logout, fetchUserBannerInfo } from '../../actions/user';
 
 const navList = [
-    // {
-    //     name: 'Home',
-    //     link: '/',
-    //     icon: 'home'
-    // },
+    {
+        name: 'Home',
+        link: '/',
+        icon: 'home'
+    },
     {
         name: 'Bolt Currency',
         link: '/currency',
@@ -33,7 +32,7 @@ const navList = [
 ];
 
 const layout = props => {
-    const { router, user, logoutAction } = props;
+    const { router, user, logoutAction, userBannerInfoAction } = props;
     const [nav, setNav] = useState(router.pathname);
 
     const onLogout = () => {
@@ -44,6 +43,10 @@ const layout = props => {
         Router.replace('/signin');
     };
 
+    useEffect(() => {
+        userBannerInfoAction();
+    }, []);
+
     return (
         <Fragment>
             <SCheader>
@@ -52,15 +55,14 @@ const layout = props => {
                 </div>
 
                 <SCMenu>
-                    <SCAvatar color={hashColor(user.userName)}>
-                        {user.userName.substr(0, 1).toUpperCase()}
-                    </SCAvatar>
+                    <SCAvatar avatar={user.avatar}></SCAvatar>
 
                     <div style={{ justifyContent: 'space-between' }}>
                         {user.userName}
 
                         <span>
                             <img src="/static/images/flash.svg" alt="Boltcoin" />
+                            <BoltCoinBalance>{user.BoltCoin}</BoltCoinBalance>
                         </span>
                     </div>
 
@@ -115,7 +117,8 @@ layout.propTypes = {
     children: PropTypes.object.isRequired,
     router: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
-    logoutAction: PropTypes.func.isRequired
+    logoutAction: PropTypes.func.isRequired,
+    userBannerInfoAction: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -123,7 +126,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-    logoutAction: logout
+    logoutAction: logout,
+    userBannerInfoAction: fetchUserBannerInfo,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(memo(layout)));

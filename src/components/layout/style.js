@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import { fontWhite, secondColor } from '../../widgets/styleGuid';
 
+export const BoltCoinBalance = styled.span`
+    position: absolute;
+    margin-top: -2px;
+    margin-left: 5px;
+    color: #0091ea;
+`;
 export const SCcontainer = styled.div`
     display: flex;
     color: ${fontWhite};
@@ -130,12 +136,15 @@ export const SCMenu = styled.div`
 `;
 
 export const SCAvatar = styled.div`
-    background-color: ${props => props.color};
+    background: url('${props => props.avatar}');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
     border-radius: 50%;
     height: 44px;
     width: 44px;
     font-size: 30px;
     justify-content: center;
     align-items: center;
-    margin-right: 14px;
+    margin-right: 14px;    
 `;
