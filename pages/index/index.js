@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -156,9 +156,9 @@ class Index extends Component {
     }
 }
 
-// Index.propTypes = {
-//     router: PropTypes.object.isRequired
-// };
+Index.propTypes = {
+    user: PropTypes.object.isRequired
+};
 
 const mapStateToProps = state => ({
     user: state.user
