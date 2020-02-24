@@ -69,6 +69,15 @@ export const renewToken = data => ({
     data
 });
 
+export const fetchUserBannerInfo = () => ({
+    type: types.USER_BANNER_INFO_FETCH,
+});
+
+export const fetchUserBannerInfoSuccess = data => ({
+    type: types.USER_BANNER_INFO_FETCH_SUCCESS,
+    data
+});
+
 export const fetchProfile$ = () => ({
     type: types.USER_PROFILE_FETCH
 });

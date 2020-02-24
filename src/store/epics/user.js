@@ -17,7 +17,8 @@ import {
     registerPhone,
     loginPhone,
     loginEmail,
-    getUserProfile
+    getUserProfile,
+    getUserBannerInfo,
 } from '../../utils/api';
 import agent from '../../utils/wrapRequest';
 
@@ -84,6 +85,17 @@ const profileEpic = action$ =>
         })
     );
 
+const bannerInfoEpic = action$ =>
+    action$.pipe(
+        ofType(types.USER_BANNER_INFO_FETCH),
+        switchMap(() => from(getUserBannerInfo())),
+        map(res => actions.fetchUserBannerInfoSuccess(res.data)),
+        catchError((err, obs) => {
+            console.error('Epic', err);
+            return obs;
+        })
+    );
+
 const authCheckEpic = action$ =>
     action$.pipe(
         ofType(types.AUTH_CHECK),
@@ -113,5 +125,6 @@ export default [
     loginEmailEpic,
     loginPhoneEpic,
     profileEpic,
+    bannerInfoEpic,
     authCheckEpic
 ];

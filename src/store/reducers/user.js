@@ -11,6 +11,8 @@ const initialState = {
     email: '',
     userName: '',
     phone: '',
+    BoltCoin: '',
+    avatar: '',
     loading: false
 };
 
@@ -22,6 +24,7 @@ const user = (state = initialState, action = {}) => {
             case types.USER_LOGIN_EMAIL:
             case types.USER_LOGIN_PHONE:
                 draft.loading = true;
+                draft.error = null;
                 break;
             case types.USER_AUTH_SUCCESS:
                 draft.token = action.token;
@@ -53,8 +56,15 @@ const user = (state = initialState, action = {}) => {
                 draft.email = email;
                 draft.language = language;
                 draft.phone = phone;
-                draft.userName = userName;
                 draft.address = address;
+                draft.userName = userName;
+                if (!draft.isAuth) draft.isAuth = true;
+                break;
+            case types.USER_BANNER_INFO_FETCH_SUCCESS:
+                const { id, BoltCoin, avatar } = action.data;
+                draft.userID = id;
+                draft.BoltCoin = BoltCoin;
+                draft.avatar = avatar;
                 if (!draft.isAuth) draft.isAuth = true;
                 break;
             case types.LOGOUT:
