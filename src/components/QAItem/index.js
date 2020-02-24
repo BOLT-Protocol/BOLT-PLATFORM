@@ -2,14 +2,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Question, Answer } from './style';
-import './style.css';
 
 export default class Counter extends React.Component {
     state = { show: false, OpenClass: '' }
 
     showAnswer = () => this.setState(state => ({
         show: !state.show,
-        OpenClass: state.OpenClass ? '': 'QAOpen',
+        OpenClass: state.OpenClass ? '' : 'QAOpen',
     }));
 
     render() {
@@ -17,7 +16,7 @@ export default class Counter extends React.Component {
         const { OpenClass, show } = this.state;
         return (
             <div
-                style = {{
+                style={{
                     position: 'relative'
                 }}
             >

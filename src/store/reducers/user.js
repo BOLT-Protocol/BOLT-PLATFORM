@@ -24,6 +24,7 @@ const user = (state = initialState, action = {}) => {
             case types.USER_LOGIN_EMAIL:
             case types.USER_LOGIN_PHONE:
                 draft.loading = true;
+                draft.error = null;
                 break;
             case types.USER_AUTH_SUCCESS:
                 draft.token = action.token;
@@ -51,7 +52,7 @@ const user = (state = initialState, action = {}) => {
                 draft.loading = false;
                 break;
             case types.USER_PROFILE_SUCCESS:
-                const { email, language, phone ,userName, address} = action.payload;
+                const { email, language, phone, userName, address } = action.payload;
                 draft.email = email;
                 draft.language = language;
                 draft.phone = phone;

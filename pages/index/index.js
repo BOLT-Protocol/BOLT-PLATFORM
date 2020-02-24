@@ -7,13 +7,19 @@ import Link from 'next/link';
 import Signin from "../../src/containers/SigninContainer";
 import QAItem from "../../src/components/QAItem";
 import { TextField, TextAreaLayout, TextBody, ImgItem, AItem } from "../../src/components/textField/style";
-import {QAHr} from "../../src/components/QAItem/style";
+import { QAHr } from "../../src/components/QAItem/style";
 
 const SigninField = styled.div`
     display: ${props => props.show ? 'none' : 'flex'} !important;
 `;
 
 class Index extends Component {
+    static getInitialProps() {
+        return {
+            namespacesRequired: [],
+        };
+    }
+
     constructor(props) {
         super(props);
         this.user = props.user;
@@ -149,7 +155,7 @@ class Index extends Component {
                     <br></br>
                 </div>
                 <SigninField show={this.user.userName}>
-                    <Signin/>
+                    <Signin />
                 </SigninField>
             </div>
         );

@@ -15,8 +15,8 @@ export const Question = styled.div`
 `;
 
 export const Answer = styled.div`
-    display: ${props => props.show ? 'block' : 'none' };
-    position: ${props => props.show ? 'inherit' : 'absolute' };;
+    display: ${props => props.show ? 'block' : 'none'};
+    position: ${props => props.show ? 'inherit' : 'absolute'};;
     margin-top: -40px;
     margin-left: 20px;
     -webkit-transition: margin-top 1s ease-out;
@@ -25,6 +25,10 @@ export const Answer = styled.div`
     transition: margin-top 1s ease-out;
     color: #ffffff;
     font-size: 12px;
+
+    &.QAOpen {
+        margin: 0px 0px 20px 20px !important;
+    }
 `;
 
 export const QAHr = styled.hr`

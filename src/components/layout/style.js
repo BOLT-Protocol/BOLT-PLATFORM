@@ -45,7 +45,7 @@ export const SCheader = styled.header`
 export const SCnav = styled.nav`
     width: 280px;
     min-width: 280px;
-    height: 100vh;
+    min-height: 100vh;
     background-color: rgba(156, 165, 236, 0.04);
     padding-top: 80px;
     font-size: 0.875rem;
