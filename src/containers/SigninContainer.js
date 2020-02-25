@@ -102,11 +102,12 @@ class Signin extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { user } = this.props;
+
         // if signup success
         // if (prevState.page ===  2 && !prevProps.user.isAuth && user.isAuth) {
         if (!prevProps.user.isAuth && user.isAuth) {
             this.timmer = setTimeout(() => {
-                Router.push('/');
+                Router.replace('/index');
             }, 1000);
         }
     }

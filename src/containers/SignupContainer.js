@@ -167,7 +167,7 @@ class Signup extends Component {
                     })
                 );
                 this.timmer = setTimeout(() => {
-                    Router.push('/');
+                    Router.push('/index');
                 }, 3000);
             }, 200);
         }
