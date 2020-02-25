@@ -2,17 +2,12 @@ import React, { Component } from 'react';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import Link from 'next/link';
-import Signin from "../../src/containers/SigninContainer";
 import QAItem from "../../src/components/QAItem";
 import { TextField, TextAreaLayout, TextBody, ImgItem, AItem } from "../../src/components/textField/style";
 import { QAHr } from "../../src/components/QAItem/style";
 import { authGuard } from '../../src/utils/auth';
 
-const SigninField = styled.div`
-    display: ${props => props.show ? 'none' : 'flex'} !important;
-`;
 
 class Index extends Component {
     static getInitialProps(ctx) {
@@ -31,22 +26,13 @@ class Index extends Component {
 
 
     render() {
-        let noneStyle;
-        if (this.user.userName) {
-            noneStyle = {};
-        } else {
-            noneStyle = {
-                display: 'none',
-            };
-        }
         return (
             <div>
                 <div
                     style={{
                         marginTop: '40px',
                         marginLeft: '80px',
-                        marginRight: '80px',
-                        ...noneStyle
+                        marginRight: '80px'
                     }}
                 >
                     <TextField direction="row">
@@ -158,9 +144,6 @@ class Index extends Component {
 
                     <br></br>
                 </div>
-                <SigninField show={this.user.userName}>
-                    <Signin />
-                </SigninField>
             </div>
         );
     }

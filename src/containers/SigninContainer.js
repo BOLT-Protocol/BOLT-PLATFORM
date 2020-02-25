@@ -107,7 +107,7 @@ class Signin extends Component {
         // if (prevState.page ===  2 && !prevProps.user.isAuth && user.isAuth) {
         if (!prevProps.user.isAuth && user.isAuth) {
             this.timmer = setTimeout(() => {
-                Router.replace('/index');
+                Router.push('/');
             }, 1000);
         }
     }
