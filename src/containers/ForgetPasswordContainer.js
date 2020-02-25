@@ -12,12 +12,15 @@ import { WGloginField, WGbuttonField } from '../widgets/div';
 import { WGmainButton } from '../widgets/button';
 import { validateEmail, validatePassword, vaildateEqual } from '../utils/validation';
 import { setInput, handleStep } from '../utils/loginService';
+import { authCheck } from '../utils/auth';
 
 class ForgetPassword extends Component {
-    static getInitialProps() {
+    static getInitialProps({ req, res }) {
         const user = {
             isAuth: false
         };
+
+        authCheck(req, res);
 
         return {
             namespacesRequired: [],
@@ -69,11 +72,11 @@ class ForgetPassword extends Component {
         this.handleStep = handleStep.bind(this);
     }
 
-    sendEmail () {
+    sendEmail() {
         // console.log('send email');
     }
 
-    handleSubmit () {
+    handleSubmit() {
         // console.log('submit');
         this.handleStep(4);
     }

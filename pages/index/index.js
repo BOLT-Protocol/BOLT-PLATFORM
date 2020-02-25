@@ -8,13 +8,17 @@ import Signin from "../../src/containers/SigninContainer";
 import QAItem from "../../src/components/QAItem";
 import { TextField, TextAreaLayout, TextBody, ImgItem, AItem } from "../../src/components/textField/style";
 import { QAHr } from "../../src/components/QAItem/style";
+import { authGuard } from '../../src/utils/auth';
 
 const SigninField = styled.div`
     display: ${props => props.show ? 'none' : 'flex'} !important;
 `;
 
 class Index extends Component {
-    static getInitialProps() {
+    static getInitialProps(ctx) {
+
+        authGuard(ctx);
+
         return {
             namespacesRequired: [],
         };

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import produce from 'immer';
 import Router from 'next/router';
 
+import Cookies from 'universal-cookie';
 import InputField from '../components/inputField';
 import Loading from '../components/loading';
 import { WGH1 } from '../widgets/h';
@@ -18,6 +19,7 @@ import { setInput } from '../utils/loginService';
 import { validateEmail } from '../utils/validation';
 import { loginUserEmail$, loginUserPhone$ } from '../actions/user';
 import CountryCode from '../constants/countryCode.json';
+import { authCheck } from '../utils/auth';
 
 const mapStateToProps = state => ({
     user: state.user
@@ -28,8 +30,9 @@ const mapDispatchToProps = dispatch => ({
     onLoginPhone$: payload => dispatch(loginUserPhone$(payload))
 });
 class Signin extends Component {
-    static getInitialProps({ store }) {
+    static getInitialProps({ store, req, res }) {
         const { user } = store.getState();
+        authCheck(req, res);
 
         return {
             namespacesRequired: [],

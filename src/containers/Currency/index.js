@@ -12,7 +12,7 @@ import PaymentModal from '../../components/currency/paymentModal';
 import ConfirmModal from '../../components/modal/confirmModal';
 // import { getUserCard } from '../../utils/api';
 import { getCurrencyList$, cancelCurrencyList$, updateListBySymbol$, getUserBalance$, selectToken } from '../../actions/currency';
-import authGuard from '../../utils/auth';
+import { authGuard } from '../../utils/auth';
 import { MINT, BURN, WITHDRAW } from '../../constants/currency';
 
 const Currency = ({ fetchList, list, loading, cancelFetch, userName, userAddress, updateList, getBalance, selectedToken, setSelectedToken }) => {

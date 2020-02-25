@@ -62,6 +62,7 @@ const GlobalStyle = createGlobalStyle`
 class Wrapper extends App {
     static async getInitialProps({ Component, ctx }) {
         const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
+        // console.log(Router.router, Router.pathname);
 
         if (ctx.isServer) {
             const cookie = new Cookies(ctx.req.headers.cookie);

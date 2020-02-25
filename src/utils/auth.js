@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import Cookies from 'universal-cookie';
 
-const authGuard = async ctx => {
+export const authGuard = async ctx => {
     const cookie = new Cookies(ctx.req ? ctx.req.headers.cookie : null);
 
     const token = cookie.get('boltToken');
@@ -19,4 +19,18 @@ const authGuard = async ctx => {
     return token;
 };
 
-export default authGuard;
+export const authCheck = async (req, res) => {
+    const cookie = new Cookies(req ? req.headers.cookie : null);
+
+    const token = cookie.get('boltToken');
+
+    if (req && token) {
+        res.writeHead(302, { Location: '/' });
+        res.end();
+        return;
+    }
+
+    if (token) {
+        Router.replace('/');
+    }
+};

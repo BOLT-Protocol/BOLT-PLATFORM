@@ -9,8 +9,7 @@ export default (initialState) => {
     const epicMiddleware = createEpicMiddleware();
     let middleware = [epicMiddleware];
 
-    if (process.env.NODE_ENV !== 'production')
-    {
+    if (process.env.NODE_ENV !== 'production') {
         const logger = createLogger({ collapsed: true });
         middleware = [...middleware, logger];
     }

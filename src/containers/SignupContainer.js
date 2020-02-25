@@ -33,6 +33,7 @@ import {
     // checkVerifyCodePhone
 } from '../utils/api';
 import countryCodeArr from '../constants/countryCode.json';
+import { authCheck } from '../utils/auth';
 
 const mapStateToProps = state => ({
     user: state.user
@@ -44,8 +45,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 class Signup extends Component {
-    static getInitialProps({ store }) {
+    static getInitialProps({ store, req, res }) {
         const { user } = store.getState();
+
+        authCheck(req, res);
 
         return {
             namespacesRequired: [],

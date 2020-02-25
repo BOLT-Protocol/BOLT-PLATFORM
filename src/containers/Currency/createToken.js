@@ -15,7 +15,7 @@ import { validateCurrencyName, validateCurrencySymbol, validateCurrencyAmount, v
 import CURRENCY, { MAX_AMOUNT, MIN_AMOUNT, CREATE } from '../../constants/currency';
 import { createFund, checkAddress, getCost, escrowFund, checkCurrencyName, checkCurrencySymbol } from '../../utils/api';
 import { TOAST_OPTIONS } from '../../utils/toast';
-import authGuard from '../../utils/auth';
+import { authGuard } from '../../utils/auth';
 
 toast.configure(TOAST_OPTIONS);
 
