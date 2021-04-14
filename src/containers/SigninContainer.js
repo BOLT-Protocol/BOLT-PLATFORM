@@ -17,17 +17,17 @@ import { WGmainButton } from '../widgets/button';
 import { WGmainSelect } from '../widgets/select';
 import { setInput } from '../utils/loginService';
 import { validateEmail } from '../utils/validation';
-import { loginUserEmail$, loginUserPhone$ } from '../actions/user';
+import { loginUserWC$ } from '../actions/user';
 import CountryCode from '../constants/countryCode.json';
 import { authCheck } from '../utils/auth';
+import WalletConnect from '../components/walletConnect';
 
-const mapStateToProps = state => ({
-    user: state.user
+const mapStateToProps = (state) => ({
+    user: state.user,
 });
 
-const mapDispatchToProps = dispatch => ({
-    onLoginEmail$: payload => dispatch(loginUserEmail$(payload)),
-    onLoginPhone$: payload => dispatch(loginUserPhone$(payload))
+const mapDispatchToProps = (dispatch) => ({
+    onLoginWC$: (payload) => dispatch(loginUserWC$(payload)),
 });
 class Signin extends Component {
     static getInitialProps({ store, req, res }) {
@@ -37,63 +37,19 @@ class Signin extends Component {
         return {
             namespacesRequired: [],
             user,
-            page: 'Signin'
+            page: 'Signin',
         };
     }
 
     static propTypes = {
-        onLoginEmail$: PropTypes.func.isRequired,
-        onLoginPhone$: PropTypes.func.isRequired,
-        user: PropTypes.object.isRequired
+        user: PropTypes.object.isRequired,
+        onLoginWC$: PropTypes.func.isRequired,
     };
 
     constructor(props) {
         super(props);
 
-        const initialInput = {
-            type: 'text',
-            value: '',
-            valid: null,
-            error: '',
-            hint: '',
-            placeholder: '',
-            showError: false
-        };
-
-        this.state = {
-            page: 1,
-            page1: {
-                email: {
-                    ...initialInput,
-                    type: 'email',
-                    placeholder: '電子郵件帳號',
-                    error:
-                        '您的電子郵件輸入錯誤，請檢查帳號及格式是否正確，謝謝'
-                },
-                password: {
-                    ...initialInput,
-                    type: 'password',
-                    placeholder: '密碼',
-                    error: '帳號與密碼不符'
-                }
-            },
-            page2: {
-                cellphone: {
-                    ...initialInput,
-                    placeholder: '您的手機號碼',
-                    error: '手機格式錯誤'
-                },
-                password: {
-                    ...initialInput,
-                    type: 'password',
-                    placeholder: '密碼',
-                    error: '帳號與密碼不符'
-                }
-            },
-            countryCode: '+886'
-        };
-
-        this.setInput = setInput.bind(this);
+        this.state = {};
     }
 
     componentDidMount() {
@@ -103,8 +59,6 @@ class Signin extends Component {
     componentDidUpdate(prevProps, prevState) {
         const { user } = this.props;
 
-        // if signup success
-        // if (prevState.page ===  2 && !prevProps.user.isAuth && user.isAuth) {
         if (!prevProps.user.isAuth && user.isAuth) {
             this.timmer = setTimeout(() => {
                 Router.push('/');
@@ -112,250 +66,25 @@ class Signin extends Component {
         }
     }
 
-    componentWillUnmount() {
-        this.count = false;
-    }
-
-    handleSubmit = () => {
-        const { page } = this.state;
-        this.count = true;
-        if (page === 1) {
-            const { onLoginEmail$ } = this.props;
-            const { page1 } = this.state;
-            const { email, password } = page1;
-            for (let el in page1) {
-                // eslint-disable-next-line react/destructuring-assignment
-                if (!page1[el].valid) {
-                    this.setState(
-                        produce(draft => {
-                            draft.page1[el].showError = true;
-                        })
-                    );
-                    return false;
-                }
-            }
-            onLoginEmail$({
-                email: email.value,
-                password: password.value
-            });
-        } else if (page === 2) {
-            const { onLoginPhone$ } = this.props;
-            const { page2, countryCode } = this.state;
-            const { cellphone, password } = page2;
-            for (let el in page2) {
-                // eslint-disable-next-line react/destructuring-assignment
-                if (!page2[el].valid) {
-                    this.setState(
-                        produce(draft => {
-                            draft.page1[el].showError = true;
-                        })
-                    );
-                    return false;
-                }
-            }
-
-            const pv = cellphone.value;
-            const phone = pv.charAt(0) === '0' ? pv.substr(1, pv.length) : pv;
-
-            onLoginPhone$({
-                phone,
-                countryCode,
-                password: password.value
-            });
-        }
-    };
-
-    handleCountryCode = e => {
-        const { value } = e.target;
-
-        this.setState(
-            produce(draft => {
-                draft.countryCode = value;
-            })
-        );
-    };
-
-    renderHeader() {
-        const { page } = this.state;
-        const tag =
-            page === 1 ? (
-                <WGmainP
-                    style={{
-                        textAlign: 'center',
-                        fontSize: '14px',
-                        color: '#9b9b9b'
-                    }}
-                >
-                    信箱&nbsp;|&nbsp;
-                    <WGmainA
-                        onClick={() => {
-                            this.setState(
-                                produce(draft => {
-                                    draft.page = 2;
-                                })
-                            );
-                        }}
-                    >
-                        手機號碼
-                    </WGmainA>
-                </WGmainP>
-            ) :
-                (
-                    <WGmainP
-                        style={{
-                            textAlign: 'center',
-                            fontSize: '14px',
-                            color: '#9b9b9b'
-                        }}
-                    >
-                        <WGmainA
-                            onClick={() => {
-                                this.setState(
-                                    produce(draft => {
-                                        draft.page = 1;
-                                    })
-                                );
-                            }}
-                        >
-                            信箱
-                        </WGmainA>
-                        &nbsp;|&nbsp;手機號碼
-                    </WGmainP>
-                );
-        return (
-            <div
-                style={{
-                    alignItems: 'flex-end'
-                }}
-            >
-                <WGH1>帳號登入</WGH1>
-                {tag}
-            </div>
-        );
-    }
-
-    renderInput() {
-        const { page } = this.state;
-
-        // eslint-disable-next-line react/destructuring-assignment
-        const inputs = this.state[`page${page}`];
-
-        if (!inputs) return null;
-
-        return Object.keys(inputs).map(key => {
-            let validCheck = () => true;
-
-            if (key === 'email') {
-                validCheck = validateEmail;
-            }
-            // eslint-disable-next-line react/destructuring-assignment
-            const item = inputs[key];
-            const { countryCode } = key === 'cellphone' ? this.state : {};
-            return key === 'cellphone' ? (
-                <div key={key}>
-                    <WGmainSelect
-                        name="countryCode"
-                        value={countryCode}
-                        onChange={this.handleCountryCode}
-                        style={{
-                            height: '28px',
-                            margin: '1rem 0',
-                            width: '100%',
-                            backgroundColor: '#ffffff15',
-                            color: '#ffffff'
-                        }}
-                    >
-                        {CountryCode.map(c => (
-                            <option key={c.countryName} value={c.phoneCode}>
-                                {c.countryName} {c.phoneCode}
-                            </option>
-                        ))}
-                    </WGmainSelect>
-                    <InputField
-                        key={key + page}
-                        inputValue={item.value}
-                        type={item.type}
-                        setInput={this.setInput}
-                        name={key}
-                        error={item.error}
-                        placeholder={item.placeholder}
-                        validCheck={validCheck}
-                        hint={item.hint}
-                        showError={item.showError}
-                        valid={item.valid}
-                    />
-                </div>
-            ) :
-                (
-                    <InputField
-                        key={key + page}
-                        inputValue={item.value}
-                        type={item.type}
-                        setInput={this.setInput}
-                        name={key}
-                        error={item.error}
-                        placeholder={item.placeholder}
-                        showError={item.showError}
-                        validCheck={validCheck}
-                        valid={item.valid}
-                    />
-                );
-        });
-    }
+    componentWillUnmount() {}
 
     render() {
-        const { user } = this.props;
+        const { user, onLoginWC$ } = this.props;
 
         return (
             <>
                 <WGloginField>
-                    {this.renderHeader()}
+                    {/* {this.renderHeader()}
 
-                    <form>{this.renderInput()}</form>
+                    <form>{this.renderInput()}</form> */}
+                    <WalletConnect login={onLoginWC$} />
 
-                    <WGbuttonField>
-                        <div
-                            style={{
-                                width: '100%',
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'center',
-                                marginBottom: '1rem'
-                            }}
-                        >
-                            <input type="checkbox" />
-
-                            <WGmainP>記住我</WGmainP>
-                        </div>
-                        <WGmainButton onClick={this.handleSubmit}>
-                            登入
-                        </WGmainButton>
-                    </WGbuttonField>
-
-                    {user.error && this.count && <WGerrorP>{user.error}</WGerrorP>}
-
-                    <div
-                        style={{
-                            fontSize: '0.875rem',
-                            marginTop: '18px',
-                            display: 'flex',
-                            justifyContent: 'space-between'
-                        }}
-                    >
-                        <Link href="/forgetPassword">
-                            <WGmainA>忘記密碼？</WGmainA>
-                        </Link>
-                        <WGmainP>
-                            或 &nbsp;
-                            <Link href="/signup">
-                                <WGmainA>建立帳戶</WGmainA>
-                            </Link>
-                        </WGmainP>
-                    </div>
+                    {user.error && this.count && (
+                        <WGerrorP>{user.error}</WGerrorP>
+                    )}
                 </WGloginField>
 
                 <Loading show={user.loading} />
-
             </>
         );
     }

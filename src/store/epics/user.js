@@ -24,79 +24,81 @@ import agent from '../../utils/wrapRequest';
 
 const cookie = new Cookies();
 
-const registerEmailEpic = action$ =>
+const registerEmailEpic = (action$) =>
     action$.pipe(
         ofType(types.USER_REGISTER_EMAIL),
         debounceTime(1000),
-        switchMap(action =>
+        switchMap((action) =>
             from(registerEmail(action.data)).pipe(
                 concatMap((res) => of(actions.authCheck(res)))
-            )),
+            )
+        ),
         catchError((err, obs) => {
             console.error(err);
             return obs;
         })
     );
 
-const registerPhoneEpic = action$ =>
+const registerPhoneEpic = (action$) =>
     action$.pipe(
         ofType(types.USER_REGISTER_PHONE),
         debounceTime(1000),
-        switchMap(action =>
+        switchMap((action) =>
             from(registerPhone(action.data)).pipe(
-                concatMap(res => of(actions.authCheck(res)))
-            )),
+                concatMap((res) => of(actions.authCheck(res)))
+            )
+        ),
         catchError((err, obs) => {
             console.error(err);
             return obs;
         })
     );
 
-const loginEmailEpic = action$ =>
+const loginEmailEpic = (action$) =>
     action$.pipe(
         ofType(types.USER_LOGIN_EMAIL),
-        switchMap(action => from(loginEmail(action.data))),
-        map(res => actions.authCheck(res)),
+        switchMap((action) => from(loginEmail(action.data))),
+        map((res) => actions.authCheck(res)),
         catchError((err, obs) => {
             console.error('Epic', err);
             return obs;
         })
     );
 
-const loginPhoneEpic = action$ =>
+const loginPhoneEpic = (action$) =>
     action$.pipe(
         ofType(types.USER_LOGIN_PHONE),
-        switchMap(action => from(loginPhone(action.data))),
-        map(res => actions.authCheck(res)),
+        switchMap((action) => from(loginPhone(action.data))),
+        map((res) => actions.authCheck(res)),
         catchError((err, obs) => {
             console.error('Epic', err);
             return obs;
         })
     );
 
-const profileEpic = action$ =>
+const profileEpic = (action$) =>
     action$.pipe(
         ofType(types.USER_PROFILE_FETCH),
         switchMap(() => from(getUserProfile())),
-        map(res => actions.fetchProfileSuccess(res.data)),
+        map((res) => actions.fetchProfileSuccess(res.data)),
         catchError((err, obs) => {
             console.error('Epic', err);
             return obs;
         })
     );
 
-const bannerInfoEpic = action$ =>
+const bannerInfoEpic = (action$) =>
     action$.pipe(
         ofType(types.USER_BANNER_INFO_FETCH),
         switchMap(() => from(getUserBannerInfo())),
-        map(res => actions.fetchUserBannerInfoSuccess(res.data)),
+        map((res) => actions.fetchUserBannerInfoSuccess(res.data)),
         catchError((err, obs) => {
             console.error('Epic', err);
             return obs;
         })
     );
 
-const authCheckEpic = action$ =>
+const authCheckEpic = (action$) =>
     action$.pipe(
         ofType(types.AUTH_CHECK),
         switchMap((action) => {
@@ -106,7 +108,7 @@ const authCheckEpic = action$ =>
                 cookie.set('boltToken', token, { path: '/' });
                 cookie.set('boltSecret', tokenSecret, { path: '/' });
                 agent.setHeaders({
-                    token
+                    token,
                 });
 
                 return of(
@@ -119,6 +121,25 @@ const authCheckEpic = action$ =>
         })
     );
 
+const loginWithWalletConnectEpic = (action$) =>
+    action$.pipe(
+        ofType(types.USER_LOGIN_WC),
+        switchMap((action) =>
+            of(
+                actions.authCheck({
+                    data: {
+                        token: 'token',
+                        tokenSecret: '',
+                    },
+                })
+            )
+        ),
+        catchError((err, obs) => {
+            console.error('Epic', err);
+            return obs;
+        })
+    );
+
 export default [
     registerEmailEpic,
     registerPhoneEpic,
@@ -126,5 +147,6 @@ export default [
     loginPhoneEpic,
     profileEpic,
     bannerInfoEpic,
-    authCheckEpic
+    authCheckEpic,
+    loginWithWalletConnectEpic,
 ];
