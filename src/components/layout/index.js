@@ -5,33 +5,41 @@ import Router, { withRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Cookies from 'universal-cookie';
 
-import { SCheader, SCnav, SCcontainer, SCli, SCMenu, SCAvatar, BoltCoinBalance } from './style';
+import {
+    SCheader,
+    SCnav,
+    SCcontainer,
+    SCli,
+    SCMenu,
+    SCAvatar,
+    BoltCoinBalance,
+} from './style';
 import { logout, fetchUserBannerInfo } from '../../actions/user';
 
 const navList = [
     {
         name: 'Home',
         link: '/',
-        icon: 'home'
+        icon: 'home',
     },
     {
         name: 'Bolt Currency',
         link: '/currency',
-        icon: 'currency'
+        icon: 'currency',
     },
     {
         name: 'Bolt Pay',
         link: '/pay',
-        icon: 'pay'
+        icon: 'pay',
     },
     {
         name: 'Bolt Trust',
         link: '/trust',
-        icon: 'trust'
-    }
+        icon: 'trust',
+    },
 ];
 
-const layout = props => {
+const layout = (props) => {
     const { router, user, logoutAction, userBannerInfoAction } = props;
     const [nav, setNav] = useState(router.pathname);
 
@@ -41,6 +49,7 @@ const layout = props => {
         cookie.remove('boltToken');
         cookie.remove('boltSecret');
         Router.replace('/signin');
+        localStorage.removeItem('walletconnect');
     };
 
     useEffect(() => {
@@ -61,7 +70,10 @@ const layout = props => {
                         {user.userName}
 
                         <span>
-                            <img src="/static/images/flash.svg" alt="Boltcoin" />
+                            <img
+                                src="/static/images/flash.svg"
+                                alt="Boltcoin"
+                            />
                             <BoltCoinBalance>{user.BoltCoin}</BoltCoinBalance>
                         </span>
                     </div>
@@ -69,9 +81,7 @@ const layout = props => {
                     <nav>
                         <ul>
                             <li>
-                                <a onClick={onLogout}>
-                                    登出
-                                </a>
+                                <a onClick={onLogout}>登出</a>
                             </li>
                         </ul>
                     </nav>
@@ -79,19 +89,27 @@ const layout = props => {
             </SCheader>
 
             <SCcontainer>
-
                 <SCnav>
-
                     <ul>
                         {navList.map((n) => (
-                            <SCli key={n.name} active={n.link === nav} onClick={() => setNav(n.link)}>
+                            <SCli
+                                key={n.name}
+                                active={n.link === nav}
+                                onClick={() => setNav(n.link)}
+                            >
                                 <Link href={n.link}>
                                     <a>
-                                        <img src={`/static/images/ic_${n.icon}.svg`} alt={n.name} />
+                                        <img
+                                            src={`/static/images/ic_${n.icon}.svg`}
+                                            alt={n.name}
+                                        />
                                         {n.name}
                                         {n.link === nav && (
                                             <span>
-                                                <img src="/static/images/ic_arrow.svg" alt="arrow" />
+                                                <img
+                                                    src="/static/images/ic_arrow.svg"
+                                                    alt="arrow"
+                                                />
                                             </span>
                                         )}
                                     </a>
@@ -99,16 +117,13 @@ const layout = props => {
                             </SCli>
                         ))}
                     </ul>
-
                 </SCnav>
 
                 <div>
                     {/* eslint-disable-next-line react/destructuring-assignment */}
                     {props.children}
                 </div>
-
             </SCcontainer>
-
         </Fragment>
     );
 };
@@ -121,7 +136,7 @@ layout.propTypes = {
     userBannerInfoAction: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     user: state.user,
 });
 
@@ -130,4 +145,7 @@ const mapDispatchToProps = {
     userBannerInfoAction: fetchUserBannerInfo,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(memo(layout)));
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(withRouter(memo(layout)));
