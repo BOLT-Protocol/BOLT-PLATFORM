@@ -46,10 +46,10 @@ const layout = (props) => {
     const onLogout = () => {
         const cookie = new Cookies();
         logoutAction();
-        console.log('logout');
         cookie.remove('boltToken');
         cookie.remove('boltSecret');
         Router.replace('/signin');
+        localStorage.removeItem('walletconnect');
     };
 
     useEffect(() => {

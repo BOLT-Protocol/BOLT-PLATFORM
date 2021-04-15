@@ -13,16 +13,18 @@ const initialState = {
     phone: '',
     BoltCoin: '',
     avatar: '',
-    loading: false
+    loading: false,
 };
 
 const user = (state = initialState, action = {}) => {
-    return produce(state, draft => {
+    return produce(state, (draft) => {
         switch (action.type) {
             case types.USER_REGISTER_EMAIL:
             case types.USER_REGISTER_PHONE:
             case types.USER_LOGIN_EMAIL:
             case types.USER_LOGIN_PHONE:
+            case types.USER_LOGIN_WC:
+            case types.USER_LOADING:
                 draft.loading = true;
                 draft.error = null;
                 break;
@@ -52,7 +54,13 @@ const user = (state = initialState, action = {}) => {
                 draft.loading = false;
                 break;
             case types.USER_PROFILE_SUCCESS:
-                const { email, language, phone, userName, address } = action.payload;
+                const {
+                    email,
+                    language,
+                    phone,
+                    userName,
+                    address,
+                } = action.payload;
                 draft.email = email;
                 draft.language = language;
                 draft.phone = phone;

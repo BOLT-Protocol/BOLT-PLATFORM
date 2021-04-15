@@ -5,6 +5,7 @@ import QRCodeModal from '@walletconnect/qrcode-modal';
 import { convertUtf8ToHex } from '@walletconnect/utils';
 
 import { WGmainButton } from '../../widgets/button';
+import { WGbuttonField } from '../../widgets/div';
 import Loading from '../loading/ringword';
 
 // import { eip712 } from './mock';
@@ -29,7 +30,9 @@ class WallectConnect extends React.Component {
         this.state = { ...INITIAL_STATE };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        localStorage.removeItem('walletconnect');
+    }
 
     walletConnectInit = async () => {
         // bridge url
@@ -93,13 +96,7 @@ class WallectConnect extends React.Component {
 
         if (connector.connected) {
             const { chainId, accounts } = connector;
-            const address = accounts[0];
-            this.setState({
-                connected: true,
-                // chainId,
-                // accounts,
-                address,
-            });
+
             this.onSessionUpdate(accounts, chainId);
         }
 
@@ -119,16 +116,16 @@ class WallectConnect extends React.Component {
     };
 
     onConnect = async (payload) => {
+        const { loading } = this.props;
         const { chainId, accounts } = payload.params[0];
         const address = accounts[0];
-        console.log('Chain Id', chainId);
         await this.setState({
-            connected: true,
-            // chainId,
-            // accounts,
+            chainId,
             address,
         });
-        // this.getAccountAssets();
+        loading();
+
+        this.signPersonalMessage();
     };
 
     onDisconnect = async () => {
@@ -137,28 +134,10 @@ class WallectConnect extends React.Component {
 
     onSessionUpdate = async (accounts, chainId) => {
         const address = accounts[0];
-        // await this.setState({ chainId, accounts, address });
         await this.setState({ chainId, address });
-        // await this.getAccountAssets();
     };
 
-    // getAccountAssets = async () => {
-    //     const { address, chainId } = this.state;
-    //     this.setState({ fetching: true });
-    //     try {
-    //         // get account balances
-    //         const assets = await apiGetAccountAssets(address, chainId);
-
-    //         await this.setState({ fetching: false, address, assets });
-    //     } catch (error) {
-    //         console.error(error);
-    //         await this.setState({ fetching: false });
-    //     }
-    // };
-
-    // toggleModal = () => this.setState({ showModal: !this.state.showModal });
-
-    testSignPersonalMessage = async () => {
+    signPersonalMessage = async () => {
         const { connector, address } = this.state;
 
         if (!connector) {
@@ -179,20 +158,9 @@ class WallectConnect extends React.Component {
         const msgParams = [hexMsg, address];
 
         try {
-            // open modal
-            this.toggleModal();
-
-            // toggle pending request indicator
-            this.setState({ pendingRequest: true });
-
             // send message
+            console.log(msgParams);
             const result = await connector.signPersonalMessage(msgParams);
-
-            console.log(message, '==> ', result);
-
-            // verify signature
-            // const hash = hashPersonalMessage(message);
-            // const valid = await verifySignature(address, result, hash, chainId);
 
             // format displayed result
             const formattedResult = {
@@ -204,93 +172,34 @@ class WallectConnect extends React.Component {
 
             const { login } = this.props;
             const { chainId } = this.state;
-            login({ msg: data, signature: chainId, chainId, ip: '127.0.0.1' });
+            login({ msg: data, signature: result, chainId });
 
-            // display result
-            this.setState({
-                connector,
-                pendingRequest: false,
-                // result: formattedResult || null,
-            });
             console.log(formattedResult);
         } catch (error) {
+            const { cancel } = this.props;
+            cancel();
             console.error(error);
-            // this.setState({ connector, pendingRequest: false, result: null });
-            this.setState({ connector, pendingRequest: false });
         }
     };
 
-    // testSignTypedData = async () => {
-    //     const { connector, address, chainId } = this.state;
-
-    //     if (!connector) {
-    //         return;
-    //     }
-
-    //     const message = JSON.stringify(eip712.example);
-
-    //     // eth_signTypedData params
-    //     const msgParams = [address, message];
-
-    //     try {
-    //         // open modal
-    //         this.toggleModal();
-
-    //         // toggle pending request indicator
-    //         this.setState({ pendingRequest: true });
-
-    //         // sign typed data
-    //         const result = await connector.signTypedData(msgParams);
-
-    //         // verify signature
-    //         // const hash = hashTypedDataMessage(message);
-    //         // const valid = await verifySignature(address, result, hash, chainId);
-
-    //         // format displayed result
-    //         const formattedResult = {
-    //             method: 'eth_signTypedData',
-    //             address,
-    //             valid: true,
-    //             result,
-    //         };
-    //         console.log(formattedResult);
-
-    //         // display result
-    //         this.setState({
-    //             connector,
-    //             pendingRequest: false,
-    //             result: formattedResult || null,
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //         this.setState({ connector, pendingRequest: false, result: null });
-    //     }
-    // };
-
     render() {
-        const { connected, pendingRequest } = this.state;
+        // const { connected, pendingRequest, address } = this.state;
+        const { user } = this.props;
         return (
             <div>
                 <Loading
-                    show={pendingRequest}
+                    show={user.loading}
                     text="Waiting..."
                     subTitle="WalletConnect"
                 />
-                {connected ? (
-                    <WGmainButton
-                        type="button"
-                        onClick={this.testSignPersonalMessage}
-                    >
-                        SignTypedData
-                    </WGmainButton>
-                ) : (
+                <WGbuttonField>
                     <WGmainButton
                         type="button"
                         onClick={this.walletConnectInit}
                     >
                         Connect to WalletConnect
                     </WGmainButton>
-                )}
+                </WGbuttonField>
             </div>
         );
     }
@@ -298,6 +207,9 @@ class WallectConnect extends React.Component {
 
 WallectConnect.propTypes = {
     login: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+    loading: PropTypes.func.isRequired,
+    cancel: PropTypes.func.isRequired,
 };
 
 export default WallectConnect;

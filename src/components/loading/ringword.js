@@ -1,10 +1,11 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
+import { mainColor } from '../../widgets/styleGuid';
 
 const ringRadius = '7rem';
 const ringSectors = 30;
 const animDuration = 8;
-const color = '#0080FF';
+const color = mainColor;
 
 const tiltSpin = keyframes`
     0% {
@@ -50,6 +51,7 @@ const SCHolder = styled.div`
     left: 0;
     display: flex;
     background-color: rgba(0, 0, 0, 0.8);
+
     height: 100vh;
     width: 100vw;
     z-index: 9999;
@@ -115,14 +117,16 @@ const rindwordLoading = ({ show, text = 'Loading...', subTitle = '' }) =>
             <SCLoading>
                 <div>
                     {new Array(ringSectors).fill('').map((t, i) => {
-                        return <div>{text[i] || ''}</div>;
+                        // eslint-disable-next-line react/no-array-index-key
+                        return <div key={i}>{text[i] || ''}</div>;
                     })}
                 </div>
 
                 <div>
                     {new Array(ringSectors).fill('').map((t, i) => {
                         return (
-                            <div>
+                            // eslint-disable-next-line react/no-array-index-key
+                            <div key={i}>
                                 {(subTitle ? subTitle[i] : text[i]) || ''}
                             </div>
                         );

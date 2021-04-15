@@ -92,4 +92,4 @@ export const checkCurrencyName = (name) =>
 export const checkCurrencySymbol = (symbol) =>
     agent.request(`/check/symbol/${symbol}`)();
 
-export const loginWithWallet = agent.request('/user/login/wallet');
+export const loginWithWallet = agent.request('/user/login/wallet', 'POST');

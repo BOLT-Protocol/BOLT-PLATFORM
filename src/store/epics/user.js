@@ -19,6 +19,7 @@ import {
     loginEmail,
     getUserProfile,
     getUserBannerInfo,
+    loginWithWallet,
 } from '../../utils/api';
 import agent from '../../utils/wrapRequest';
 
@@ -112,8 +113,8 @@ const authCheckEpic = (action$) =>
                 });
 
                 return of(
-                    actions.authUserSuccess(token),
-                    actions.fetchProfile$()
+                    actions.fetchProfile$(),
+                    actions.authUserSuccess(token)
                 );
             } else {
                 return of(actions.authUserFail(message));
@@ -125,13 +126,8 @@ const loginWithWalletConnectEpic = (action$) =>
     action$.pipe(
         ofType(types.USER_LOGIN_WC),
         switchMap((action) =>
-            of(
-                actions.authCheck({
-                    data: {
-                        token: 'token',
-                        tokenSecret: '',
-                    },
-                })
+            from(loginWithWallet(action.data)).pipe(
+                concatMap((res) => of(actions.authCheck(res)))
             )
         ),
         catchError((err, obs) => {

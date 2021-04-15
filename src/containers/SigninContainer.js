@@ -2,23 +2,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Link from 'next/link';
-import produce from 'immer';
 import Router from 'next/router';
 
-import Cookies from 'universal-cookie';
-import InputField from '../components/inputField';
-import Loading from '../components/loading';
-import { WGH1 } from '../widgets/h';
-import { WGmainP, WGerrorP } from '../widgets/p';
-import { WGmainA } from '../widgets/a';
-import { WGloginField, WGbuttonField } from '../widgets/div';
-import { WGmainButton } from '../widgets/button';
-import { WGmainSelect } from '../widgets/select';
-import { setInput } from '../utils/loginService';
-import { validateEmail } from '../utils/validation';
-import { loginUserWC$ } from '../actions/user';
-import CountryCode from '../constants/countryCode.json';
+import { WGerrorP } from '../widgets/p';
+import { WGloginField } from '../widgets/div';
+
+import { loginUserWC$, userLoading, authUserFail } from '../actions/user';
 import { authCheck } from '../utils/auth';
 import WalletConnect from '../components/walletConnect';
 
@@ -28,6 +17,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     onLoginWC$: (payload) => dispatch(loginUserWC$(payload)),
+    onLoading: () => dispatch(userLoading()),
+    onCancelWC: () => dispatch(authUserFail()),
 });
 class Signin extends Component {
     static getInitialProps({ store, req, res }) {
@@ -44,6 +35,8 @@ class Signin extends Component {
     static propTypes = {
         user: PropTypes.object.isRequired,
         onLoginWC$: PropTypes.func.isRequired,
+        onLoading: PropTypes.func.isRequired,
+        onCancelWC: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -69,7 +62,7 @@ class Signin extends Component {
     componentWillUnmount() {}
 
     render() {
-        const { user, onLoginWC$ } = this.props;
+        const { user, onLoginWC$, onLoading, onCancelWC } = this.props;
 
         return (
             <>
@@ -77,14 +70,19 @@ class Signin extends Component {
                     {/* {this.renderHeader()}
 
                     <form>{this.renderInput()}</form> */}
-                    <WalletConnect login={onLoginWC$} />
+                    <WalletConnect
+                        login={onLoginWC$}
+                        user={user}
+                        loading={onLoading}
+                        cancel={onCancelWC}
+                    />
 
                     {user.error && this.count && (
                         <WGerrorP>{user.error}</WGerrorP>
                     )}
                 </WGloginField>
 
-                <Loading show={user.loading} />
+                {/* <Loading show={user.loading} /> */}
             </>
         );
     }

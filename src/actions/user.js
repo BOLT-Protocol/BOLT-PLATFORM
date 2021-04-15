@@ -41,11 +41,18 @@ export const loginUserPhone$ = ({ phone, countryCode, password }) => ({
     },
 });
 
-export const loginUserWC$ = ({ chainId }) => ({
+export const loginUserWC$ = ({ chainId, msg, signature, ip }) => ({
     type: types.USER_LOGIN_WC,
     data: {
         chainId,
+        msg,
+        signature,
+        ip,
     },
+});
+
+export const userLoading = () => ({
+    type: types.USER_LOADING,
 });
 
 export const authUserSuccess = (data) => ({
