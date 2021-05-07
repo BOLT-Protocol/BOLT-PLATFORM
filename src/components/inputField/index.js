@@ -4,13 +4,24 @@ import PropTypes from 'prop-types';
 import { SCinputField, SCinputMessage } from './style';
 import { WGerrorP, WGhintP } from '../../widgets/p';
 
-const inputField = ({ name, type, hint, inputValue, setInput, placeholder, validCheck, error, showError, valid }) => {
+const inputField = ({
+    name,
+    type,
+    hint,
+    inputValue,
+    setInput,
+    placeholder,
+    validCheck,
+    error,
+    showError,
+    valid,
+}) => {
     // type: password, text...
     // ***** valid need initial value null, after enter value, will be true or false
     const [value, setValue] = useState(inputValue);
     const timeoutRef = useRef(null);
 
-    const handleChange = e => {
+    const handleChange = (e) => {
         const v = e.target.value;
         setValue(v);
     };
@@ -29,7 +40,7 @@ const inputField = ({ name, type, hint, inputValue, setInput, placeholder, valid
                 setInput({
                     key: name,
                     valid: isValid,
-                    value
+                    value,
                 });
             }, 300);
         }
@@ -37,25 +48,30 @@ const inputField = ({ name, type, hint, inputValue, setInput, placeholder, valid
 
     return (
         <SCinputField>
-            {
-                type === 'textarea' ? (
-                    <textarea rows="3" value={value} onChange={handleChange} placeholder={placeholder} />
-                ) :
-                    (
-                        <input
-                            name={name}
-                            value={value}
-                            type={type}
-                            onChange={handleChange}
-                            placeholder={placeholder}
-                            autoComplete={type === 'password' ? 'on' : 'off'}
-                        />
-                    )
-            }
+            {type === 'textarea' ? (
+                <textarea
+                    rows="3"
+                    value={value}
+                    onChange={handleChange}
+                    placeholder={placeholder}
+                />
+            ) : (
+                <input
+                    name={name}
+                    value={value}
+                    type={type}
+                    onChange={handleChange}
+                    placeholder={placeholder}
+                    autoComplete={type === 'password' ? 'on' : 'off'}
+                />
+            )}
 
             <SCinputMessage>
-                {value.trim() === '' && hint && !showError && <WGhintP>{hint}</WGhintP>}
-                {((value.trim() !== '' && valid === false) || showError) && <WGerrorP>{error}</WGerrorP>}
+                {inputValue.trim() === '' && hint && !showError && (
+                    <WGhintP>{hint}</WGhintP>
+                )}
+                {((inputValue.trim() !== '' && valid === false) ||
+                    showError) && <WGerrorP>{error}</WGerrorP>}
             </SCinputMessage>
         </SCinputField>
     );
@@ -69,7 +85,7 @@ inputField.defaultProps = {
     error: '',
     showError: false,
     valid: null,
-    validCheck: () => true
+    validCheck: () => true,
 };
 
 inputField.propTypes = {
@@ -82,7 +98,7 @@ inputField.propTypes = {
     validCheck: PropTypes.func,
     setInput: PropTypes.func.isRequired,
     name: PropTypes.string.isRequired,
-    valid: PropTypes.bool
+    valid: PropTypes.bool,
 };
 
 export default inputField;

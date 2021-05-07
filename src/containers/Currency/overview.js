@@ -8,28 +8,28 @@ import { fontGrey, fontYellow } from '../../widgets/styleGuid';
 const items = [
     {
         title: '新幣名稱',
-        key: CURRENCY.NAME
+        key: CURRENCY.NAME,
     },
     {
         title: '合約地址',
-        key: CURRENCY.ADDRESS
+        key: CURRENCY.ADDRESS,
     },
     {
         title: '英文縮寫',
-        key: CURRENCY.SYMBOL
+        key: CURRENCY.SYMBOL,
     },
     {
         title: '發行數量',
-        key: CURRENCY.AMOUNT
+        key: CURRENCY.AMOUNT,
     },
     {
         title: '網站地址',
-        key: CURRENCY.WEB
+        key: CURRENCY.WEB,
     },
     {
         title: '簡介',
-        key: CURRENCY.INTRODUCTION
-    }
+        key: CURRENCY.INTRODUCTION,
+    },
 ];
 
 const SCoverview = styled.div`
@@ -88,53 +88,45 @@ const Overview = (props) => {
     const { image, payment } = props;
     return (
         <SCoverview>
-            <div>
-                {image && (
-                    <img src={image} alt="Logo" />
-                )}
-            </div>
+            <div>{image && <img src={image} alt="Logo" />}</div>
 
             <div>
-                {items.map(item => (
+                {items.map((item) => (
                     <div key={item.key}>
-                        {item.title}：
-                        <p>
-                            {props[item.key] || '- -'}
-                        </p>
+                        {item.title}：<p>{props[item.key] || '- -'}</p>
                     </div>
                 ))}
 
                 <SCpayment>
-                    {
-                        payment.type ? (
-                            <ul>
-                                <li>
-                                    付款方式：{payment.type}
-                                </li>
+                    {payment.type ? (
+                        <ul>
+                            {/* <li>付款方式：{payment.type}</li>
 
-                                <li>
-                                    卡號：**** **** **** {payment.cardNumber}
-                                </li>
+                            <li>卡號：**** **** **** {payment.cardNumber}</li> */}
 
-                                <li>
-                                    付款金額 ({payment.unit})：{payment.cost.toLocaleString()} 元
-                                </li>
-                            </ul>
-                        ) :
-                            (
-                                <p>應付總額 ({payment.unit})：${payment.cost.toLocaleString()} 元</p>
-                            )
-                    }
+                            <li>
+                                {/* 付款金額 ({payment.unit})：
+                                {payment.cost.toLocaleString()} 元 */}
+                                付款金額：
+                                {payment.cost.toLocaleString()} ({payment.unit})
+                            </li>
+                        </ul>
+                    ) : (
+                        // <p>應付總額 ({payment.unit})：${payment.cost.toLocaleString()} 元</p>
+                        <p>
+                            應付總額：{payment.cost.toLocaleString()} (
+                            {payment.unit})
+                        </p>
+                    )}
                 </SCpayment>
             </div>
-
         </SCoverview>
     );
 };
 
 Overview.propTypes = {
     image: PropTypes.string.isRequired,
-    payment: PropTypes.object.isRequired
+    payment: PropTypes.object.isRequired,
 };
 
 export default Overview;

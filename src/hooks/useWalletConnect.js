@@ -1,0 +1,294 @@
+import { useCallback, useEffect, useState, useRef } from 'react';
+import PropTypes from 'prop-types';
+import WalletConnect from '@walletconnect/client';
+import QRCodeModal from '@walletconnect/qrcode-modal';
+import { convertUtf8ToHex } from '@walletconnect/utils';
+
+import { getNonce, getGasLimit, getFee, payment } from '../utils/api';
+
+const INITIAL_STATE = {
+    connector: null,
+    fetching: false,
+    connected: false,
+    chainId: 3, // TODO:
+    showModal: false,
+    pendingRequest: false,
+    uri: '',
+    accounts: [],
+    address: '',
+    result: null,
+    assets: [],
+};
+
+const useWalletConnect = (props) => {
+    const connectorRef = useRef(null);
+    const [walletState, setWalletState] = useState(INITIAL_STATE);
+
+    const signPersonalMessage = async () => {
+        const { address } = walletState;
+
+        if (!connectorRef.current) {
+            return;
+        }
+
+        // test message
+        const data = {
+            site: window.location.origin,
+            timestamp: Date.now(),
+        };
+        const message = JSON.stringify(data);
+
+        // encode message (hex)
+        const hexMsg = convertUtf8ToHex(message);
+
+        // personal_sign params
+        const msgParams = [hexMsg, address];
+
+        try {
+            // send message
+            console.log(msgParams);
+            const result = await connectorRef.current.signPersonalMessage(
+                msgParams
+            );
+
+            // format displayed result
+            const formattedResult = {
+                method: 'personal_sign',
+                address,
+                valid: true,
+                result,
+            };
+
+            const { login } = props;
+            const { chainId } = walletState;
+            login({ msg: data, signature: result, chainId });
+
+            console.log(formattedResult);
+        } catch (error) {
+            const { cancel } = props;
+            cancel();
+            console.error(error);
+        }
+    };
+
+    const onConnect = async (payload) => {
+        const { loading } = props;
+        const { chainId, accounts } = payload.params[0];
+        const address = accounts[0];
+        await setWalletState({
+            ...walletState,
+            chainId,
+            address,
+            connected: true,
+        });
+        loading();
+
+        signPersonalMessage();
+    };
+
+    const resetApp = async () => {
+        await setWalletState({ ...INITIAL_STATE });
+    };
+
+    const killSession = () => {
+        if (connectorRef.current) {
+            connectorRef.current.killSession();
+        }
+        resetApp();
+    };
+
+    const onDisconnect = async () => {
+        resetApp();
+    };
+
+    const onSessionUpdate = async (accounts, chainId) => {
+        const address = accounts[0];
+        await setWalletState({ ...walletState, chainId, address });
+    };
+
+    const subscribeToEvents = async () => {
+        const connector = connectorRef.current;
+
+        if (!connector) {
+            return;
+        }
+
+        connector.on('session_update', async (error, payload) => {
+            console.log(`connector.on("session_update")`);
+
+            if (error) {
+                throw error;
+            }
+
+            const { chainId, accounts } = payload.params[0];
+            onSessionUpdate(accounts, chainId);
+        });
+
+        connector.on('connect', (error, payload) => {
+            console.log(`connector.on("connect")`);
+
+            if (error) {
+                throw error;
+            }
+
+            onConnect(payload);
+            console.log(walletState);
+        });
+
+        connector.on('disconnect', (error, payload) => {
+            console.log(`connector.on("disconnect") ${payload}`);
+
+            if (error) {
+                throw error;
+            }
+
+            onDisconnect();
+        });
+
+        if (connector.connected) {
+            const { chainId, accounts } = connector;
+
+            onSessionUpdate(accounts, chainId);
+        }
+
+        setWalletState({ ...walletState, connector });
+    };
+
+    const walletConnectInit = useCallback(async () => {
+        // bridge url
+        const bridge = 'https://bridge.walletconnect.org';
+
+        // create new connector
+        const connector = new WalletConnect({
+            bridge,
+            qrcodeModal: QRCodeModal,
+        });
+
+        connectorRef.current = connector;
+
+        setWalletState({
+            ...walletState,
+            connector,
+        });
+
+        // // check if already connected
+        if (!connector.connected) {
+            // create new session
+            await connector.createSession();
+        }
+
+        // // subscribe to events
+        await subscribeToEvents();
+    });
+
+    const signTransaction = async (
+        { data = '0x', value = '0x0', to, blockchainId, orderID },
+        callback
+    ) => {
+        // const { connector, address, chainId } = walletState;
+        const { address } = walletState;
+        const connector = connectorRef.current;
+
+        if (!connector) {
+            return;
+        }
+
+        // from
+        const from = address;
+
+        const nonce = await getNonce(blockchainId, from);
+
+        // gasPrice
+        const gasPrice = await getFee(blockchainId);
+
+        // gasLimit
+        const gasLimit = await getGasLimit(blockchainId)({
+            fromAddress: from,
+            toAddress: to,
+            value,
+            data,
+        });
+
+        // test transaction
+        const tx = {
+            from,
+            to,
+            nonce,
+            gasPrice,
+            gasLimit,
+            value,
+            data,
+        };
+
+        console.log(tx);
+
+        try {
+            // open modal
+            // this.toggleModal();
+
+            // toggle pending request indicator
+            setWalletState({ ...walletState, pendingRequest: true });
+
+            // send transaction
+            const result = await connector.sendTransaction(tx);
+
+            payment({
+                orderID,
+                type: 'create',
+            }).then(({ success }) => {
+                if (success) {
+                    callback(result);
+                } else {
+                    // toast.error(message);
+                }
+            });
+
+            // format displayed result
+            const formattedResult = {
+                method: 'eth_sendTransaction',
+                txHash: result,
+                from: address,
+                to: address,
+                value: '0 ETH',
+            };
+
+            // display result
+            setWalletState({
+                ...walletState,
+                connector,
+                pendingRequest: false,
+                result: formattedResult || null,
+            });
+        } catch (error) {
+            console.error(error);
+            setWalletState({
+                ...walletState,
+                connector,
+                pendingRequest: false,
+                result: null,
+            });
+        }
+    };
+    useEffect(() => {});
+
+    return [
+        walletState,
+        walletConnectInit,
+        signTransaction,
+        killSession,
+        connectorRef,
+    ];
+};
+
+useWalletConnect.defaultProps = {
+    login: () => {},
+    cancel: () => {},
+};
+
+useWalletConnect.propTypes = {
+    login: PropTypes.func,
+    cancel: PropTypes.func,
+    loading: PropTypes.func.isRequired,
+};
+
+export default useWalletConnect;

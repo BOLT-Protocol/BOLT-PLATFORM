@@ -93,3 +93,12 @@ export const checkCurrencySymbol = (symbol) =>
     agent.request(`/check/symbol/${symbol}`)();
 
 export const loginWithWallet = agent.request('/user/login/wallet', 'POST');
+
+export const getNonce = (blockchainId, address) =>
+    agent.request(`/blockchain/${blockchainId}/address/${address}/nonce`)();
+
+export const getGasLimit = (blockchainId) =>
+    agent.request(`/blockchain/${blockchainId}/gas-limit `, 'POST');
+
+export const getFee = (blockchainId) =>
+    agent.request(`/blockchain/${blockchainId}/fee`);

@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import Cookies from 'universal-cookie';
 
-export const authGuard = async ctx => {
+export const authGuard = async (ctx) => {
     const cookie = new Cookies(ctx.req ? ctx.req.headers.cookie : null);
 
     const token = cookie.get('boltToken');
@@ -11,6 +11,8 @@ export const authGuard = async ctx => {
         ctx.res.end();
         return;
     }
+
+    console.log(token, ctx.req);
 
     if (!token) {
         Router.replace('/signin');
