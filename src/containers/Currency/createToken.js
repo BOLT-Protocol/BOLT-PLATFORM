@@ -50,7 +50,7 @@ toast.configure(TOAST_OPTIONS);
 const CREATE_METHOD = {
     data:
         '0xf3c6606d63757272656e6379000000000000000000000000000000000000000000000000',
-    to: '0xcfb5b61ef1921607836edfc60affd2e8086b39be',
+    to: '0xe5076d6590BF03c49a50F5e7b6BFBBfD1bFB540a',
     blockchainId: '8000025B',
     // value: '0x0',
     value: '0xde0b6b3a7640000',
@@ -136,7 +136,7 @@ class CreateToken extends Component {
             '選擇發幣方式',
             '填寫基本資訊',
             '總覽',
-            '填寫付款資訊',
+            // '填寫付款資訊',
             '完成',
         ];
     }
@@ -306,27 +306,24 @@ class CreateToken extends Component {
                     })
             );
         } else if (step === 3) {
-            const { start, end } = this.loading();
-
-            start(() =>
-                this.sendToken(inputs).then(({ data, success, message }) => {
-                    if (!success) {
-                        console.error(message);
-                        return end();
-                    }
-                    const { orderID } = data;
-                    this.setState(
-                        produce((draft) => {
-                            draft.orderID = orderID;
-                        })
-                    );
-                    this.goNext();
-
-                    this.toggleModal();
-
-                    end();
-                })
-            );
+            // const { start, end } = this.loading();
+            // start(() =>
+            //     this.sendToken(inputs).then(({ data, success, message }) => {
+            //         if (!success) {
+            //             console.error(message);
+            //             return end();
+            //         }
+            //         const { orderID } = data;
+            //         this.setState(
+            //             produce((draft) => {
+            //                 draft.orderID = orderID;
+            //             })
+            //         );
+            //         this.goNext();
+            //         this.toggleModal();
+            //         end();
+            //     })
+            // );
         } else {
             this.goNext();
         }
@@ -458,7 +455,6 @@ class CreateToken extends Component {
                 );
             case 3:
             case 4:
-            case 5:
                 const field = {};
                 Object.keys(inputs).forEach((key) => {
                     field[key] = inputs[key].value;
@@ -525,10 +521,10 @@ class CreateToken extends Component {
                     {step === 3 && (
                         <WalletConnectPay
                             nextStep={this.nextStep}
-                            orderID={orderID}
+                            sendToken={() => this.sendToken(newInfo)}
                         />
                     )}
-                    {step === 5 && (
+                    {step === 4 && (
                         <SCfinishField>
                             付款完成，您可開始使用您的 {symbol} Token
                             <WGmainButton
@@ -546,7 +542,7 @@ class CreateToken extends Component {
     }
 }
 
-const WalletConnectPay = ({ nextStep, orderID }) => {
+const WalletConnectPay = ({ nextStep, sendToken }) => {
     const [
         walletState,
         walletConnectInit,
@@ -566,17 +562,19 @@ const WalletConnectPay = ({ nextStep, orderID }) => {
                     value: CREATE_METHOD.value,
                     to: CREATE_METHOD.to,
                     blockchainId: CREATE_METHOD.blockchainId,
-                    orderID,
                 },
                 (tx) => {
-                    console.log(tx);
-                    payForCreate({
-                        orderID,
-                        type: 'create',
-                        paymentType: 'wallet',
-                        txid: tx,
-                    }).then(() => {
-                        nextStep();
+                    sendToken().then(({ data }) => {
+                        const { orderID } = data;
+
+                        payForCreate({
+                            orderID,
+                            type: 'create',
+                            paymentType: 'wallet',
+                            txid: tx,
+                        }).then(() => {
+                            nextStep();
+                        });
                     });
                 }
             );
@@ -585,13 +583,9 @@ const WalletConnectPay = ({ nextStep, orderID }) => {
     return <WGmainButton onClick={pay}>前往付款</WGmainButton>;
 };
 
-WalletConnectPay.defaultProps = {
-    orderID: '',
-};
-
 WalletConnectPay.propTypes = {
     nextStep: PropTypes.func.isRequired,
-    orderID: PropTypes.string,
+    sendToken: PropTypes.func.isRequired,
 };
 
 export default CreateToken;

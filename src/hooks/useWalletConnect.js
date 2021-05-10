@@ -4,7 +4,7 @@ import WalletConnect from '@walletconnect/client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { convertUtf8ToHex } from '@walletconnect/utils';
 
-import { getNonce, getGasLimit, getFee } from '../utils/api';
+import { getNonce, getFee } from '../utils/api';
 
 const INITIAL_STATE = {
     connector: null,
@@ -205,12 +205,12 @@ const useWalletConnect = (props) => {
 
         const gasPriceRes = await getFee(blockchainId);
 
-        const gasLimitRes = await getGasLimit(blockchainId)({
-            fromAddress: from,
-            toAddress: to,
-            value,
-            data,
-        });
+        // const gasLimitRes = await getGasLimit(blockchainId)({
+        //     fromAddress: from,
+        //     toAddress: to,
+        //     value,
+        //     data,
+        // });
 
         // test transaction
         const tx = {
@@ -218,9 +218,10 @@ const useWalletConnect = (props) => {
             to,
             nonce: (Number(nonceRes.data.nonce) / 10 ** 18).toString(16),
             gasPrice: gasPriceRes.data.standard,
-            gasLimit: (Number(gasLimitRes.data.gasLimit) / 10 ** 18).toString(
-                16
-            ),
+            // gasLimit: (Number(gasLimitRes.data.gasLimit) / 10 ** 18).toString(
+            //     16
+            // ),
+            gasLimit: '0x186a0',
             value,
             data,
         };
@@ -238,7 +239,7 @@ const useWalletConnect = (props) => {
             const result = await connector.sendTransaction(tx);
             console.log(result);
 
-            callback(result.result);
+            callback(result);
 
             // format displayed result
             const formattedResult = {

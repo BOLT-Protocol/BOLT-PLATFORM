@@ -1,7 +1,7 @@
 import React, { Fragment, useState, memo, useEffect } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
-import Router, { withRouter } from 'next/router';
+import { withRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Cookies from 'universal-cookie';
 
@@ -48,7 +48,8 @@ const layout = (props) => {
         logoutAction();
         cookie.remove('boltToken');
         cookie.remove('boltSecret');
-        Router.replace('/signin');
+        // Router.replace('/signin');
+        window.location.replace('/signin');
         localStorage.removeItem('walletconnect');
     };
 
