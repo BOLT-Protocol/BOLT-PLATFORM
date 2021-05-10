@@ -4,7 +4,7 @@ import WalletConnect from '@walletconnect/client';
 import QRCodeModal from '@walletconnect/qrcode-modal';
 import { convertUtf8ToHex } from '@walletconnect/utils';
 
-import { getNonce, getGasLimit, getFee, payment } from '../utils/api';
+import { getNonce, getGasLimit, getFee } from '../utils/api';
 
 const INITIAL_STATE = {
     connector: null,
@@ -132,7 +132,6 @@ const useWalletConnect = (props) => {
             }
 
             onConnect(payload);
-            console.log(walletState);
         });
 
         connector.on('disconnect', (error, payload) => {
@@ -157,12 +156,18 @@ const useWalletConnect = (props) => {
     const walletConnectInit = useCallback(async () => {
         // bridge url
         const bridge = 'https://bridge.walletconnect.org';
+        console.log(walletState.chainId);
 
         // create new connector
         const connector = new WalletConnect({
-            bridge,
+            session: {
+                bridge,
+                chainId: walletState.chainId, // Not Worked
+            },
             qrcodeModal: QRCodeModal,
         });
+
+        connector.chainId = 3;
 
         connectorRef.current = connector;
 
@@ -182,7 +187,7 @@ const useWalletConnect = (props) => {
     });
 
     const signTransaction = async (
-        { data = '0x', value = '0x0', to, blockchainId, orderID },
+        { data = '0x', value = '0x0', to, blockchainId },
         callback
     ) => {
         // const { connector, address, chainId } = walletState;
@@ -196,13 +201,11 @@ const useWalletConnect = (props) => {
         // from
         const from = address;
 
-        const nonce = await getNonce(blockchainId, from);
+        const nonceRes = await getNonce(blockchainId, from);
 
-        // gasPrice
-        const gasPrice = await getFee(blockchainId);
+        const gasPriceRes = await getFee(blockchainId);
 
-        // gasLimit
-        const gasLimit = await getGasLimit(blockchainId)({
+        const gasLimitRes = await getGasLimit(blockchainId)({
             fromAddress: from,
             toAddress: to,
             value,
@@ -213,9 +216,11 @@ const useWalletConnect = (props) => {
         const tx = {
             from,
             to,
-            nonce,
-            gasPrice,
-            gasLimit,
+            nonce: (Number(nonceRes.data.nonce) / 10 ** 18).toString(16),
+            gasPrice: gasPriceRes.data.standard,
+            gasLimit: (Number(gasLimitRes.data.gasLimit) / 10 ** 18).toString(
+                16
+            ),
             value,
             data,
         };
@@ -231,17 +236,9 @@ const useWalletConnect = (props) => {
 
             // send transaction
             const result = await connector.sendTransaction(tx);
+            console.log(result);
 
-            payment({
-                orderID,
-                type: 'create',
-            }).then(({ success }) => {
-                if (success) {
-                    callback(result);
-                } else {
-                    // toast.error(message);
-                }
-            });
+            callback(result.result);
 
             // format displayed result
             const formattedResult = {

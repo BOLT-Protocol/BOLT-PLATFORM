@@ -39,6 +39,7 @@ import {
     escrowFund,
     checkCurrencyName,
     checkCurrencySymbol,
+    payForCreate,
 } from '../../utils/api';
 import { TOAST_OPTIONS } from '../../utils/toast';
 import { authGuard } from '../../utils/auth';
@@ -49,8 +50,9 @@ toast.configure(TOAST_OPTIONS);
 const CREATE_METHOD = {
     data:
         '0xf3c6606d63757272656e6379000000000000000000000000000000000000000000000000',
-    to: '0xD8A723E59e3f8dbc5832189f4139FCE08E3446A0',
+    to: '0xcfb5b61ef1921607836edfc60affd2e8086b39be',
     blockchainId: '8000025B',
+    // value: '0x0',
     value: '0xde0b6b3a7640000',
 };
 
@@ -568,7 +570,14 @@ const WalletConnectPay = ({ nextStep, orderID }) => {
                 },
                 (tx) => {
                     console.log(tx);
-                    nextStep();
+                    payForCreate({
+                        orderID,
+                        type: 'create',
+                        paymentType: 'wallet',
+                        txid: tx,
+                    }).then(() => {
+                        nextStep();
+                    });
                 }
             );
         }

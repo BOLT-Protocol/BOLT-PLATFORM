@@ -101,4 +101,6 @@ export const getGasLimit = (blockchainId) =>
     agent.request(`/blockchain/${blockchainId}/gas-limit `, 'POST');
 
 export const getFee = (blockchainId) =>
-    agent.request(`/blockchain/${blockchainId}/fee`);
+    agent.request(`/blockchain/${blockchainId}/fee`)();
+
+export const payForCreate = agent.request('/payment', 'POST');
