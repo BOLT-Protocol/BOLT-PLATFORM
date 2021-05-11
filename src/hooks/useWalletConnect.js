@@ -24,8 +24,8 @@ const useWalletConnect = (props) => {
     const connectorRef = useRef(null);
     const [walletState, setWalletState] = useState(INITIAL_STATE);
 
-    const signPersonalMessage = async () => {
-        const { address } = walletState;
+    const signPersonalMessage = async (_address) => {
+        const address = _address || walletState.address;
 
         if (!connectorRef.current) {
             return;
@@ -37,6 +37,7 @@ const useWalletConnect = (props) => {
             timestamp: Date.now(),
         };
         const message = JSON.stringify(data);
+        console.log('Message: ', message);
 
         // encode message (hex)
         const hexMsg = convertUtf8ToHex(message);
@@ -61,6 +62,8 @@ const useWalletConnect = (props) => {
 
             const { login } = props;
             const { chainId } = walletState;
+            console.log('Address: ', address);
+            console.log(result);
             login({ msg: data, signature: result, chainId });
 
             console.log(formattedResult);
@@ -75,7 +78,7 @@ const useWalletConnect = (props) => {
         const { loading } = props;
         const { chainId, accounts } = payload.params[0];
         const address = accounts[0];
-        await setWalletState({
+        setWalletState({
             ...walletState,
             chainId,
             address,
@@ -83,11 +86,11 @@ const useWalletConnect = (props) => {
         });
         loading();
 
-        signPersonalMessage();
+        signPersonalMessage(address);
     };
 
     const resetApp = async () => {
-        await setWalletState({ ...INITIAL_STATE });
+        setWalletState({ ...INITIAL_STATE });
     };
 
     const killSession = () => {
@@ -103,7 +106,7 @@ const useWalletConnect = (props) => {
 
     const onSessionUpdate = async (accounts, chainId) => {
         const address = accounts[0];
-        await setWalletState({ ...walletState, chainId, address });
+        setWalletState({ ...walletState, chainId, address });
     };
 
     const subscribeToEvents = async () => {
@@ -200,6 +203,7 @@ const useWalletConnect = (props) => {
 
         // from
         const from = address;
+        console.log(from);
 
         const nonceRes = await getNonce(blockchainId, from);
 
