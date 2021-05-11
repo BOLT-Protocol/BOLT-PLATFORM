@@ -49,11 +49,11 @@ toast.configure(TOAST_OPTIONS);
 
 const CREATE_METHOD = {
     data:
-        '0xf3c6606d63757272656e6379000000000000000000000000000000000000000000000000',
-    to: '0xe5076d6590BF03c49a50F5e7b6BFBBfD1bFB540a',
+        '0xf3c6606d426f6c7443757272656e63790000000000000000000000000000000000000000',
+    to: '0xcdf31C99DE8218bE1963786dEE32a7FB06bC9211',
     blockchainId: '8000025B',
     // value: '0x0',
-    value: '0xde0b6b3a7640000',
+    value: '0x2386f26fc10000',
 };
 
 const commonField = {
@@ -305,26 +305,28 @@ class CreateToken extends Component {
                         }
                     })
             );
-        } else if (step === 3) {
-            // const { start, end } = this.loading();
-            // start(() =>
-            //     this.sendToken(inputs).then(({ data, success, message }) => {
-            //         if (!success) {
-            //             console.error(message);
-            //             return end();
-            //         }
-            //         const { orderID } = data;
-            //         this.setState(
-            //             produce((draft) => {
-            //                 draft.orderID = orderID;
-            //             })
-            //         );
-            //         this.goNext();
-            //         this.toggleModal();
-            //         end();
-            //     })
-            // );
-        } else {
+        }
+        // else if (step === 3) {
+        // const { start, end } = this.loading();
+        // start(() =>
+        //     this.sendToken(inputs).then(({ data, success, message }) => {
+        //         if (!success) {
+        //             console.error(message);
+        //             return end();
+        //         }
+        //         const { orderID } = data;
+        //         this.setState(
+        //             produce((draft) => {
+        //                 draft.orderID = orderID;
+        //             })
+        //         );
+        //         this.goNext();
+        //         this.toggleModal();
+        //         end();
+        //     })
+        // );
+        // }
+        else {
             this.goNext();
         }
     };
