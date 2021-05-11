@@ -305,26 +305,28 @@ class CreateToken extends Component {
                         }
                     })
             );
-        } else if (step === 3) {
-            // const { start, end } = this.loading();
-            // start(() =>
-            //     this.sendToken(inputs).then(({ data, success, message }) => {
-            //         if (!success) {
-            //             console.error(message);
-            //             return end();
-            //         }
-            //         const { orderID } = data;
-            //         this.setState(
-            //             produce((draft) => {
-            //                 draft.orderID = orderID;
-            //             })
-            //         );
-            //         this.goNext();
-            //         this.toggleModal();
-            //         end();
-            //     })
-            // );
-        } else {
+        }
+        // else if (step === 3) {
+        // const { start, end } = this.loading();
+        // start(() =>
+        //     this.sendToken(inputs).then(({ data, success, message }) => {
+        //         if (!success) {
+        //             console.error(message);
+        //             return end();
+        //         }
+        //         const { orderID } = data;
+        //         this.setState(
+        //             produce((draft) => {
+        //                 draft.orderID = orderID;
+        //             })
+        //         );
+        //         this.goNext();
+        //         this.toggleModal();
+        //         end();
+        //     })
+        // );
+        // }
+        else {
             this.goNext();
         }
     };
@@ -502,15 +504,18 @@ class CreateToken extends Component {
                 </SCmain>
 
                 <SCstepControl>
-                    {step > 1 && step !== 5 && (
-                        <a onClick={this.goBack}>
-                            <img
-                                src="/static/images/ic_arrow_back.svg"
-                                alt="back"
-                            />
-                            上一步
-                        </a>
-                    )}
+                    {step > 1 &&
+                        step !== 5 &&
+                        step !==
+                            4(
+                                <a onClick={this.goBack}>
+                                    <img
+                                        src="/static/images/ic_arrow_back.svg"
+                                        alt="back"
+                                    />
+                                    上一步
+                                </a>
+                            )}
 
                     {(step === 1 || step === 2) && (
                         <WGmainButton onClick={this.nextStep}>
@@ -552,6 +557,7 @@ const WalletConnectPay = ({ nextStep, sendToken }) => {
     ] = global.useWalletConnect;
 
     const pay = () => {
+        console.log(walletState.address);
         // walletConnectInit();
         if (!walletState.connected) {
             walletConnectInit();
@@ -566,12 +572,12 @@ const WalletConnectPay = ({ nextStep, sendToken }) => {
                 (tx) => {
                     sendToken().then(({ data }) => {
                         const { orderID } = data;
-
                         payForCreate({
                             orderID,
                             type: 'create',
                             paymentType: 'wallet',
                             txid: tx,
+                            address: walletState.address,
                         }).then(() => {
                             nextStep();
                         });
