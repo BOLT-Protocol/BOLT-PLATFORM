@@ -504,18 +504,15 @@ class CreateToken extends Component {
                 </SCmain>
 
                 <SCstepControl>
-                    {step > 1 &&
-                        step !== 5 &&
-                        step !==
-                            4(
-                                <a onClick={this.goBack}>
-                                    <img
-                                        src="/static/images/ic_arrow_back.svg"
-                                        alt="back"
-                                    />
-                                    上一步
-                                </a>
-                            )}
+                    {step > 1 && step !== 5 && step !== 4 && (
+                        <a onClick={this.goBack}>
+                            <img
+                                src="/static/images/ic_arrow_back.svg"
+                                alt="back"
+                            />
+                            上一步
+                        </a>
+                    )}
 
                     {(step === 1 || step === 2) && (
                         <WGmainButton onClick={this.nextStep}>
