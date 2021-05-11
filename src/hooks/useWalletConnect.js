@@ -64,7 +64,7 @@ const useWalletConnect = (props) => {
             const { chainId } = walletState;
             console.log('Address: ', address);
             console.log(result);
-            login({ msg: data, signature: result, chainId });
+            login({ msg: data, signature: result, chainId, address });
 
             console.log(formattedResult);
         } catch (error) {
